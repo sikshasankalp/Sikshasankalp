@@ -1,8 +1,11 @@
+import { GalleryHero } from '../../components/sections/gallery/GalleryHero';
+import { GalleryGrid } from '../../components/sections/gallery/GalleryGrid';
+
 export default function Gallery() {
   return (
-    <div className="container-default section-padding">
-      <h1 className="text-h1">Gallery Page</h1>
-      <p className="text-body mt-4">Placeholder for the Gallery page.</p>
+    <div className="flex flex-col w-full">
+      <GalleryHero />
+      <GalleryGrid />
     </div>
   );
 }

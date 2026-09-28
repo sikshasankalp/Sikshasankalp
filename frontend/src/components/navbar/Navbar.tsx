@@ -129,18 +129,30 @@ export function Navbar() {
               <span className="mt-[1px]">हिन्दी</span>
             </button>
             
-            {/* Donate CTA */}
-            <Button variant="accent" size="sm" to="/donate" className="text-[14px] px-4 py-1.5">
-              Donate Now
-            </Button>
+            {/* CTA */}
+            {localStorage.getItem('admin_token') ? (
+              <Button variant="accent" size="sm" to="/donate" className="text-[14px] px-4 py-1.5">
+                Donate Now
+              </Button>
+            ) : (
+              <Button variant="accent" size="sm" to="/admin/login" className="text-[14px] px-4 py-1.5">
+                Login
+              </Button>
+            )}
           </div>
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="flex flex-1 items-center justify-end gap-4 lg:hidden">
-          <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
-            Donate
-          </Button>
+          {localStorage.getItem('admin_token') ? (
+            <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
+              Donate
+            </Button>
+          ) : (
+            <Button variant="accent" size="sm" to="/admin/login" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
+              Login
+            </Button>
+          )}
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

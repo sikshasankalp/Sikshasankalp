@@ -1,8 +1,15 @@
+import { DonateHero } from '../../components/sections/donate/DonateHero';
+import { DonateMain } from '../../components/sections/donate/DonateMain';
+import { DonateTrust } from '../../components/sections/donate/DonateTrust';
+import { DonateImpact } from '../../components/sections/donate/DonateImpact';
+
 export default function Donate() {
   return (
-    <div className="container-default section-padding">
-      <h1 className="text-h1">Donate Page</h1>
-      <p className="text-body mt-4">Placeholder for the Donate page.</p>
+    <div className="flex flex-col w-full">
+      <DonateHero />
+      <DonateMain />
+      <DonateTrust />
+      <DonateImpact />
     </div>
   );
 }

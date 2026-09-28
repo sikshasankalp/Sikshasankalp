@@ -1,8 +1,19 @@
+import { AboutHero } from '../../components/sections/about/AboutHero';
+import { WhoWeAre } from '../../components/sections/about/WhoWeAre';
+import { OurBelief } from '../../components/sections/about/OurBelief';
+import { WhatWeDo } from '../../components/sections/about/WhatWeDo';
+import { OurApproach } from '../../components/sections/about/OurApproach';
+import { ClosingCTA } from '../../components/sections/about/ClosingCTA';
+
 export default function About() {
   return (
-    <div className="container-default section-padding">
-      <h1 className="text-h1">About Page</h1>
-      <p className="text-body mt-4">Placeholder for the About page.</p>
+    <div className="flex flex-col w-full">
+      <AboutHero />
+      <WhoWeAre />
+      <OurBelief />
+      <WhatWeDo />
+      <OurApproach />
+      <ClosingCTA />
     </div>
   );
 }

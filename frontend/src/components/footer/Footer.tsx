@@ -164,6 +164,14 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link 
+                to="/admin/login" 
+                className="text-xs text-white/30 hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:underline flex items-center gap-1"
+              >
+                Login
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
