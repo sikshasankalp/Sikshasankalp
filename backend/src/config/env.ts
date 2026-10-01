@@ -23,5 +23,20 @@ export const config = {
     port: parseInt(getEnv('SMTP_PORT', '465'), 10),
     user: getEnv('SMTP_USER'),
     password: getEnv('SMTP_PASSWORD'),
+  },
+  googleAuth: {
+    clientId: getEnv('GOOGLE_CLIENT_ID'),
+    clientSecret: getEnv('GOOGLE_CLIENT_SECRET'),
+    callbackUrl: getEnv('GOOGLE_CALLBACK_URL'),
+  },
+  cloudinary: {
+    cloudName: getEnv('CLOUDINARY_CLOUD_NAME'),
+    apiKey: getEnv('CLOUDINARY_API_KEY'),
+    apiSecret: getEnv('CLOUDINARY_API_SECRET'),
+  },
+  razorpay: {
+    keyId: getEnv('RAZORPAY_KEY_ID'),
+    keySecret: getEnv('RAZORPAY_KEY_SECRET'),
+    webhookSecret: getEnv('RAZORPAY_WEBHOOK_SECRET'),
   }
 };

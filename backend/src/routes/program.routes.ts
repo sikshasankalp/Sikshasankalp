@@ -3,13 +3,20 @@ import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { 
-  createGallerySchema, 
-  updateGallerySchema, 
-  galleryIdSchema, 
-  galleryQuerySchema 
-} from '../validators/gallery.validator';
+  createProgramSchema, 
+  updateProgramSchema, 
+  programIdSchema, 
+  programQuerySchema 
+} from '../validators/program.validator';
 import { AppError } from '../errors/AppError';
 import { ZodSchema } from 'zod';
+import {
+  listPrograms,
+  getProgramById,
+  createProgram,
+  updateProgram,
+  deleteProgram
+} from '../controllers/program.controller';
 
 const router = Router();
 
@@ -34,46 +41,34 @@ const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next
   next();
 };
 
-import { 
-  listGallery, 
-  getGalleryById, 
-  createGallery, 
-  updateGallery, 
-  deleteGallery 
-} from '../controllers/gallery.controller';
-
-import { uploadImageMiddleware } from '../middleware/upload.middleware';
-
 // Public GET
-router.get('/', validateQuery(galleryQuerySchema), listGallery);
-router.get('/:id', validateParams(galleryIdSchema), getGalleryById);
+router.get('/', validateQuery(programQuerySchema), listPrograms);
+router.get('/:id', validateParams(programIdSchema), getProgramById);
 
 // Admin WRITE
 router.post(
   '/',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateBody(createGallerySchema),
-  createGallery
+  validateBody(createProgramSchema),
+  createProgram
 );
 
 router.patch(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateParams(galleryIdSchema),
-  validateBody(updateGallerySchema),
-  updateGallery
+  validateParams(programIdSchema),
+  validateBody(updateProgramSchema),
+  updateProgram
 );
 
 router.delete(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(galleryIdSchema),
-  deleteGallery
+  validateParams(programIdSchema),
+  deleteProgram
 );
 
 export default router;

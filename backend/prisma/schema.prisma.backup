@@ -7,173 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                  String    @id @default(uuid())
-  name                String
-  email               String    @unique
-  passwordHash        String?
-  googleId            String?   @unique
-  role                Role      @default(PUBLIC_USER)
-  isActive            Boolean   @default(true)
-  lastLoginAt         DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  refreshTokenHash    String?   @map("refreshToken")
-  resetPasswordExpiry DateTime?
-  resetPasswordTokenHash String? @map("resetPasswordToken")
-  emailVerifyExpiry   DateTime?
-  emailVerifyTokenHash String?  @map("emailVerifyToken")
-  isVerified          Boolean   @default(false)
-  photoUrl            String?   @default("")
-}
-
-model GalleryItem {
-  id                 String           @id @default(uuid())
-  title              String?
-  description        String?
-  imageUrl           String
-  cloudinaryPublicId String?
-  category           GalleryCategory?
-  eventDate          DateTime?
-  isFeatured         Boolean          @default(false)
-  isPublished        Boolean          @default(true)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-}
-
-model Program {
-  id                 String   @id @default(uuid())
-  title              String
-  slug               String   @unique
-  shortDescription   String?
-  description        String?
-  imageUrl           String?
-  cloudinaryPublicId String?
-  isFeatured         Boolean  @default(false)
-  isPublished        Boolean  @default(true)
-  displayOrder       Int      @default(0)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}
-
-model TeamMember {
-  id                 String   @id @default(uuid())
-  name               String
-  designation        String
-  bio                String?
-  photoUrl           String?
-  cloudinaryPublicId String?
-  displayOrder       Int      @default(0)
-  isPublished        Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}
-
-model MediaCoverage {
-  id                 String    @id @default(uuid())
-  title              String
-  publication        String
-  description        String?
-  thumbnailUrl       String?
-  cloudinaryPublicId String?
-  externalUrl        String
-  publishedAt        DateTime?
-  isFeatured         Boolean   @default(false)
-  isPublished        Boolean   @default(true)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-}
-
-model DigitalLibrary {
-  id                 String           @id @default(uuid())
-  title              String
-  description        String?
-  category           LibraryCategory?
-  fileUrl            String
-  cloudinaryPublicId String?
-  thumbnailUrl       String?
-  fileType           String?
-  fileSize           Int?
-  isPublished        Boolean          @default(true)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-}
-
-model TransparencyDocument {
-  id                 String    @id @default(uuid())
-  title              String
-  documentType       String
-  documentNumber     String?
-  documentUrl        String
-  cloudinaryPublicId String?
-  issuedDate         DateTime?
-  description        String?
-  isPublished        Boolean   @default(true)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-}
-
-model Volunteer {
-  id        String          @id @default(uuid())
-  name      String
-  mobile    String
-  email     String?
-  city      String?
-  skills    String?
-  interests String?
-  message   String?
-  status    VolunteerStatus @default(NEW)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-}
-
-model PartnerEnquiry {
-  id               String        @id @default(uuid())
-  organizationName String
-  contactPerson    String
-  email            String
-  mobile           String
-  organizationType String?
-  message          String?
-  status           PartnerStatus @default(NEW)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-}
-
-model ContactMessage {
-  id        String        @id @default(uuid())
-  name      String
-  email     String?
-  mobile    String
-  subject   String?
-  message   String
-  status    ContactStatus @default(NEW)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-model Donation {
-  id                String         @id @default(uuid())
-  donorName         String
-  email             String?
-  mobile            String
-  pan               String?
-  address           String?
-  amount            Float
-  currency          String         @default("INR")
-  status            DonationStatus @default(CREATED)
-  razorpayOrderId   String?
-  razorpayPaymentId String?
-  receiptNumber     String?        @unique
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-}
-
 enum Role {
   SUPER_ADMIN
   CONTENT_ADMIN
   FINANCE_ADMIN
   PUBLIC_USER
+}
+
+model User {
+  id                     String    @id @default(uuid())
+  name                   String
+  email                  String    @unique
+  passwordHash           String?
+  googleId               String?   @unique
+  role                   Role
+  isActive               Boolean   @default(true)
+  isVerified             Boolean   @default(false)
+  photoUrl               String?
+  lastLoginAt            DateTime?
+  refreshTokenHash       String?
+  resetPasswordTokenHash String?
+  resetPasswordExpiry    DateTime?
+  emailVerifyTokenHash   String?
+  emailVerifyExpiry      DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([role])
+  @@index([isActive])
 }
 
 enum GalleryCategory {
@@ -190,6 +51,79 @@ enum GalleryCategory {
   SPECIAL_MOMENTS
 }
 
+model GalleryItem {
+  id                 String           @id @default(uuid())
+  title              String?
+  description        String?
+  imageUrl           String
+  cloudinaryPublicId String?
+  category           GalleryCategory?
+  eventDate          DateTime?
+  isFeatured         Boolean          @default(false)
+  isPublished        Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([isPublished])
+  @@index([category])
+  @@index([isFeatured])
+  @@index([eventDate])
+}
+
+model Program {
+  id                 String   @id @default(uuid())
+  title              String
+  slug               String   @unique
+  shortDescription   String?
+  description        String?
+  imageUrl           String?
+  cloudinaryPublicId String?
+  isFeatured         Boolean  @default(false)
+  isPublished        Boolean  @default(true)
+  displayOrder       Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([isFeatured])
+  @@index([displayOrder])
+}
+
+model TeamMember {
+  id                 String   @id @default(uuid())
+  name               String
+  designation        String
+  bio                String?
+  photoUrl           String?
+  cloudinaryPublicId String?
+  displayOrder       Int      @default(0)
+  isPublished        Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([displayOrder])
+}
+
+model MediaCoverage {
+  id                 String    @id @default(uuid())
+  title              String
+  publication        String
+  description        String?
+  thumbnailUrl       String?
+  cloudinaryPublicId String?
+  externalUrl        String
+  publishedAt        DateTime?
+  isFeatured         Boolean   @default(false)
+  isPublished        Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([isFeatured])
+  @@index([publishedAt])
+}
+
 enum LibraryCategory {
   NCERT_BOOK
   NOTES
@@ -201,12 +135,66 @@ enum LibraryCategory {
   OTHER
 }
 
+model DigitalLibrary {
+  id                 String           @id @default(uuid())
+  title              String
+  description        String?
+  category           LibraryCategory?
+  fileUrl            String
+  cloudinaryPublicId String?
+  thumbnailUrl       String?
+  fileType           String?
+  fileSize           Int?
+  isPublished        Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([createdAt])
+}
+
+model TransparencyDocument {
+  id                 String    @id @default(uuid())
+  title              String
+  documentType       String
+  documentNumber     String?
+  documentUrl        String
+  cloudinaryPublicId String?
+  issuedDate         DateTime?
+  description        String?
+  isPublished        Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([documentType])
+  @@index([isPublished])
+  @@index([issuedDate])
+}
+
 enum VolunteerStatus {
   NEW
   CONTACTED
   IN_PROGRESS
   COMPLETED
   REJECTED
+}
+
+model Volunteer {
+  id        String          @id @default(uuid())
+  name      String
+  mobile    String
+  email     String?
+  city      String?
+  skills    String?
+  interests String?
+  message   String?
+  status    VolunteerStatus @default(NEW)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum PartnerStatus {
@@ -217,11 +205,42 @@ enum PartnerStatus {
   REJECTED
 }
 
+model PartnerEnquiry {
+  id               String        @id @default(uuid())
+  organizationName String
+  contactPerson    String
+  email            String
+  mobile           String
+  organizationType String?
+  message          String?
+  status           PartnerStatus @default(NEW)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
 enum ContactStatus {
   NEW
   READ
   REPLIED
   CLOSED
+}
+
+model ContactMessage {
+  id        String        @id @default(uuid())
+  name      String
+  email     String?
+  mobile    String
+  subject   String?
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum DonationStatus {
@@ -230,4 +249,24 @@ enum DonationStatus {
   SUCCESS
   FAILED
   REFUNDED
+}
+
+model Donation {
+  id                String         @id @default(uuid())
+  donorName         String
+  email             String?
+  mobile            String
+  pan               String?
+  address           String?
+  amount            Decimal        @db.Decimal(12, 2)
+  currency          String         @default("INR")
+  status            DonationStatus @default(CREATED)
+  razorpayOrderId   String?        @unique
+  razorpayPaymentId String?        @unique
+  receiptNumber     String?        @unique
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }

@@ -2,18 +2,25 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
+import { apiLimiter } from '../middleware/rateLimit.middleware';
 import { 
-  createGallerySchema, 
-  updateGallerySchema, 
-  galleryIdSchema, 
-  galleryQuerySchema 
-} from '../validators/gallery.validator';
+  createDonationOrderSchema, 
+  verifyDonationSchema, 
+  donationIdSchema, 
+  donationQuerySchema 
+} from '../validators/donation.validator';
 import { AppError } from '../errors/AppError';
 import { ZodSchema } from 'zod';
+import {
+  listDonations,
+  getDonationById,
+  createDonationOrder,
+  verifyDonationPayment,
+  processRazorpayWebhook
+} from '../controllers/donation.controller';
 
 const router = Router();
 
-// Inline validators for query and params
 const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
   const result = schema.safeParse(req.query);
   if (!result.success) {
@@ -34,46 +41,42 @@ const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next
   next();
 };
 
-import { 
-  listGallery, 
-  getGalleryById, 
-  createGallery, 
-  updateGallery, 
-  deleteGallery 
-} from '../controllers/gallery.controller';
-
-import { uploadImageMiddleware } from '../middleware/upload.middleware';
-
-// Public GET
-router.get('/', validateQuery(galleryQuerySchema), listGallery);
-router.get('/:id', validateParams(galleryIdSchema), getGalleryById);
-
-// Admin WRITE
+// Public Endpoints
 router.post(
+  '/order',
+  apiLimiter,
+  validateBody(createDonationOrderSchema),
+  createDonationOrder
+);
+
+router.post(
+  '/verify',
+  apiLimiter,
+  validateBody(verifyDonationSchema),
+  verifyDonationPayment
+);
+
+// Webhook (Public, but verified via HMAC signature, so no rate limit to avoid dropping events)
+router.post(
+  '/webhook',
+  processRazorpayWebhook
+);
+
+// Admin Endpoints
+router.get(
   '/',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateBody(createGallerySchema),
-  createGallery
+  requireRole('SUPER_ADMIN', 'FINANCE_ADMIN'),
+  validateQuery(donationQuerySchema),
+  listDonations
 );
 
-router.patch(
+router.get(
   '/:id',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateParams(galleryIdSchema),
-  validateBody(updateGallerySchema),
-  updateGallery
-);
-
-router.delete(
-  '/:id',
-  requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(galleryIdSchema),
-  deleteGallery
+  requireRole('SUPER_ADMIN', 'FINANCE_ADMIN'),
+  validateParams(donationIdSchema),
+  getDonationById
 );
 
 export default router;

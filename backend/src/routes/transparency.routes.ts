@@ -3,17 +3,23 @@ import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { 
-  createGallerySchema, 
-  updateGallerySchema, 
-  galleryIdSchema, 
-  galleryQuerySchema 
-} from '../validators/gallery.validator';
+  createTransparencySchema, 
+  updateTransparencySchema, 
+  transparencyIdSchema, 
+  transparencyQuerySchema 
+} from '../validators/transparency.validator';
 import { AppError } from '../errors/AppError';
 import { ZodSchema } from 'zod';
+import {
+  listTransparency,
+  getTransparencyById,
+  createTransparency,
+  updateTransparency,
+  deleteTransparency
+} from '../controllers/transparency.controller';
 
 const router = Router();
 
-// Inline validators for query and params
 const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
   const result = schema.safeParse(req.query);
   if (!result.success) {
@@ -34,46 +40,34 @@ const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next
   next();
 };
 
-import { 
-  listGallery, 
-  getGalleryById, 
-  createGallery, 
-  updateGallery, 
-  deleteGallery 
-} from '../controllers/gallery.controller';
-
-import { uploadImageMiddleware } from '../middleware/upload.middleware';
-
 // Public GET
-router.get('/', validateQuery(galleryQuerySchema), listGallery);
-router.get('/:id', validateParams(galleryIdSchema), getGalleryById);
+router.get('/', validateQuery(transparencyQuerySchema), listTransparency);
+router.get('/:id', validateParams(transparencyIdSchema), getTransparencyById);
 
 // Admin WRITE
 router.post(
   '/',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateBody(createGallerySchema),
-  createGallery
+  validateBody(createTransparencySchema),
+  createTransparency
 );
 
 router.patch(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateParams(galleryIdSchema),
-  validateBody(updateGallerySchema),
-  updateGallery
+  validateParams(transparencyIdSchema),
+  validateBody(updateTransparencySchema),
+  updateTransparency
 );
 
 router.delete(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(galleryIdSchema),
-  deleteGallery
+  validateParams(transparencyIdSchema),
+  deleteTransparency
 );
 
 export default router;

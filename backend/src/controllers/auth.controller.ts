@@ -2,7 +2,9 @@ import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { loginSchema, forgotPasswordSchema, resetPasswordSchema, signupSchema } from '../validators/auth.validator';
 import { AuthRequest } from '../types/auth.types';
 import { authService } from '../services/auth.service';
+import { googleAuthService } from '../services/google-auth.service';
 import { AppError } from '../errors/AppError';
+import { config } from '../config/env';
 
 const cookieOptionsBase: CookieOptions = {
   httpOnly: true,
@@ -94,6 +96,34 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const url = googleAuthService.getAuthorizationUrl();
+    res.redirect(url);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const googleCallback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const code = req.query.code as string;
+    if (!code) {
+      res.redirect(`${config.frontendUrl}/login?error=GoogleAuthFailed`);
+      return;
+    }
+    
+    const { accessToken, refreshToken } = await authService.handleGoogleLogin(code);
+
+    res.cookie('accessToken', accessToken, accessTokenOptions);
+    res.cookie('refreshToken', refreshToken, refreshTokenOptions);
+
+    res.redirect(`${config.frontendUrl}/`);
+  } catch (error) {
+    res.redirect(`${config.frontendUrl}/login?error=GoogleAuthFailed`);
   }
 };
 

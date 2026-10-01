@@ -2,18 +2,25 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
+import { apiLimiter } from '../middleware/rateLimit.middleware';
 import { 
-  createGallerySchema, 
-  updateGallerySchema, 
-  galleryIdSchema, 
-  galleryQuerySchema 
-} from '../validators/gallery.validator';
+  createPartnerSchema, 
+  updatePartnerSchema, 
+  partnerIdSchema, 
+  partnerQuerySchema 
+} from '../validators/partner.validator';
 import { AppError } from '../errors/AppError';
 import { ZodSchema } from 'zod';
+import {
+  listPartnerInquiries,
+  getPartnerInquiryById,
+  createPartnerInquiry,
+  updatePartnerInquiry,
+  deletePartnerInquiry
+} from '../controllers/partner.controller';
 
 const router = Router();
 
-// Inline validators for query and params
 const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
   const result = schema.safeParse(req.query);
   if (!result.success) {
@@ -34,46 +41,48 @@ const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next
   next();
 };
 
-import { 
-  listGallery, 
-  getGalleryById, 
-  createGallery, 
-  updateGallery, 
-  deleteGallery 
-} from '../controllers/gallery.controller';
-
-import { uploadImageMiddleware } from '../middleware/upload.middleware';
-
-// Public GET
-router.get('/', validateQuery(galleryQuerySchema), listGallery);
-router.get('/:id', validateParams(galleryIdSchema), getGalleryById);
-
-// Admin WRITE
+// Public POST (Rate Limited)
 router.post(
+  '/',
+  apiLimiter,
+  validateBody(createPartnerSchema),
+  createPartnerInquiry
+);
+
+// Admin GET
+router.get(
   '/',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateBody(createGallerySchema),
-  createGallery
+  validateQuery(partnerQuerySchema),
+  listPartnerInquiries
 );
 
+router.get(
+  '/:id',
+  requireAuth,
+  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
+  validateParams(partnerIdSchema),
+  getPartnerInquiryById
+);
+
+// Admin WRITE (Update Status)
 router.patch(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateParams(galleryIdSchema),
-  validateBody(updateGallerySchema),
-  updateGallery
+  validateParams(partnerIdSchema),
+  validateBody(updatePartnerSchema),
+  updatePartnerInquiry
 );
 
+// Admin DELETE
 router.delete(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(galleryIdSchema),
-  deleteGallery
+  validateParams(partnerIdSchema),
+  deletePartnerInquiry
 );
 
 export default router;

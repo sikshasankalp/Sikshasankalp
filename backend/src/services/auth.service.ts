@@ -7,6 +7,7 @@ import { AppError } from '../errors/AppError';
 import { z } from 'zod';
 import { loginSchema, resetPasswordSchema, signupSchema } from '../validators/auth.validator';
 import { sendResetPasswordEmail, sendVerificationEmail } from '../utils/email';
+import { googleAuthService } from './google-auth.service';
 
 const generateAccessToken = (userId: string, role: string) => {
   return jwt.sign({ userId, role }, config.jwt.access, { expiresIn: '15m' });
@@ -108,6 +109,10 @@ export const authService = {
       throw new AppError('Invalid email or password', 401);
     }
 
+    if (!user.passwordHash) {
+      throw new AppError('Invalid email or password', 401);
+    }
+
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       throw new AppError('Invalid email or password', 401);
@@ -119,6 +124,65 @@ export const authService = {
 
     const accessToken = generateAccessToken(user.id, user.role);
     
+    const rawRefreshToken = generateRefreshToken(user.id);
+    const refreshTokenHash = hashToken(rawRefreshToken);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { 
+        lastLoginAt: new Date(),
+        refreshTokenHash
+      }
+    });
+
+    return {
+      accessToken,
+      refreshToken: rawRefreshToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        photoUrl: user.photoUrl
+      }
+    };
+  },
+
+  async handleGoogleLogin(code: string) {
+    const profile = await googleAuthService.verifyAndExtractProfileFromCode(code);
+    const emailNormalized = profile.email.toLowerCase().trim();
+
+    let user = await prisma.user.findUnique({ where: { googleId: profile.googleId } });
+
+    if (!user) {
+      user = await prisma.user.findUnique({ where: { email: emailNormalized } });
+      if (user) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { 
+            googleId: profile.googleId,
+            photoUrl: user.photoUrl || profile.photoUrl || ''
+          }
+        });
+      } else {
+        user = await prisma.user.create({
+          data: {
+            name: profile.name,
+            email: emailNormalized,
+            googleId: profile.googleId,
+            photoUrl: profile.photoUrl || '',
+            isVerified: true,
+            role: 'PUBLIC_USER'
+          }
+        });
+      }
+    }
+
+    if (!user.isActive) {
+      throw new AppError('Invalid email or password', 401);
+    }
+
+    const accessToken = generateAccessToken(user.id, user.role);
     const rawRefreshToken = generateRefreshToken(user.id);
     const refreshTokenHash = hashToken(rawRefreshToken);
 

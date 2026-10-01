@@ -34,7 +34,14 @@ app.use(cors({
 app.use(cookieParser());
 
 // Limit request body size
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ 
+  limit: '1mb',
+  verify: (req: any, res, buf) => {
+    if (req.originalUrl.includes('/api/donations/webhook')) {
+      req.rawBody = buf;
+    }
+  }
+}));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Safe logging: don't log Authorization header, cookies, or request bodies

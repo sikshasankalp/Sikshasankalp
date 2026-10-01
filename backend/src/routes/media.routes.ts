@@ -3,17 +3,23 @@ import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { 
-  createGallerySchema, 
-  updateGallerySchema, 
-  galleryIdSchema, 
-  galleryQuerySchema 
-} from '../validators/gallery.validator';
+  createMediaSchema, 
+  updateMediaSchema, 
+  mediaIdSchema, 
+  mediaQuerySchema 
+} from '../validators/media.validator';
 import { AppError } from '../errors/AppError';
 import { ZodSchema } from 'zod';
+import {
+  listMedia,
+  getMediaById,
+  createMedia,
+  updateMedia,
+  deleteMedia
+} from '../controllers/media.controller';
 
 const router = Router();
 
-// Inline validators for query and params
 const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
   const result = schema.safeParse(req.query);
   if (!result.success) {
@@ -34,46 +40,34 @@ const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next
   next();
 };
 
-import { 
-  listGallery, 
-  getGalleryById, 
-  createGallery, 
-  updateGallery, 
-  deleteGallery 
-} from '../controllers/gallery.controller';
-
-import { uploadImageMiddleware } from '../middleware/upload.middleware';
-
 // Public GET
-router.get('/', validateQuery(galleryQuerySchema), listGallery);
-router.get('/:id', validateParams(galleryIdSchema), getGalleryById);
+router.get('/', validateQuery(mediaQuerySchema), listMedia);
+router.get('/:id', validateParams(mediaIdSchema), getMediaById);
 
 // Admin WRITE
 router.post(
   '/',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateBody(createGallerySchema),
-  createGallery
+  validateBody(createMediaSchema),
+  createMedia
 );
 
 router.patch(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  uploadImageMiddleware.single('image'),
-  validateParams(galleryIdSchema),
-  validateBody(updateGallerySchema),
-  updateGallery
+  validateParams(mediaIdSchema),
+  validateBody(updateMediaSchema),
+  updateMedia
 );
 
 router.delete(
   '/:id',
   requireAuth,
   requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(galleryIdSchema),
-  deleteGallery
+  validateParams(mediaIdSchema),
+  deleteMedia
 );
 
 export default router;

@@ -8,12 +8,12 @@ const queryBoolean = z
 export const createGallerySchema = z.object({
   title: z.string().trim().min(2).max(150),
   description: z.string().trim().max(1000).optional(),
-  imageUrl: z.string().url().max(2048),
+  imageUrl: z.string().url().max(2048).optional(),
   cloudinaryPublicId: z.string().trim().max(500).optional(),
   category: z.string().trim().min(2).max(100),
   eventDate: z.coerce.date().optional(),
-  isFeatured: z.boolean().default(false).optional(),
-  isPublished: z.boolean().default(false).optional(),
+  isFeatured: queryBoolean,
+  isPublished: queryBoolean,
 }).strict();
 
 export const updateGallerySchema = createGallerySchema.partial().strict();

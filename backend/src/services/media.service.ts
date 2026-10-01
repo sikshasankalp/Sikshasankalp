@@ -1,41 +1,38 @@
 import { prisma } from '../config/database';
 import { AppError } from '../errors/AppError';
-import { GalleryCategory, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { 
-  CreateGalleryInput, 
-  UpdateGalleryInput, 
-  GalleryQueryInput 
-} from '../validators/gallery.validator';
+  CreateMediaInput, 
+  UpdateMediaInput, 
+  MediaQueryInput 
+} from '../validators/media.validator';
 
 const publicSelect = {
   id: true,
   title: true,
+  publication: true,
   description: true,
-  imageUrl: true,
-  category: true,
-  eventDate: true,
+  thumbnailUrl: true,
+  externalUrl: true,
+  publishedAt: true,
   isFeatured: true,
   isPublished: true,
   createdAt: true,
   updatedAt: true,
-} satisfies Prisma.GalleryItemSelect;
+} satisfies Prisma.MediaCoverageSelect;
 
 const adminSelect = {
   ...publicSelect,
   cloudinaryPublicId: true,
-} satisfies Prisma.GalleryItemSelect;
+} satisfies Prisma.MediaCoverageSelect;
 
-export const galleryService = {
-  async listGalleryItems(query: GalleryQueryInput, isPublicRequest: boolean) {
+export const mediaService = {
+  async listMedia(query: MediaQueryInput, isPublicRequest: boolean) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 12;
     const skip = (page - 1) * limit;
 
-    const where: Prisma.GalleryItemWhereInput = {};
-
-    if (query.category) {
-      where.category = query.category as GalleryCategory;
-    }
+    const where: Prisma.MediaCoverageWhereInput = {};
 
     if (isPublicRequest) {
       where.isPublished = true;
@@ -52,14 +49,14 @@ export const galleryService = {
     }
 
     const [items, total] = await Promise.all([
-      prisma.galleryItem.findMany({
+      prisma.mediaCoverage.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
         select: isPublicRequest ? publicSelect : adminSelect,
       }),
-      prisma.galleryItem.count({ where }),
+      prisma.mediaCoverage.count({ where }),
     ]);
 
     return {
@@ -73,31 +70,31 @@ export const galleryService = {
     };
   },
 
-  async getGalleryItemById(id: string, isPublicRequest: boolean) {
-    const item = await prisma.galleryItem.findFirst({
+  async getMediaById(id: string, isPublicRequest: boolean) {
+    const item = await prisma.mediaCoverage.findFirst({
       where: isPublicRequest ? { id, isPublished: true } : { id },
       select: isPublicRequest ? publicSelect : adminSelect,
     });
 
     if (!item) {
-      throw new AppError('Gallery item not found', 404);
+      throw new AppError('Media coverage not found', 404);
     }
 
     return item;
   },
 
-  async createGalleryItem(data: CreateGalleryInput) {
-    if (!data.imageUrl) throw new AppError('Image URL is required', 400);
-    const item = await prisma.galleryItem.create({
+  async createMedia(data: CreateMediaInput) {
+    const item = await prisma.mediaCoverage.create({
       data: {
         title: data.title,
+        publication: data.publication,
         description: data.description,
-        imageUrl: data.imageUrl,
+        thumbnailUrl: data.thumbnailUrl,
         cloudinaryPublicId: data.cloudinaryPublicId,
-        category: data.category as GalleryCategory,
-        eventDate: data.eventDate,
-        isFeatured: data.isFeatured,
-        isPublished: data.isPublished,
+        externalUrl: data.externalUrl,
+        publishedAt: data.publishedAt,
+        isFeatured: data.isFeatured ?? false,
+        isPublished: data.isPublished ?? true,
       },
       select: adminSelect,
     });
@@ -105,21 +102,22 @@ export const galleryService = {
     return item;
   },
 
-  async updateGalleryItem(id: string, data: UpdateGalleryInput) {
-    const existing = await prisma.galleryItem.findUnique({ where: { id } });
+  async updateMedia(id: string, data: UpdateMediaInput) {
+    const existing = await prisma.mediaCoverage.findUnique({ where: { id } });
     if (!existing) {
-      throw new AppError('Gallery item not found', 404);
+      throw new AppError('Media coverage not found', 404);
     }
 
-    const item = await prisma.galleryItem.update({
+    const item = await prisma.mediaCoverage.update({
       where: { id },
       data: {
         title: data.title,
+        publication: data.publication,
         description: data.description,
-        imageUrl: data.imageUrl,
+        thumbnailUrl: data.thumbnailUrl,
         cloudinaryPublicId: data.cloudinaryPublicId,
-        category: data.category as GalleryCategory | undefined,
-        eventDate: data.eventDate,
+        externalUrl: data.externalUrl,
+        publishedAt: data.publishedAt,
         isFeatured: data.isFeatured,
         isPublished: data.isPublished,
       },
@@ -129,13 +127,13 @@ export const galleryService = {
     return item;
   },
 
-  async deleteGalleryItem(id: string) {
-    const existing = await prisma.galleryItem.findUnique({ where: { id } });
+  async deleteMedia(id: string) {
+    const existing = await prisma.mediaCoverage.findUnique({ where: { id } });
     if (!existing) {
-      throw new AppError('Gallery item not found', 404);
+      throw new AppError('Media coverage not found', 404);
     }
 
-    await prisma.galleryItem.delete({
+    await prisma.mediaCoverage.delete({
       where: { id },
     });
 
