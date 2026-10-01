@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
+
 
 interface LogoProps {
   className?: string;
@@ -7,8 +7,10 @@ interface LogoProps {
 }
 
 export function Logo({ className = '', variant = 'dark' }: LogoProps) {
-  const textColor = variant === 'dark' ? 'text-brand-primary' : 'text-white';
-  const iconColor = variant === 'dark' ? 'text-brand-accent' : 'text-white';
+  // If you need a white version of the logo for dark backgrounds (like the footer),
+  // you can conditionally render a different image or use CSS filters.
+  // For now, we'll use the main logo image.
+  const isLight = variant === 'light';
 
   return (
     <Link 
@@ -16,17 +18,11 @@ export function Logo({ className = '', variant = 'dark' }: LogoProps) {
       className={`flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-md ${className}`}
       aria-label="Shiksha Sankalp Foundation - Home"
     >
-      <div className={`p-1.5 md:p-2 rounded-lg bg-opacity-10 group-hover:bg-opacity-20 transition-colors ${variant === 'dark' ? 'bg-brand-primary' : 'bg-white'}`}>
-        <BookOpen className={`w-5 h-5 md:w-7 md:h-7 ${iconColor}`} />
-      </div>
-      <div className="flex flex-col">
-        <span className={`font-display font-bold text-[17px] md:text-[19px] leading-none ${textColor}`}>
-          Shiksha Sankalp
-        </span>
-        <span className={`text-[9px] md:text-[11px] font-medium uppercase tracking-wider ${variant === 'dark' ? 'text-content-muted' : 'text-white/80'}`}>
-          Foundation
-        </span>
-      </div>
+      <img 
+        src="/logo/logo.jpeg" 
+        alt="Shiksha Sankalp Foundation Logo" 
+        className={`h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 ${isLight ? 'brightness-0 invert opacity-90' : ''}`}
+      />
     </Link>
   );
 }

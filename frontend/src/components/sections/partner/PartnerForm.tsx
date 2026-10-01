@@ -118,7 +118,7 @@ export function PartnerForm() {
                 id="mobile" 
                 required 
                 className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
-                placeholder="+91 98765 43210"
+                placeholder="+91 89207 65376"
                 value={formData.mobile}
                 onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
               />

@@ -85,7 +85,7 @@ export function ContactMain() {
                       id="mobile" 
                       required 
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 89207 65376"
                       value={formData.mobile}
                       onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
                     />
@@ -153,33 +153,33 @@ export function ContactMain() {
             <div>
               <h2 className="text-2xl font-bold text-content-primary mb-6">Contact Information</h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                <a href="#" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group">
+                <a href="tel:+918920765376" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-surface-muted flex items-center justify-center shrink-0 group-hover:bg-brand-primary/10">
                     <Phone className="w-5 h-5 text-brand-primary" />
                   </div>
                   <div>
                     <p className="text-xs text-content-muted font-bold uppercase tracking-wider mb-0.5">Call Us</p>
-                    <p className="text-sm font-medium text-content-primary">Number to be updated</p>
+                    <p className="text-sm font-medium text-content-primary">+91 89207 65376</p>
                   </div>
                 </a>
                 
-                <a href="#" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group">
+                <a href="https://wa.me/918920765376" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-surface-muted flex items-center justify-center shrink-0 group-hover:bg-green-100">
                     <MessageCircle className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
                     <p className="text-xs text-content-muted font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
-                    <p className="text-sm font-medium text-content-primary">Number to be updated</p>
+                    <p className="text-sm font-medium text-content-primary">+91 89207 65376</p>
                   </div>
                 </a>
                 
-                <a href="#" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group sm:col-span-2">
+                <a href="mailto:sikshasankalpfoundation@gmail.com" className="flex items-center gap-4 p-4 border border-border/60 rounded-lg hover:border-brand-primary/40 transition-colors group sm:col-span-2">
                   <div className="w-10 h-10 rounded-full bg-surface-muted flex items-center justify-center shrink-0 group-hover:bg-brand-primary/10">
                     <Mail className="w-5 h-5 text-brand-primary" />
                   </div>
                   <div>
                     <p className="text-xs text-content-muted font-bold uppercase tracking-wider mb-0.5">Official Email</p>
-                    <p className="text-sm font-medium text-content-primary">Email address to be updated</p>
+                    <p className="text-sm font-medium text-content-primary">sikshasankalpfoundation@gmail.com</p>
                   </div>
                 </a>
               </div>

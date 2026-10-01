@@ -121,14 +121,14 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <Phone className="w-5 h-5 text-brand-primary shrink-0" />
-                <a href="tel:+919876543210" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline">
-                  +91 98765 43210
+                <a href="tel:+918920765376" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline">
+                  +91 89207 65376
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <Mail className="w-5 h-5 text-brand-primary shrink-0" />
-                <a href="mailto:contact@shikshasankalp.org" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline">
-                  contact@shikshasankalp.org
+                <a href="mailto:sikshasankalpfoundation@gmail.com" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline">
+                  sikshasankalpfoundation@gmail.com
                 </a>
               </li>
             </ul>

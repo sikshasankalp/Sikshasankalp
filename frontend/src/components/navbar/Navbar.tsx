@@ -8,6 +8,8 @@ import { mainNavigation, moreNavigation } from '../../data/navigation';
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('English');
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
@@ -120,14 +122,53 @@ export function Navbar() {
           <div className="w-[1px] h-4 bg-border mx-4"></div>
 
           <div className="flex items-center gap-4">
-            {/* Language Switcher Placeholder */}
-            <button 
-              className="flex items-center gap-1.5 text-[14px] font-medium text-content-secondary hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-sm"
-              aria-label="Switch language to Hindi"
+            {/* Language Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsLanguageDropdownOpen(true)}
+              onMouseLeave={() => setIsLanguageDropdownOpen(false)}
             >
-              <Globe className="w-[14px] h-[14px]" />
-              <span className="mt-[1px]">हिन्दी</span>
-            </button>
+              <button 
+                className="flex items-center gap-1 text-[14px] font-medium text-content-secondary hover:text-brand-primary transition-colors py-2"
+                aria-expanded={isLanguageDropdownOpen}
+                aria-haspopup="true"
+              >
+                <Globe className="w-[14px] h-[14px]" />
+                <span className="mt-[1px]">{currentLanguage === 'English' ? 'EN' : 'HI'}</span>
+                <ChevronDown className={`w-[14px] h-[14px] transition-transform ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              <div 
+                className={`absolute top-full right-0 mt-1 w-36 bg-white rounded-lg shadow-elevated border border-border overflow-hidden transition-all duration-200 origin-top-right ${
+                  isLanguageDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
+                }`}
+              >
+                <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setCurrentLanguage('English');
+                      setIsLanguageDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-[14px] transition-colors hover:bg-surface-muted ${
+                      currentLanguage === 'English' ? 'text-brand-primary font-medium bg-brand-primary/5' : 'text-content-secondary'
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentLanguage('Hindi');
+                      setIsLanguageDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-[14px] transition-colors hover:bg-surface-muted ${
+                      currentLanguage === 'Hindi' ? 'text-brand-primary font-medium bg-brand-primary/5' : 'text-content-secondary'
+                    }`}
+                  >
+                    हिन्दी
+                  </button>
+                </div>
+              </div>
+            </div>
             
             {/* CTA */}
             {localStorage.getItem('admin_token') ? (
@@ -218,9 +259,12 @@ export function Navbar() {
         </div>
         
         <div className="p-4 border-t border-border bg-surface-muted mt-auto">
-          <button className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-border rounded-md text-content-primary font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary">
+          <button 
+            onClick={() => setCurrentLanguage(currentLanguage === 'English' ? 'Hindi' : 'English')}
+            className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-border rounded-md text-content-primary font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+          >
             <Globe className="w-5 h-5 text-brand-primary" />
-            <span>Read in हिन्दी</span>
+            <span>{currentLanguage === 'English' ? 'Read in हिन्दी' : 'Read in English'}</span>
           </button>
         </div>
       </div>
