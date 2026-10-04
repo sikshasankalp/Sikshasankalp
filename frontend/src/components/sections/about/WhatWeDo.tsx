@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function WhatWeDo() {
+    const { t } = useLanguage();
   const areasOfWork = [
     {
       title: 'Education & Footpath Learning',
@@ -38,10 +41,10 @@ export function WhatWeDo() {
     <section className="section-padding bg-background">
       <div className="container-default">
         <div className="max-w-3xl mb-12 md:mb-16">
-          <h2 className="text-h2 mb-4">What We Do</h2>
+          <h2 className="text-h2 mb-4">{t('about.whatWeDo.text1')}</h2>
           <p className="text-body-large">
-            Our comprehensive approach addresses the various challenges faced by underprivileged children, ensuring they receive holistic support on their journey to education and a better life.
-          </p>
+            {t('about.whatWeDo.text2')}
+                                </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">

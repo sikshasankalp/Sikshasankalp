@@ -1,3 +1,5 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 const PARTNER_CATEGORIES = [
   { id: 'csr', title: 'CSR Partners', desc: 'Direct your CSR mandate toward high-impact, verifiable ground-level education and health programs.' },
   { id: 'schools', title: 'Schools', desc: 'Help us bridge the gap by integrating underprivileged students into mainstream classrooms and sharing learning resources.' },
@@ -9,10 +11,11 @@ const PARTNER_CATEGORIES = [
 ] as const;
 
 export function PartnerCategories() {
+    const { t } = useLanguage();
   return (
     <section className="section-padding bg-background border-b border-border/50">
       <div className="container-default max-w-6xl mx-auto">
-        <h2 className="text-h2 mb-12 text-center md:text-left">Who Can Partner With Us</h2>
+        <h2 className="text-h2 mb-12 text-center md:text-left">{t('partner.partnerCategories.text1')}</h2>
         
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
           {PARTNER_CATEGORIES.map((category) => (

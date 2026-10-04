@@ -18,24 +18,25 @@ async function main() {
     }
   }
 
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail! }
-  });
+  const passwordHash = await bcrypt.hash(adminPassword!, 12);
 
-  if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash(adminPassword!, 12); // cost factor 12
-    await prisma.user.create({
-      data: {
-        email: adminEmail!,
-        name: adminName,
-        passwordHash,
-        role: Role.SUPER_ADMIN,
-      }
-    });
-    console.log(`Admin user seeded with email: ${adminEmail}`);
-  } else {
-    console.log('Admin user already exists.');
-  }
+  await prisma.user.upsert({
+    where: { email: adminEmail! },
+    update: {
+      passwordHash,
+      role: Role.SUPER_ADMIN,
+      isVerified: true,
+      name: adminName,
+    },
+    create: {
+      email: adminEmail!,
+      name: adminName,
+      passwordHash,
+      role: Role.SUPER_ADMIN,
+      isVerified: true,
+    }
+  });
+  console.log(`Admin user seeded/updated with email: ${adminEmail}`);
 }
 
 main()

@@ -44,3 +44,36 @@ export const sendVerificationEmail = async (to: string, verifyLink: string) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+export const sendDonationReceiptEmail = async (
+  to: string,
+  donorName: string,
+  amount: number,
+  receiptNumber: string,
+  date: Date,
+  pdfBuffer: Buffer
+) => {
+  const mailOptions = {
+    from: `"Shiksha Sankalp Foundation" <${config.smtp.user}>`,
+    to,
+    subject: 'Donation Receipt – Shiksha Sankalp Foundation',
+    html: `
+      <h2>Thank You for Your Donation!</h2>
+      <p>Dear ${donorName},</p>
+      <p>We have successfully received your generous donation of <strong>₹${amount.toLocaleString('en-IN')}</strong> on ${date.toLocaleDateString('en-IN')}.</p>
+      <p>Your official receipt (No: ${receiptNumber}) is attached to this email.</p>
+      <p>Your support empowers education and transforms lives. Thank you for being a part of Shiksha Sankalp Foundation.</p>
+      <br/>
+      <p>Warm regards,<br/>Shiksha Sankalp Foundation</p>
+    `,
+    attachments: [
+      {
+        filename: `${receiptNumber.replace(/\//g, '-')}.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf'
+      }
+    ]
+  };
+
+  await transporter.sendMail(mailOptions);
+};

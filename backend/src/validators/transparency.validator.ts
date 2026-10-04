@@ -10,7 +10,6 @@ export const createTransparencySchema = z.object({
   documentType: z.string().trim().min(2).max(100),
   documentNumber: z.string().trim().max(100).optional(),
   documentUrl: z.string().url().max(2048),
-  cloudinaryPublicId: z.string().trim().max(500).optional(),
   issuedDate: z.coerce.date().optional(),
   description: z.string().trim().max(2000).optional(),
   isPublished: queryBoolean,

@@ -1,13 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { isAuthenticated } from '../services/auth';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminRoute() {
-  const isAuth = isAuthenticated();
+  const { isLoading, isAdmin } = useAuth();
   
-  // TODO: Actual authorization must be enforced by the backend once authentication is implemented.
-  // This is only UX-level protection.
-  if (!isAuth) {
-    return <Navigate to="/admin/login" replace />;
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;

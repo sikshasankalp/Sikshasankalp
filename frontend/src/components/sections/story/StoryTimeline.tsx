@@ -1,6 +1,27 @@
 import { PlaceholderImage } from '../../common/PlaceholderImage';
+import { useState, useEffect } from 'react';
+import { fetchGallery } from '../../../services/api/gallery';
+import type { GalleryItem } from '../../../services/api/gallery';
+import { useLanguage } from "../../../context/LanguageContext";
 
 export function StoryTimeline() {
+    const { t } = useLanguage();
+  const [timelineImages, setTimelineImages] = useState<GalleryItem[]>([]);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        const items = await fetchGallery({ displayLocation: 'STORY_TIMELINE' });
+        if (items) {
+          // Sort items by creation date or just use them in order returned
+          setTimelineImages(items);
+        }
+      } catch (err) {
+        console.error('Failed to load Story Timeline images:', err);
+      }
+    };
+    loadImages();
+  }, []);
   const steps = [
     {
       title: "The Beginning",
@@ -38,7 +59,7 @@ export function StoryTimeline() {
               <div key={index} className="grid md:grid-cols-[1fr_1fr] gap-10 md:gap-16 items-center">
                 <div className={`flex flex-col ${isEven ? 'md:order-1' : 'md:order-2'}`}>
                   <span className="text-sm font-display text-brand-primary/60 tracking-wider font-bold mb-3 uppercase">
-                    Chapter 0{index + 1}
+                    {t('story.storyTimeline.text1')}{index + 1}
                   </span>
                   <h2 className="text-h2 mb-4">{step.title}</h2>
                   <p className="text-body-large text-content-secondary leading-relaxed">
@@ -46,7 +67,15 @@ export function StoryTimeline() {
                   </p>
                 </div>
                 <div className={`relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-surface-muted border border-border/50 ${isEven ? 'md:order-2' : 'md:order-1'}`}>
-                  <PlaceholderImage className="w-full h-full border-none" text="Story Event Real Photo" />
+                  {timelineImages[index] ? (
+                    <img 
+                      src={timelineImages[index].imageUrl} 
+                      alt={timelineImages[index].title || "Story Event Real Photo"} 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <PlaceholderImage className="w-full h-full border-none" text="Story Event Real Photo" />
+                  )}
                 </div>
               </div>
             );

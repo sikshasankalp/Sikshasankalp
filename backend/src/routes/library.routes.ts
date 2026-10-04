@@ -1,73 +1,170 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import {
+  Router,
+  Request,
+  Response,
+  NextFunction,
+} from 'express';
+import { Role } from '@prisma/client';
+import { ZodSchema } from 'zod';
+
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
-import { 
-  createLibrarySchema, 
-  updateLibrarySchema, 
-  libraryIdSchema, 
-  libraryQuerySchema 
+import { uploadImageMiddleware } from '../middleware/upload.middleware';
+
+import {
+  createLibrarySchema,
+  updateLibrarySchema,
+  libraryIdSchema,
+  libraryQuerySchema,
 } from '../validators/library.validator';
+
 import { AppError } from '../errors/AppError';
-import { ZodSchema } from 'zod';
+
 import {
   listLibraryResources,
   getLibraryResourceById,
   createLibraryResource,
   updateLibraryResource,
-  deleteLibraryResource
+  deleteLibraryResource,
 } from '../controllers/library.controller';
 
 const router = Router();
 
-const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
-  const result = schema.safeParse(req.query);
-  if (!result.success) {
-    next(new AppError('Invalid query parameters', 400));
-    return;
-  }
-  Object.assign(req.query, result.data);
-  next();
-};
+const validateQuery =
+  (schema: ZodSchema) =>
+  (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+  ): void => {
+    const result = schema.safeParse(req.query);
 
-const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
-  const result = schema.safeParse(req.params);
-  if (!result.success) {
-    next(new AppError('Invalid request parameters', 400));
-    return;
-  }
-  Object.assign(req.params, result.data);
-  next();
-};
+    if (!result.success) {
+      next(
+        new AppError(
+          'Invalid query parameters',
+          400,
+        ),
+      );
+      return;
+    }
 
-// Public GET
-router.get('/', validateQuery(libraryQuerySchema), listLibraryResources);
-router.get('/:id', validateParams(libraryIdSchema), getLibraryResourceById);
+    req.query = result.data as Request['query'];
+    next();
+  };
 
-// Admin WRITE
+const validateParams =
+  (schema: ZodSchema) =>
+  (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+  ): void => {
+    const result = schema.safeParse(req.params);
+
+    if (!result.success) {
+      next(
+        new AppError(
+          'Invalid request parameters',
+          400,
+        ),
+      );
+      return;
+    }
+
+    req.params = result.data as Request['params'];
+    next();
+  };
+
+/*
+ * ADMIN LIST
+ *
+ * Must stay before /:id.
+ */
+router.get(
+  '/admin',
+  requireAuth,
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN,
+  ),
+  validateQuery(libraryQuerySchema),
+  (req, res, next) => {
+    res.locals.isAdmin = true;
+    next();
+  },
+  listLibraryResources,
+);
+
+/*
+ * PUBLIC LIST
+ */
+router.get(
+  '/',
+  validateQuery(libraryQuerySchema),
+  listLibraryResources,
+);
+
+/*
+ * GET SINGLE RESOURCE
+ *
+ * Public resources are returned publicly.
+ * Admin users can also access unpublished resources
+ * because the controller checks res.locals.isAdmin.
+ */
+router.get(
+  '/:id',
+  validateParams(libraryIdSchema),
+  getLibraryResourceById,
+);
+
+/*
+ * CREATE
+ *
+ * Authentication + role authorization happens before
+ * accepting the upload.
+ */
 router.post(
   '/',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN,
+  ),
+  uploadImageMiddleware.single('image'),
   validateBody(createLibrarySchema),
-  createLibraryResource
+  createLibraryResource,
 );
 
+/*
+ * UPDATE
+ */
 router.patch(
   '/:id',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN,
+  ),
   validateParams(libraryIdSchema),
+  uploadImageMiddleware.single('image'),
   validateBody(updateLibrarySchema),
-  updateLibraryResource
+  updateLibraryResource,
 );
 
+/*
+ * DELETE
+ */
 router.delete(
   '/:id',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN,
+  ),
   validateParams(libraryIdSchema),
-  deleteLibraryResource
+  deleteLibraryResource,
 );
 
 export default router;

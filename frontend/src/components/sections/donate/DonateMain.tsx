@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../buttons/Button';
-import { createDonationOrder } from '../../../services/api/donation';
-import { Lock } from 'lucide-react';
+import { createDonationOrder, verifyDonationPayment } from '../../../services/api/donation';
+import { Lock, AlertCircle } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
+import { useLanguage } from "../../../context/LanguageContext";
 
 const PRESET_AMOUNTS = [500, 1000, 2500];
 
 export function DonateMain() {
+    const { t } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [amountSelection, setAmountSelection] = useState<number | 'custom'>(1000);
   const [customAmount, setCustomAmount] = useState<string>('');
   
@@ -18,7 +25,35 @@ export function DonateMain() {
   });
   
   const [isProcessing, setIsProcessing] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<{
+    receiptNumber: string;
+    receiptToken: string;
+    amount: number;
+  } | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  useEffect(() => {
+    if (user && formData.name === '' && formData.email === '') {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const activeAmount = amountSelection === 'custom' 
     ? (parseInt(customAmount) || 0) 
@@ -28,10 +63,12 @@ export function DonateMain() {
     e.preventDefault();
     if (activeAmount <= 0) return;
     
+    setErrorMsg(null);
     setIsProcessing(true);
+    
     try {
-      // Create order via our separated API service
-      await createDonationOrder({
+      // 1. Create order
+      const order = await createDonationOrder({
         amount: activeAmount,
         donorName: formData.name,
         email: formData.email,
@@ -40,31 +77,122 @@ export function DonateMain() {
         address: formData.address
       });
       
-      // In the future:
-      // 1. Initialize Razorpay with order.orderId
-      // 2. Handle success callback -> verifyDonationPayment() -> setSuccess(true)
+      // 2. Setup Razorpay options
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Shiksha Sankalp Foundation',
+        description: 'Donation',
+        order_id: order.razorpayOrderId,
+        handler: async function (response: any) {
+          try {
+            // 3. Verify payment on success callback
+            setIsProcessing(true);
+            const verificationResult = await verifyDonationPayment(
+              response.razorpay_order_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature
+            );
+            setSuccessData({
+              receiptNumber: verificationResult.receiptNumber,
+              receiptToken: verificationResult.receiptToken,
+              amount: verificationResult.amount,
+            });
+          } catch (err: any) {
+            setErrorMsg(err.message || 'Payment verification failed.');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.mobile,
+        },
+        theme: {
+          color: '#16a34a', // Using brand-primary color
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+          }
+        }
+      };
       
-      // For now, simulate success immediately after order creation to demonstrate architecture
-      setSuccess(true);
-    } catch (error) {
+      // 4. Open Razorpay Checkout
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any){
+        setErrorMsg(`Payment Failed: ${response.error.description}`);
+      });
+      rzp.open();
+      
+    } catch (error: any) {
       console.error('Failed to initialize donation', error);
-    } finally {
+      setErrorMsg(error.message || 'Failed to initialize payment.');
       setIsProcessing(false);
     }
   };
 
-  if (success) {
+  if (!user) {
+    return (
+      <section className="section-padding bg-background border-b border-border/50 text-center">
+        <div className="container-default max-w-lg mx-auto py-16 bg-surface border border-border rounded-xl shadow-sm px-6">
+          <div className="w-16 h-16 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold mb-4 text-content-primary">{t('donate.donateMain.text1')}</h2>
+          <p className="text-content-secondary mb-8">
+            {t('donate.donateMain.text2')}
+                              </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button onClick={() => navigate('/login?redirect=/donate')} variant="primary">
+              {t('donate.donateMain.text3')}
+                                    </Button>
+            <Button onClick={() => navigate('/register?redirect=/donate')} variant="outline">
+              {t('donate.donateMain.text4')}
+                                    </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (successData) {
     return (
       <section className="section-padding bg-background border-b border-border/50">
         <div className="container-default max-w-2xl mx-auto text-center py-12">
           <div className="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">✓</div>
-          <h2 className="text-h2 mb-4">Payment Prepared</h2>
+          <h2 className="text-h2 mb-4">{t('donate.donateMain.text5')}</h2>
           <p className="text-body-large text-content-secondary mb-8">
-            The frontend architecture is ready. In a production environment, this is where the secure Razorpay checkout would launch.
-          </p>
-          <Button onClick={() => setSuccess(false)} variant="outline">
-            Return to Form
-          </Button>
+            {t('donate.donateMain.text6')}<br/>
+            {t('donate.donateMain.text7')}
+                              </p>
+          
+          <div className="bg-surface border border-border/60 rounded-xl p-6 max-w-sm mx-auto mb-8 text-left">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-content-secondary font-medium">{t('donate.donateMain.text8')}</span>
+              <span className="text-content-primary font-bold">{successData.receiptNumber}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-content-secondary font-medium">{t('donate.donateMain.text9')}</span>
+              <span className="text-brand-primary font-bold text-xl">₹{successData.amount.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href={`${API_URL}/api/donations/receipt/${successData.receiptToken}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-brand-primary-dark transition-colors"
+            >
+              {t('donate.donateMain.text10')}
+                                    </a>
+            <Button onClick={() => navigate('/account/donations')} variant="outline">
+              {t('donate.donateMain.text11')}
+                                    </Button>
+          </div>
         </div>
       </section>
     );
@@ -81,7 +209,7 @@ export function DonateMain() {
               
               {/* Amount Selection */}
               <div>
-                <h3 className="text-xl font-bold text-content-primary mb-6">1. Select Amount</h3>
+                <h3 className="text-xl font-bold text-content-primary mb-6">{t('donate.donateMain.text12')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   {PRESET_AMOUNTS.map(amt => (
                     <button
@@ -106,8 +234,8 @@ export function DonateMain() {
                       : 'border-border bg-surface text-content-secondary hover:border-brand-primary/40'
                     }`}
                   >
-                    Custom
-                  </button>
+                    {t('donate.donateMain.text13')}
+                                                        </button>
                 </div>
                 
                 {amountSelection === 'custom' && (
@@ -128,11 +256,11 @@ export function DonateMain() {
 
               {/* Donor Details */}
               <div>
-                <h3 className="text-xl font-bold text-content-primary mb-6">2. Donor Details</h3>
+                <h3 className="text-xl font-bold text-content-primary mb-6">{t('donate.donateMain.text14')}</h3>
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div className="flex flex-col gap-2">
                     <label htmlFor="name" className="text-sm font-bold text-content-primary">
-                      Full Name <span className="text-brand-primary">*</span>
+                      {t('donate.donateMain.text15')} <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="text" 
@@ -145,7 +273,7 @@ export function DonateMain() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
-                      Mobile Number <span className="text-brand-primary">*</span>
+                      {t('donate.donateMain.text16')} <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="tel" 
@@ -158,7 +286,7 @@ export function DonateMain() {
                   </div>
                   <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="email" className="text-sm font-bold text-content-primary">
-                      Email Address <span className="text-brand-primary">*</span>
+                      {t('donate.donateMain.text17')} <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="email" 
@@ -171,23 +299,24 @@ export function DonateMain() {
                   </div>
                   <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="pan" className="text-sm font-bold text-content-primary">
-                      PAN Number <span className="text-content-muted font-normal ml-1">(Optional)</span>
+                      {t('donate.donateMain.text18')} <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="text" 
                       id="pan"
+                      required
                       maxLength={10}
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary uppercase"
                       value={formData.pan}
-                      onChange={e => setFormData(prev => ({...prev, pan: e.target.value.toUpperCase()}))}
+                      onChange={e => setFormData(prev => ({...prev, pan: e.target.value.replace(/\s+/g, '').toUpperCase()}))}
                     />
                     <p className="text-xs text-content-muted mt-1">
-                      Note: PAN and 80G documentation are only relevant where applicable. Providing a PAN does not guarantee tax exemption unless official certification is available.
-                    </p>
+                      {t('donate.donateMain.text19')}
+                                                              </p>
                   </div>
                   <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="address" className="text-sm font-bold text-content-primary">
-                      Address <span className="text-content-muted font-normal ml-1">(Optional)</span>
+                      {t('donate.donateMain.text20')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
                     </label>
                     <textarea 
                       id="address" 
@@ -205,31 +334,31 @@ export function DonateMain() {
           {/* Right: Summary Panel */}
           <div>
             <div className="bg-surface-muted/50 border border-border/80 rounded-xl p-8 sticky top-24">
-              <h3 className="text-xl font-bold text-content-primary mb-6 border-b border-border/60 pb-4">Donation Summary</h3>
+              <h3 className="text-xl font-bold text-content-primary mb-6 border-b border-border/60 pb-4">{t('donate.donateMain.text21')}</h3>
               
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-content-secondary">Amount</span>
+                  <span className="text-content-secondary">{t('donate.donateMain.text22')}</span>
                   <span className="font-bold text-content-primary">₹{activeAmount.toLocaleString()}</span>
                 </div>
                 {formData.name && (
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-content-secondary">Name</span>
+                    <span className="text-content-secondary">{t('donate.donateMain.text23')}</span>
                     <span className="font-medium text-content-primary">{formData.name}</span>
                   </div>
                 )}
                 {formData.email && (
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-content-secondary">Email</span>
+                    <span className="text-content-secondary">{t('donate.donateMain.text24')}</span>
                     <span className="font-medium text-content-primary break-all max-w-[60%] text-right">{formData.email}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center text-sm border-t border-border/60 pt-4 mt-4">
-                  <span className="text-content-secondary">Payment Method</span>
-                  <span className="font-medium text-content-primary">Secure Checkout</span>
+                  <span className="text-content-secondary">{t('donate.donateMain.text25')}</span>
+                  <span className="font-medium text-content-primary">{t('donate.donateMain.text26')}</span>
                 </div>
                 <div className="flex justify-between items-center text-lg font-bold border-t border-border/60 pt-4 mt-4">
-                  <span className="text-content-primary">Total</span>
+                  <span className="text-content-primary">{t('donate.donateMain.text27')}</span>
                   <span className="text-brand-primary">₹{activeAmount.toLocaleString()}</span>
                 </div>
               </div>
@@ -243,12 +372,19 @@ export function DonateMain() {
                 disabled={isProcessing || activeAmount <= 0}
               >
                 <Lock className="w-4 h-4" />
-                {isProcessing ? 'Preparing Payment...' : 'Proceed to Donate'}
+                {isProcessing ? 'Processing...' : 'Proceed to Donate'}
               </Button>
               
+              {errorMsg && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{errorMsg}</p>
+                </div>
+              )}
+              
               <p className="text-xs text-center text-content-muted mt-4">
-                You will be redirected to a secure payment gateway. No payment information is stored on our servers.
-              </p>
+                {t('donate.donateMain.text28')}
+                                            </p>
             </div>
           </div>
           

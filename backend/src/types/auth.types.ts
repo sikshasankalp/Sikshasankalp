@@ -1,6 +1,16 @@
 import { Request } from 'express';
-import { User } from '@prisma/client';
+import { Role } from '@prisma/client';
+
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  photoUrl: string | null;
+  isActive: boolean;
+  isVerified: boolean;
+}
 
 export interface AuthRequest extends Request {
-  user?: User;
+  user?: AuthenticatedUser;
 }

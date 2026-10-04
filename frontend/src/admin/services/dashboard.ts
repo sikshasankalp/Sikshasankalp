@@ -1,43 +1,35 @@
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export interface DashboardStats {
-  totalDonations: string;
-  successfulDonations: string;
-  volunteers: number;
-  contactMessages: number;
-  galleryItems: number;
-  programs: number;
-}
-
-export interface RecentActivity {
-  id: string;
-  type: 'donation' | 'volunteer' | 'message' | 'gallery';
-  title: string;
-  time: string;
-}
-
-export interface DashboardData {
-  stats: DashboardStats;
-  recentActivity: RecentActivity[];
-}
-
-export const getDashboardData = async (): Promise<DashboardData> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  // Future API: GET /api/admin/dashboard
-  return {
-    stats: {
-      totalDonations: '₹1,24,500',
-      successfulDonations: '42',
-      volunteers: 18,
-      contactMessages: 24,
-      galleryItems: 156,
-      programs: 5
-    },
-    recentActivity: [
-      { id: '1', type: 'donation', title: 'New donation received (₹5,000)', time: '2 hours ago' },
-      { id: '2', type: 'volunteer', title: 'New volunteer enquiry (Mumbai)', time: '5 hours ago' },
-      { id: '3', type: 'message', title: 'New contact message (Partnership)', time: '1 day ago' },
-      { id: '4', type: 'gallery', title: 'Added 12 new gallery items', time: '2 days ago' }
-    ]
+  donations: {
+    totalAmount: number;
+    successfulCount: number;
   };
+  volunteers: {
+    total: number;
+    pending: number;
+  };
+  gallery: {
+    published: number;
+  };
+  programs: {
+    active: number;
+  };
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    message: string;
+    createdAt: string;
+  }>;
+}
+
+export const getDashboardData = async (): Promise<DashboardStats> => {
+  const response = await fetch(`${API_URL}/api/admin`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch dashboard data');
+  }
+  const result = await response.json();
+  return result.data;
 };

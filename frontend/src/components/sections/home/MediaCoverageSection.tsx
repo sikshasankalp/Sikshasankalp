@@ -1,3 +1,4 @@
+import { useLanguage } from '../../../context/LanguageContext';
 import { Button } from '../../buttons/Button';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 
@@ -9,10 +10,11 @@ const mediaLogos = [
 ];
 
 export function MediaCoverageSection() {
+  const { t } = useLanguage();
   return (
     <section className="py-16 bg-background">
       <div className="container-default text-center">
-        <h2 className="text-h2 mb-10">हमारे काम की मीडिया में झलक</h2>
+        <h2 className="text-h2 mb-10">{t('home.mediaCoverageSection.title1')}</h2>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10 max-w-4xl mx-auto">
           {mediaLogos.map((logo, index) => (
@@ -32,7 +34,7 @@ export function MediaCoverageSection() {
         </div>
         
         <Button to="/media" variant="outline">
-          सभी मीडिया कवरेज देखें
+          {t('home.mediaCoverageSection.btn1')}
         </Button>
       </div>
     </section>

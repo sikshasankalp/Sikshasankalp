@@ -3,15 +3,13 @@ import { Link } from 'react-router-dom';
 
 interface LogoProps {
   className?: string;
-  variant?: 'dark' | 'light';
 }
 
-export function Logo({ className = '', variant = 'dark' }: LogoProps) {
+export function Logo({ className = '' }: LogoProps) {
   // If you need a white version of the logo for dark backgrounds (like the footer),
   // you can conditionally render a different image or use CSS filters.
   // For now, we'll use the main logo image.
-  const isLight = variant === 'light';
-
+  
   return (
     <Link 
       to="/" 
@@ -21,7 +19,7 @@ export function Logo({ className = '', variant = 'dark' }: LogoProps) {
       <img 
         src="/logo/logo.jpeg" 
         alt="Shiksha Sankalp Foundation Logo" 
-        className={`h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 ${isLight ? 'brightness-0 invert opacity-90' : ''}`}
+        className="h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 rounded-md"
       />
     </Link>
   );

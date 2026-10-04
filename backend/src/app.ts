@@ -3,61 +3,166 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import type { IncomingMessage } from 'http';
+
 import { config } from './config/env';
 import routes from './routes';
 import { notFoundHandler } from './middleware/notFound.middleware';
 import { errorHandler } from './errors/errorHandler';
 import { apiLimiter } from './middleware/rateLimit.middleware';
 
+type RawBodyRequest = IncomingMessage & {
+  rawBody?: Buffer;
+};
+
 const app = express();
 
-// Trust proxy required for express-rate-limit and cookies when deployed behind a reverse proxy (e.g. Render, NGINX)
-if (process.env.NODE_ENV === 'production') {
+/**
+ * Disable Express technology fingerprinting.
+ */
+app.disable('x-powered-by');
+
+/**
+ * Trust the first reverse proxy in production.
+ *
+ * This is appropriate when the deployment has exactly one
+ * trusted reverse proxy/load balancer in front of the app.
+ */
+if (config.nodeEnv === 'production') {
   app.set('trust proxy', 1);
 }
 
-// Security Middlewares
-// Disable CSP for now since this is an API; CSP can sometimes cause fragile blockages if misconfigured for REST APIs
-app.use(helmet({
-  contentSecurityPolicy: false,
-}));
+/**
+ * Security headers.
+ *
+ * This backend is an API server and does not serve HTML,
+ * so the browser Content Security Policy is intentionally
+ * disabled here.
+ *
+ * Helmet still provides the other relevant security headers.
+ */
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 
-// CORS Configuration
-app.use(cors({
-  origin: config.frontendUrl,
-  credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+/**
+ * CORS
+ *
+ * Only the configured frontend origin is allowed.
+ * Credentials are enabled because authentication uses
+ * HttpOnly cookies.
+ */
+app.use(
+  cors({
+    origin: config.frontendUrl,
+    credentials: true,
+    methods: [
+      'GET',
+      'POST',
+      'PATCH',
+      'DELETE',
+      'OPTIONS'
+    ],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization'
+    ]
+  })
+);
 
-// Cookie Parser
+/**
+ * Cookie parser
+ */
 app.use(cookieParser());
 
-// Limit request body size
-app.use(express.json({ 
-  limit: '1mb',
-  verify: (req: any, res, buf) => {
-    if (req.originalUrl.includes('/api/donations/webhook')) {
-      req.rawBody = buf;
+/**
+ * JSON body parser.
+ *
+ * Razorpay webhook signature verification requires the
+ * exact raw request body received from Razorpay.
+ */
+app.use(
+  express.json({
+    limit: '1mb',
+
+    verify: (req, _res, buf) => {
+      const request =
+        req as RawBodyRequest;
+
+      const requestPath =
+        request.url?.split('?')[0];
+
+      if (
+        requestPath ===
+        '/api/donations/webhook'
+      ) {
+        request.rawBody =
+          Buffer.from(buf);
+      }
     }
+  })
+);
+
+/**
+ * URL-encoded body parser
+ */
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '1mb'
+  })
+);
+
+/**
+ * Safe request logging.
+ *
+ * Never log:
+ * - Authorization tokens
+ * - cookies
+ * - request bodies
+ * - passwords
+ * - payment secrets
+ */
+morgan.token(
+  'safe-auth',
+  (req: express.Request) => {
+    return req.headers.authorization
+      ? 'Bearer [HIDDEN]'
+      : 'None';
   }
-}));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+);
 
-// Safe logging: don't log Authorization header, cookies, or request bodies
-morgan.token('safe-auth', (req: express.Request) => {
-  return req.headers.authorization ? 'Bearer [HIDDEN]' : 'None';
-});
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms - Auth: :safe-auth'));
+app.use(
+  morgan(
+    ':method :url :status :res[content-length] - :response-time ms - Auth: :safe-auth'
+  )
+);
 
-// Global API Rate Limiter
-// authLimiter and strictAuthLimiter should be attached in auth.routes.ts directly.
-app.use('/api', apiLimiter, routes);
+/**
+ * Global API rate limiter.
+ *
+ * Authentication-specific rate limiters are applied
+ * inside auth.routes.ts.
+ *
+ * Razorpay webhook is excluded inside apiLimiter because
+ * webhook authenticity is verified using its HMAC signature.
+ */
+app.use(
+  '/api',
+  apiLimiter,
+  routes
+);
 
-// 404
+/**
+ * 404 handler
+ */
 app.use(notFoundHandler);
 
-// Error handling
+/**
+ * Centralized error handler
+ */
 app.use(errorHandler);
 
 export default app;

@@ -1,4 +1,5 @@
 import { Book, FileText, MonitorPlay, File, Laptop, GraduationCap, LibraryBig, ArrowRight } from 'lucide-react';
+import { useLanguage } from "../../../context/LanguageContext";
 
 // Mock data structure ready for future API
 export interface ResourceCategory {
@@ -9,6 +10,7 @@ export interface ResourceCategory {
 }
 
 export function LibraryCategories() {
+    const { t } = useLanguage();
   const categories: ResourceCategory[] = [
     { id: 'ncert', title: 'NCERT Books', description: 'Complete official curriculum textbooks for all grades.', icon: Book },
     { id: 'notes', title: 'Notes & Study Material', description: 'Curated notes and summaries to help with daily studies.', icon: FileText },
@@ -23,10 +25,10 @@ export function LibraryCategories() {
     <section id="categories" className="section-padding bg-background border-t border-border/50">
       <div className="container-default max-w-6xl">
         <div className="text-center mb-16 md:mb-20">
-          <h2 className="text-h2 mb-4">Resource Categories</h2>
+          <h2 className="text-h2 mb-4">{t('library.libraryCategories.text1')}</h2>
           <p className="text-body-large max-w-2xl mx-auto">
-            Browse our categorized collection of free educational materials.
-          </p>
+            {t('library.libraryCategories.text2')}
+                                </p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
@@ -41,7 +43,7 @@ export function LibraryCategories() {
                 </p>
                 <div className="mt-auto">
                   <button className="text-brand-primary font-semibold text-sm uppercase tracking-wider flex items-center group-hover:text-brand-primary-hover transition-colors">
-                    Explore <ArrowRight className="w-4 h-4 ml-2" />
+                    {t('library.libraryCategories.text3')} <ArrowRight className="w-4 h-4 ml-2" />
                   </button>
                 </div>
               </div>

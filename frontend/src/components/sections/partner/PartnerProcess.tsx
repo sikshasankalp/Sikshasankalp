@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function PartnerProcess() {
+    const { t } = useLanguage();
   const steps = [
     { title: "Share Interest", desc: "Reach out via our form." },
     { title: "Discuss Goals", desc: "Align capabilities." },
@@ -11,7 +14,7 @@ export function PartnerProcess() {
     <section className="section-padding bg-background border-b border-border/50">
       <div className="container-default max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-h2 mb-4">How Partnership Works</h2>
+          <h2 className="text-h2 mb-4">{t('partner.partnerProcess.text1')}</h2>
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-center relative">

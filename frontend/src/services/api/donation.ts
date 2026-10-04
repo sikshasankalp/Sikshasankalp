@@ -1,3 +1,6 @@
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { fetchWithAuth } from '../apiClient';
+
 export interface DonationOrderRequest {
   amount: number;
   donorName: string;
@@ -8,27 +11,96 @@ export interface DonationOrderRequest {
 }
 
 export interface DonationOrderResponse {
-  orderId: string;
+  donationId: string;
+  razorpayOrderId: string;
   amount: number;
   currency: string;
+  keyId: string;
 }
 
 export const createDonationOrder = async (data: DonationOrderRequest): Promise<DonationOrderResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const response = await fetchWithAuth(`${API_URL}/api/donations/order`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
   
-  // Future implementation: POST /api/donations/order
-  return {
-    orderId: 'order_mock_' + Math.random().toString(36).substring(7),
-    amount: data.amount,
-    currency: 'INR'
-  };
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.message || 'Failed to create order');
+  }
+  return result.data;
 };
 
-export const verifyDonationPayment = async (_paymentId: string, _orderId: string, _signature: string): Promise<boolean> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const verifyDonationPayment = async (
+  razorpay_order_id: string,
+  razorpay_payment_id: string,
+  razorpay_signature: string
+): Promise<any> => {
+  const response = await fetchWithAuth(`${API_URL}/api/donations/verify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    }),
+  });
   
-  // Future implementation: POST /api/donations/verify
-  return true;
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.message || 'Payment verification failed');
+  }
+  return result.data;
+};
+
+export interface Donation {
+  id: string;
+  donorName: string;
+  email?: string;
+  mobile: string;
+  pan?: string;
+  address?: string;
+  amount: number;
+  currency: string;
+  status: 'CREATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  receiptNumber?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DonationListResponse {
+  success: boolean;
+  data: Donation[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export const fetchDonationsAdmin = async (params: Record<string, string | number | boolean> = {}): Promise<DonationListResponse> => {
+  const query = new URLSearchParams(params as Record<string, string>).toString();
+  const response = await fetchWithAuth(`${API_URL}/api/donations?${query}`, {
+    credentials: 'include'
+  });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'Failed to fetch donations');
+  return result;
+};
+
+export const fetchDonationById = async (id: string): Promise<Donation> => {
+  const response = await fetchWithAuth(`${API_URL}/api/donations/${id}`, {
+    credentials: 'include'
+  });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'Failed to fetch donation details');
+  return result.data;
 };

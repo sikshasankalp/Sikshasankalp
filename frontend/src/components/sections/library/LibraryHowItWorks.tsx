@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function LibraryHowItWorks() {
+    const { t } = useLanguage();
   const steps = [
     { title: "Discover", desc: "Explore the different categories." },
     { title: "Choose", desc: "Find the material you need." },
@@ -10,7 +13,7 @@ export function LibraryHowItWorks() {
     <section className="section-padding bg-brand-primary text-white">
       <div className="container-default max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-h2 mb-4">How It Works</h2>
+          <h2 className="text-h2 mb-4">{t('library.libraryHowItWorks.text1')}</h2>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative">

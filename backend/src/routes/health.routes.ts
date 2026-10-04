@@ -1,16 +1,28 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+
 import { prisma } from '../config/database';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  try {
-    // Quick DB check
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ success: true, message: 'API is running' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'API is running, but database connection failed' });
+router.get(
+  '/',
+  async (_req: Request, res: Response): Promise<void> => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+
+      res.status(200).json({
+        success: true,
+        message: 'API is running',
+        database: 'connected'
+      });
+    } catch {
+      res.status(503).json({
+        success: false,
+        message: 'API is running, but database connection failed',
+        database: 'unavailable'
+      });
+    }
   }
-});
+);
 
 export default router;

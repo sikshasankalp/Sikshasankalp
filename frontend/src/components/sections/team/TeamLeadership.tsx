@@ -1,39 +1,66 @@
-import { PlaceholderImage } from '../../common/PlaceholderImage';
+import { User } from 'lucide-react';
+import type { TeamMember } from '../../../services/api/team';
+import { useLanguage } from "../../../context/LanguageContext";
 
-export function TeamLeadership() {
+interface TeamLeadershipProps {
+  members: TeamMember[];
+}
+
+export function TeamLeadership({ members }: TeamLeadershipProps) {
+    const { t } = useLanguage();
+  if (!members || members.length === 0) return null;
+
   return (
     <section className="section-padding bg-surface-muted border-b border-border/50">
       <div className="container-default max-w-6xl mx-auto">
-        <h2 className="text-h2 mb-12 text-center md:text-left">Leadership</h2>
+        <h2 className="text-h2 mb-12 text-center md:text-left">{t('team.teamLeadership.text1')}</h2>
         
         <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
-          {/* Founder */}
-          <div className="flex flex-col group">
-            <div className="relative aspect-[3/4] w-full max-w-[320px] mb-6 rounded-lg overflow-hidden bg-background border border-border/50 mx-auto md:mx-0">
-              <PlaceholderImage className="w-full h-full border-none transition-transform duration-500 group-hover:scale-105" text="Sanjay Kumar Portrait Placeholder" />
+          {members.map((member) => (
+            <div key={member.id} className="flex flex-col group">
+              <div className="relative aspect-[3/4] w-full max-w-[320px] mb-6 rounded-lg overflow-hidden bg-background border border-border/50 mx-auto md:mx-0">
+                {member.photoUrl ? (
+                  <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-surface-muted transition-transform duration-500 group-hover:scale-105">
+                    <User className="w-16 h-16 text-content-muted" />
+                  </div>
+                )}
+              </div>
+              <div className="text-center md:text-left max-w-[360px] mx-auto md:mx-0">
+                <h3 className="text-2xl font-bold text-content-primary mb-1">{member.name}</h3>
+                <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-4 leading-snug">
+                  {member.designation}
+                  {member.department && (
+                    <><br/><span className="text-xs text-brand-primary/80 tracking-normal capitalize">({member.department})</span></>
+                  )}
+                </p>
+                {member.responsibilities && (
+                  <div className="mb-4">
+                    <p className="text-xs font-bold text-content-primary uppercase tracking-wider mb-1">{t('team.teamLeadership.text2')}</p>
+                    <p className="text-body-large text-content-secondary leading-relaxed">
+                      {member.responsibilities}
+                    </p>
+                  </div>
+                )}
+                {member.bio && (
+                  <div className="mb-4">
+                    <p className="text-body text-content-secondary leading-relaxed">
+                      {member.bio}
+                    </p>
+                  </div>
+                )}
+                {member.expertise && (
+                  <div>
+                    <p className="text-xs font-bold text-content-primary uppercase tracking-wider mb-1">{t('team.teamLeadership.text3')}</p>
+                    <p className="text-body-sm text-content-secondary">
+                      {member.expertise}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="text-center md:text-left max-w-[360px] mx-auto md:mx-0">
-              <h3 className="text-2xl font-bold text-content-primary mb-1">Sanjay Kumar</h3>
-              <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-4 leading-snug">Founder & Managing Trustee</p>
-              <p className="text-body-large text-content-secondary leading-relaxed">
-                Focuses on legal governance, trust deed compliance, official authorizations, and broad board oversight to ensure the foundation remains secure and transparent.
-              </p>
-            </div>
-          </div>
-
-          {/* Co-Founder */}
-          <div className="flex flex-col group">
-            <div className="relative aspect-[3/4] w-full max-w-[320px] mb-6 rounded-lg overflow-hidden bg-background border border-border/50 mx-auto md:mx-0">
-              <PlaceholderImage className="w-full h-full border-none transition-transform duration-500 group-hover:scale-105" text="Krishna Kumar Portrait Placeholder" />
-            </div>
-            <div className="text-center md:text-left max-w-[360px] mx-auto md:mx-0">
-              <h3 className="text-2xl font-bold text-content-primary mb-1">Krishna Kumar</h3>
-              <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-4 leading-snug">Co-Founder & Executive Director <br/><span className="text-xs text-brand-primary/80 tracking-normal capitalize">(On-Ground Lead)</span></p>
-              <p className="text-body-large text-content-secondary leading-relaxed">
-                Drives ground education work, active teaching, school admissions, community support, and day-to-day field operations directly with the children and families.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

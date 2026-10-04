@@ -1,3 +1,4 @@
+import { useLanguage } from '../../../context/LanguageContext';
 const impacts = [
   {
     number: "42",
@@ -10,11 +11,12 @@ const impacts = [
 ];
 
 export function ImpactSection() {
+  const { t } = useLanguage();
   return (
     <section className="py-14 md:py-20 bg-brand-secondary text-white">
       <div className="container-default">
         <div className="text-center mb-12">
-          <h2 className="text-h2">हमारा प्रभाव</h2>
+          <h2 className="text-h2">{t('home.impactSection.title1')}</h2>
         </div>
         
         <div className="grid md:grid-cols-2 gap-10 max-w-3xl mx-auto">
@@ -32,7 +34,7 @@ export function ImpactSection() {
         
         <div className="text-center mt-12 pt-6 border-t border-white/10">
           <p className="text-sm text-white/50 italic">
-            * आंकड़े समय के साथ हमारे कार्य के अनुसार अपडेट किए जाएंगे।
+            {t('home.impactSection.note1')}
           </p>
         </div>
       </div>

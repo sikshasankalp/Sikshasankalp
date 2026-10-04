@@ -3,6 +3,7 @@ import { Logo } from '../common/Logo';
 import { footerNavigation } from '../../data/navigation';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '../buttons/Button';
+import { useLanguage } from "../../context/LanguageContext";
 
 // Simple SVG placeholders for social icons
 const FacebookIcon = ({ className }: { className?: string }) => (
@@ -30,6 +31,7 @@ const YoutubeIcon = ({ className }: { className?: string }) => (
 );
 
 export function Footer() {
+    const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -40,10 +42,10 @@ export function Footer() {
           
           {/* Brand & Mission Column (Spans 2 columns on lg) */}
           <div className="lg:col-span-2 flex flex-col items-start">
-            <Logo variant="light" className="mb-6" />
+            <Logo className="mb-6" />
             <p className="text-white/80 text-sm leading-relaxed mb-8 max-w-sm">
-              Working to connect underprivileged children with education, schools, dignity, and better opportunities for a brighter future.
-            </p>
+              {t('footer.footer.text1')}
+                                      </p>
             <div className="flex items-center gap-4">
               <a href="#" className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary" aria-label="Facebook">
                 <FacebookIcon className="w-5 h-5" />
@@ -62,7 +64,7 @@ export function Footer() {
 
           {/* Foundation Column */}
           <div>
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">Foundation</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">{t('footer.footer.text2')}</h3>
             <ul className="space-y-3">
               {footerNavigation.foundation.map((item) => (
                 <li key={item.label}>
@@ -79,7 +81,7 @@ export function Footer() {
 
           {/* Explore Column */}
           <div>
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">Explore</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">{t('footer.footer.text3')}</h3>
             <ul className="space-y-3">
               {footerNavigation.explore.map((item) => (
                 <li key={item.label}>
@@ -96,7 +98,7 @@ export function Footer() {
 
           {/* Get Involved / Contact Column */}
           <div>
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">Get Involved</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">{t('footer.footer.text4')}</h3>
             <ul className="space-y-3 mb-8">
               {footerNavigation.getInvolved.map((item) => (
                 <li key={item.label}>
@@ -110,14 +112,14 @@ export function Footer() {
               ))}
             </ul>
 
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">Contact</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-5">{t('footer.footer.text5')}</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm">
                 <MapPin className="w-5 h-5 text-brand-primary shrink-0" />
                 <span>
-                  123 NGO Office Area,<br />
-                  New Delhi, India 110001
-                </span>
+                  {t('footer.footer.text6')}<br />
+                  {t('footer.footer.text7')}
+                                                  </span>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <Phone className="w-5 h-5 text-brand-primary shrink-0" />
@@ -128,8 +130,8 @@ export function Footer() {
               <li className="flex items-center gap-3 text-sm">
                 <Mail className="w-5 h-5 text-brand-primary shrink-0" />
                 <a href="mailto:sikshasankalpfoundation@gmail.com" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline">
-                  sikshasankalpfoundation@gmail.com
-                </a>
+                  {t('footer.footer.text8')}
+                                                  </a>
               </li>
             </ul>
           </div>
@@ -138,21 +140,21 @@ export function Footer() {
         {/* Call to Action Banner (Optional inside footer) */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
           <div>
-            <h3 className="text-white text-lg font-bold mb-2">Help us build a better future</h3>
+            <h3 className="text-white text-lg font-bold mb-2">{t('footer.footer.text9')}</h3>
             <p className="text-sm max-w-xl">
-              Your contribution goes directly towards providing education, resources, and support to children who need it most.
-            </p>
+              {t('footer.footer.text10')}
+                                      </p>
           </div>
           <Button variant="accent" to="/donate" className="w-full md:w-auto shrink-0">
-            Make a Donation
-          </Button>
+            {t('footer.footer.text11')}
+                                </Button>
         </div>
 
         {/* Bottom Section */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/50">
-            &copy; {currentYear} Shiksha Sankalp Foundation. All rights reserved.
-          </p>
+            {t('footer.footer.text12')} {currentYear} {t('footer.footer.text13')}
+                                </p>
           <ul className="flex items-center gap-6">
             {footerNavigation.legal.map((item) => (
               <li key={item.label}>
@@ -169,8 +171,8 @@ export function Footer() {
                 to="/admin/login" 
                 className="text-xs text-white/30 hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:underline flex items-center gap-1"
               >
-                Login
-              </Link>
+                {t('footer.footer.text14')}
+                                            </Link>
             </li>
           </ul>
         </div>

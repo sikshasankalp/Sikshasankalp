@@ -1,24 +1,40 @@
-import { Request, Response, NextFunction } from 'express';
+import {
+  Request,
+  Response,
+  NextFunction
+} from 'express';
+
 import { config } from '../config/env';
 import { AppError } from './AppError';
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (
+  err: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+): void => {
   if (config.nodeEnv !== 'production') {
     console.error(err);
   }
 
-  let statusCode = err.statusCode || 500;
-  let message = 'Internal Server Error';
-
   if (err instanceof AppError) {
-    statusCode = err.statusCode;
-    message = err.message;
-  } else if (statusCode >= 400 && statusCode < 500 && err.message) {
-    message = err.message;
+    res.status(err.statusCode).json({
+      success: false,
+      message: err.message
+    });
+
+    return;
   }
 
-  res.status(statusCode).json({
+  /**
+   * Never expose unknown/internal error messages to clients.
+   *
+   * Database errors, third-party SDK errors, filesystem errors,
+   * configuration errors, etc. may contain sensitive implementation
+   * details.
+   */
+  res.status(500).json({
     success: false,
-    message,
+    message: 'Internal Server Error'
   });
 };

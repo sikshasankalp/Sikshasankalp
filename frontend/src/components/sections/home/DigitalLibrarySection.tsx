@@ -1,6 +1,7 @@
 import { Button } from '../../buttons/Button';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { BookText, FileText, MonitorPlay, FileArchive, Laptop, BookOpenCheck, LibraryBig } from 'lucide-react';
+import { useLanguage } from "../../../context/LanguageContext";
 
 const resources = [
   { icon: BookText, label: "NCERT Books" },
@@ -13,6 +14,7 @@ const resources = [
 ];
 
 export function DigitalLibrarySection() {
+    const { t } = useLanguage();
   return (
     <section className="py-16 md:py-24 bg-background border-y border-border">
       <div className="container-default">
@@ -20,13 +22,13 @@ export function DigitalLibrarySection() {
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-semibold mb-3">
               <LibraryBig className="w-3.5 h-3.5" />
-              <span>Digital Initiative</span>
+              <span>{t('home.digitalLibrarySection.text1')}</span>
             </div>
             
-            <h2 className="text-h2 mb-4">Free Digital Shiksha & Library</h2>
+            <h2 className="text-h2 mb-4">{t('home.digitalLibrarySection.text2')}</h2>
             
             <p className="text-body-large mb-6">
-              शिक्षा केवल स्कूल की चार दीवारों तक सीमित नहीं होनी चाहिए। हम बच्चों और विद्यार्थियों के लिए उपयोगी शैक्षणिक सामग्री को डिजिटल रूप में मुफ्त उपलब्ध कराने की दिशा में काम कर रहे हैं।
+              {t('home.digitalLibrarySection.desc1')}
             </p>
             
             <ul className="grid sm:grid-cols-2 gap-3 mb-8">
@@ -41,8 +43,8 @@ export function DigitalLibrarySection() {
             </ul>
             
             <Button to="/digital-library" variant="primary">
-              Digital Library देखें
-            </Button>
+              {t('home.digitalLibrarySection.text3')}
+                                      </Button>
           </div>
           
           <div className="relative h-[380px] lg:h-[480px] w-full rounded-2xl overflow-hidden shadow-soft">

@@ -1,16 +1,42 @@
-import { Request, Response, NextFunction } from 'express';
+import {
+  Request,
+  Response,
+  NextFunction
+} from 'express';
+
 import { galleryService } from '../services/gallery.service';
 import { cloudinaryService } from '../services/cloudinary.service';
-import { CreateGalleryInput, UpdateGalleryInput, GalleryQueryInput } from '../validators/gallery.validator';
+
+import {
+  CreateGalleryInput,
+  UpdateGalleryInput,
+  GalleryQueryInput
+} from '../validators/gallery.validator';
+
 import { AppError } from '../errors/AppError';
 
-export const listGallery = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const GALLERY_CLOUDINARY_FOLDER =
+  'shiksha-sankalp/gallery';
+
+export const listGallery = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const query = req.query as unknown as GalleryQueryInput;
-    const isPublicRequest = true; // GET endpoints are strictly public as per requirements
-    const result = await galleryService.listGalleryItems(query, isPublicRequest);
-    
-    res.json({
+    const query =
+      req.query as unknown as GalleryQueryInput;
+
+    const isPublicRequest =
+      !res.locals.isAdmin;
+
+    const result =
+      await galleryService.listGalleryItems(
+        query,
+        isPublicRequest
+      );
+
+    res.status(200).json({
       success: true,
       data: result.data,
       meta: result.meta
@@ -20,13 +46,22 @@ export const listGallery = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const getGalleryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getGalleryById = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const id = req.params.id as string;
-    const isPublicRequest = true; // GET endpoints are strictly public
-    const item = await galleryService.getGalleryItemById(id, isPublicRequest);
-    
-    res.json({
+    const id = req.params.id;
+
+    const isPublicRequest =
+      !res.locals.isAdmin;
+
+    const item = res.locals.isAdmin
+      ? await galleryService.getGalleryItemById(id, false)
+      : await galleryService.getGalleryItemById(id, true);
+
+    res.status(200).json({
       success: true,
       data: item
     });
@@ -35,118 +70,207 @@ export const getGalleryById = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const createGallery = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createGallery = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const data = req.body as CreateGalleryInput;
-    
     if (!req.file) {
-      throw new AppError('Image file is required', 400);
+      throw new AppError(
+        'Image file is required',
+        400
+      );
     }
 
-    const uploadResult = await cloudinaryService.uploadImage(req.file.buffer);
+    const data =
+      req.body as CreateGalleryInput;
+
+    const uploadResult =
+      await cloudinaryService.uploadImage(
+        req.file.buffer,
+        GALLERY_CLOUDINARY_FOLDER
+      );
 
     try {
-      // Explicitly construct the service input from validated fields as required by instructions
       const serviceInput: CreateGalleryInput = {
         title: data.title,
         description: data.description,
-        imageUrl: uploadResult.secure_url,
-        cloudinaryPublicId: uploadResult.public_id,
         category: data.category,
+        displayLocation:
+          data.displayLocation,
         eventDate: data.eventDate,
-        isFeatured: data.isFeatured ?? false,
-        isPublished: data.isPublished ?? false
+        isFeatured:
+          data.isFeatured ?? false,
+        isPublished:
+          data.isPublished ?? false
       };
 
-      const item = await galleryService.createGalleryItem(serviceInput);
-      
+      const item =
+        await galleryService.createGalleryItem(
+          serviceInput,
+          uploadResult.secure_url,
+          uploadResult.public_id
+        );
+
       res.status(201).json({
         success: true,
         data: item
       });
-    } catch (dbError) {
-      await cloudinaryService.deleteImage(uploadResult.public_id);
-      throw dbError;
+    } catch (error) {
+      try {
+        await cloudinaryService.deleteImage(
+          uploadResult.public_id
+        );
+      } catch (cleanupError) {
+        console.error(
+          'Failed to cleanup Cloudinary image after gallery creation failure:',
+          cleanupError
+        );
+      }
+
+      throw error;
     }
   } catch (error) {
     next(error);
   }
 };
 
-export const updateGallery = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateGallery = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const id = req.params.id as string;
-    const data = req.body as UpdateGalleryInput;
-    
-    const existingItem = await galleryService.getGalleryItemById(id, false);
+    const id = req.params.id;
 
-    let newImageUrl = data.imageUrl;
-    let newPublicId = data.cloudinaryPublicId;
-    let uploadResult;
+    const data =
+      req.body as UpdateGalleryInput;
+
+    const existingItem =
+      await galleryService.getGalleryItemById(
+        id,
+        false
+      );
+
+    let oldCloudinaryPublicId =
+      existingItem.cloudinaryPublicId ?? undefined;
+
+    let uploadedPublicId: string | null =
+      null;
+
+    let uploadedSecureUrl: string | undefined = undefined;
 
     if (req.file) {
-      uploadResult = await cloudinaryService.uploadImage(req.file.buffer);
-      newImageUrl = uploadResult.secure_url;
-      newPublicId = uploadResult.public_id;
+      const uploadResult =
+        await cloudinaryService.uploadImage(
+          req.file.buffer,
+          GALLERY_CLOUDINARY_FOLDER
+        );
+
+      uploadedPublicId =
+        uploadResult.public_id;
+
+      uploadedSecureUrl =
+        uploadResult.secure_url;
     }
-    
+
     try {
-      // Explicitly construct the service input from validated fields
       const serviceInput: UpdateGalleryInput = {
         title: data.title,
         description: data.description,
-        imageUrl: newImageUrl,
-        cloudinaryPublicId: newPublicId,
         category: data.category,
+        displayLocation:
+          data.displayLocation,
         eventDate: data.eventDate,
-        isFeatured: data.isFeatured,
-        isPublished: data.isPublished
+        isFeatured:
+          data.isFeatured,
+        isPublished:
+          data.isPublished
       };
 
-      const item = await galleryService.updateGalleryItem(id, serviceInput);
-      
-      if (req.file && (existingItem as any).cloudinaryPublicId) {
+      const item =
+        await galleryService.updateGalleryItem(
+          id,
+          serviceInput,
+          uploadedSecureUrl,
+          uploadedPublicId ?? undefined
+        );
+
+      if (
+        req.file &&
+        oldCloudinaryPublicId
+      ) {
         try {
-          await cloudinaryService.deleteImage((existingItem as any).cloudinaryPublicId);
+          await cloudinaryService.deleteImage(
+            oldCloudinaryPublicId
+          );
         } catch (cleanupError) {
-          console.error('Failed to cleanup old Cloudinary image:', cleanupError);
+          console.error(
+            'Failed to cleanup old Cloudinary image:',
+            cleanupError
+          );
         }
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
         data: item
       });
-    } catch (dbError) {
-      if (uploadResult) {
-        await cloudinaryService.deleteImage(uploadResult.public_id);
+    } catch (error) {
+      if (uploadedPublicId) {
+        try {
+          await cloudinaryService.deleteImage(
+            uploadedPublicId
+          );
+        } catch (cleanupError) {
+          console.error(
+            'Failed to cleanup newly uploaded Cloudinary image after gallery update failure:',
+            cleanupError
+          );
+        }
       }
-      throw dbError;
+
+      throw error;
     }
   } catch (error) {
     next(error);
   }
 };
 
-export const deleteGallery = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteGallery = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const id = req.params.id as string;
-    
-    const existingItem = await galleryService.getGalleryItemById(id, false);
+    const id = req.params.id;
+
+    const existingItem =
+      await galleryService.getGalleryItemById(
+        id,
+        false
+      );
 
     await galleryService.deleteGalleryItem(id);
-    
-    if ((existingItem as any).cloudinaryPublicId) {
+
+    if (existingItem.cloudinaryPublicId) {
       try {
-        await cloudinaryService.deleteImage((existingItem as any).cloudinaryPublicId);
+        await cloudinaryService.deleteImage(
+          existingItem.cloudinaryPublicId
+        );
       } catch (cleanupError) {
-        console.error('Failed to cleanup Cloudinary image after DB deletion:', cleanupError);
+        console.error(
+          'Failed to cleanup Cloudinary image after gallery deletion:',
+          cleanupError
+        );
       }
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
-      message: 'Gallery item deleted successfully'
+      message:
+        'Gallery item deleted successfully'
     });
   } catch (error) {
     next(error);

@@ -1,26 +1,40 @@
 import multer from 'multer';
+
 import { AppError } from '../errors/AppError';
 
-// Setup memory storage
 const storage = multer.memoryStorage();
 
-// File filter to allow only specific image formats
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  if (
-    file.mimetype === 'image/jpeg' ||
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/webp'
-  ) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Invalid file type. Only JPEG, PNG, and WebP are allowed.', 400));
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+]);
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const fileFilter: multer.Options['fileFilter'] = (
+  _req,
+  file,
+  callback,
+) => {
+  if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+    callback(
+      new AppError(
+        'Invalid file type. Only JPEG, PNG, and WebP are allowed.',
+        400,
+      ),
+    );
+    return;
   }
+
+  callback(null, true);
 };
 
 export const uploadImageMiddleware = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB
+    fileSize: MAX_FILE_SIZE,
+    files: 1,
   },
   fileFilter,
 });

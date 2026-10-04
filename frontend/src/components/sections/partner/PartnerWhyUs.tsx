@@ -1,3 +1,5 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 const REASONS = [
   { title: 'Ground-Level Work', desc: 'We do not just advocate; we work directly on the footpaths, slums, and communities where the need is greatest.' },
   { title: 'Education-Focused Mission', desc: 'Every initiative we undertake ultimately connects back to bridging the gap between underprivileged children and mainstream education.' },
@@ -7,11 +9,12 @@ const REASONS = [
 ];
 
 export function PartnerWhyUs() {
+    const { t } = useLanguage();
   return (
     <section className="section-padding bg-surface-muted border-b border-border/50">
       <div className="container-default max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-h2 mb-4">Why Work With Us</h2>
+          <h2 className="text-h2 mb-4">{t('partner.partnerWhyUs.text1')}</h2>
         </div>
         
         <div className="space-y-8">

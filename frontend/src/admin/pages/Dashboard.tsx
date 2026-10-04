@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardData } from '../services/dashboard';
-import type { DashboardData } from '../services/dashboard';
+import type { DashboardStats } from '../services/dashboard';
 import { 
   Heart, Users, Image as ImageIcon, 
   BookOpen, Plus, Activity
 } from 'lucide-react';
 
 export default function Dashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getDashboardData();
         setData(result);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to load dashboard data", error);
+        setError("Failed to load dashboard data. Please try again later.");
       } finally {
         setIsLoading(false);
       }
@@ -25,10 +27,20 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-center">
+        <Activity className="w-12 h-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-content-primary mb-2">Something went wrong</h2>
+        <p className="text-content-secondary">{error || 'Data is unavailable'}</p>
       </div>
     );
   }
@@ -40,7 +52,7 @@ export default function Dashboard() {
       <div>
         <h2 className="text-2xl font-bold text-content-primary mb-1">Dashboard Overview</h2>
         <p className="text-sm text-content-secondary">
-          Welcome back. Here's a snapshot of operations (Mock Data ready for API integration).
+          Welcome back. Here's a snapshot of operations.
         </p>
       </div>
 
@@ -53,8 +65,8 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Total Donations</p>
-            <p className="text-2xl font-bold text-content-primary">{data.stats.totalDonations}</p>
-            <p className="text-xs text-content-secondary mt-1">{data.stats.successfulDonations} successful</p>
+            <p className="text-2xl font-bold text-content-primary">₹{data.donations.totalAmount.toLocaleString('en-IN')}</p>
+            <p className="text-xs text-content-secondary mt-1">{data.donations.successfulCount} successful</p>
           </div>
         </div>
 
@@ -64,8 +76,8 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Volunteers</p>
-            <p className="text-2xl font-bold text-content-primary">{data.stats.volunteers}</p>
-            <p className="text-xs text-content-secondary mt-1">Pending enquiries</p>
+            <p className="text-2xl font-bold text-content-primary">{data.volunteers.total}</p>
+            <p className="text-xs text-content-secondary mt-1">{data.volunteers.pending} pending enquiries</p>
           </div>
         </div>
 
@@ -75,7 +87,7 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Gallery</p>
-            <p className="text-2xl font-bold text-content-primary">{data.stats.galleryItems}</p>
+            <p className="text-2xl font-bold text-content-primary">{data.gallery.published}</p>
             <p className="text-xs text-content-secondary mt-1">Published items</p>
           </div>
         </div>
@@ -86,7 +98,7 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Programs</p>
-            <p className="text-2xl font-bold text-content-primary">{data.stats.programs}</p>
+            <p className="text-2xl font-bold text-content-primary">{data.programs.active}</p>
             <p className="text-xs text-content-secondary mt-1">Active programs</p>
           </div>
         </div>
@@ -98,19 +110,27 @@ export default function Dashboard() {
         {/* Recent Activity */}
         <div className="bg-background border border-border/50 rounded-xl shadow-sm overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-border/50 flex justify-between items-center">
-            <h3 className="text-base font-bold text-content-primary">Recent Activity (Demo)</h3>
+            <h3 className="text-base font-bold text-content-primary">Recent Activity</h3>
             <Activity className="w-4 h-4 text-content-muted" />
           </div>
           <div className="divide-y divide-border/50">
-            {data.recentActivity.map(activity => (
-              <div key={activity.id} className="p-4 px-6 hover:bg-surface-muted/30 transition-colors flex items-center justify-between gap-4">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-content-primary">{activity.title}</span>
-                  <span className="text-xs text-content-muted mt-0.5 uppercase tracking-wider">{activity.type}</span>
-                </div>
-                <span className="text-xs text-content-secondary shrink-0">{activity.time}</span>
+            {data.recentActivity.length === 0 ? (
+              <div className="p-8 text-center text-content-secondary">
+                No recent activity
               </div>
-            ))}
+            ) : (
+              data.recentActivity.map(activity => (
+                <div key={activity.id} className="p-4 px-6 hover:bg-surface-muted/30 transition-colors flex items-center justify-between gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-content-primary">{activity.message}</span>
+                    <span className="text-xs text-content-muted mt-0.5 uppercase tracking-wider">{activity.type}</span>
+                  </div>
+                  <span className="text-xs text-content-secondary shrink-0">
+                    {new Date(activity.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

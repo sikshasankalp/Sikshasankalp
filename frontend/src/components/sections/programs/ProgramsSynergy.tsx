@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function ProgramsSynergy() {
+    const { t } = useLanguage();
   const steps = [
     "Reaching children on the streets",
     "Providing fundamental education",
@@ -11,10 +14,10 @@ export function ProgramsSynergy() {
     <section className="section-padding bg-surface-muted border-y border-border/50">
       <div className="container-default max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-h2 mb-4">How It All Works Together</h2>
+          <h2 className="text-h2 mb-4">{t('programs.programsSynergy.text1')}</h2>
           <p className="text-body-large max-w-3xl mx-auto">
-            Our initiatives form a cohesive pathway designed to lift a child from the streets into a structured environment of continuous learning and growth.
-          </p>
+            {t('programs.programsSynergy.text2')}
+                                </p>
         </div>
         
         <div className="flex flex-col md:flex-row justify-between gap-8 relative">

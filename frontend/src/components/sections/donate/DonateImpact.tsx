@@ -1,3 +1,5 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 const IMPACT_AREAS = [
   'Foundational Education & Learning',
   'School Admission & Transition Support',
@@ -8,10 +10,11 @@ const IMPACT_AREAS = [
 ];
 
 export function DonateImpact() {
+    const { t } = useLanguage();
   return (
     <section className="section-padding bg-background">
       <div className="container-default max-w-4xl mx-auto text-center">
-        <h2 className="text-h2 mb-10">What Your Support Enables</h2>
+        <h2 className="text-h2 mb-10">{t('donate.donateImpact.text1')}</h2>
         
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
           {IMPACT_AREAS.map((area, index) => (

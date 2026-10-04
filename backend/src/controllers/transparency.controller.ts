@@ -5,7 +5,7 @@ import { CreateTransparencyInput, UpdateTransparencyInput, TransparencyQueryInpu
 export const listTransparency = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const query = req.query as unknown as TransparencyQueryInput;
-    const isPublicRequest = true; // GET endpoints are public
+    const isPublicRequest = !res.locals.isAdmin;
     const result = await transparencyService.listTransparency(query, isPublicRequest);
     
     res.json({
@@ -21,7 +21,7 @@ export const listTransparency = async (req: Request, res: Response, next: NextFu
 export const getTransparencyById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const isPublicRequest = true; // GET endpoints are public
+    const isPublicRequest = !res.locals.isAdmin;
     const item = await transparencyService.getTransparencyById(id, isPublicRequest);
     
     res.json({
@@ -37,16 +37,15 @@ export const createTransparency = async (req: Request, res: Response, next: Next
   try {
     const data = req.body as CreateTransparencyInput;
     
-    const serviceInput: CreateTransparencyInput = {
-      title: data.title,
-      documentType: data.documentType,
-      documentNumber: data.documentNumber,
-      documentUrl: data.documentUrl,
-      cloudinaryPublicId: data.cloudinaryPublicId,
-      issuedDate: data.issuedDate,
-      description: data.description,
-      isPublished: data.isPublished
-    };
+      const serviceInput: CreateTransparencyInput = {
+        title: data.title,
+        documentType: data.documentType,
+        documentNumber: data.documentNumber,
+        documentUrl: data.documentUrl,
+        issuedDate: data.issuedDate,
+        description: data.description,
+        isPublished: data.isPublished
+      };
 
     const item = await transparencyService.createTransparency(serviceInput);
     
@@ -64,16 +63,15 @@ export const updateTransparency = async (req: Request, res: Response, next: Next
     const id = req.params.id as string;
     const data = req.body as UpdateTransparencyInput;
     
-    const serviceInput: UpdateTransparencyInput = {
-      title: data.title,
-      documentType: data.documentType,
-      documentNumber: data.documentNumber,
-      documentUrl: data.documentUrl,
-      cloudinaryPublicId: data.cloudinaryPublicId,
-      issuedDate: data.issuedDate,
-      description: data.description,
-      isPublished: data.isPublished
-    };
+      const serviceInput: UpdateTransparencyInput = {
+        title: data.title,
+        documentType: data.documentType,
+        documentNumber: data.documentNumber,
+        documentUrl: data.documentUrl,
+        issuedDate: data.issuedDate,
+        description: data.description,
+        isPublished: data.isPublished
+      };
 
     const item = await transparencyService.updateTransparency(id, serviceInput);
     

@@ -1,15 +1,31 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import {
+  Router,
+  Request,
+  Response,
+  NextFunction
+} from 'express';
+
+import { Role } from '@prisma/client';
+import { ZodSchema } from 'zod';
+
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
-import { validateBody } from '../middleware/validate.middleware';
-import { 
-  createProgramSchema, 
-  updateProgramSchema, 
-  programIdSchema, 
-  programQuerySchema 
+import {
+  validateBody
+} from '../middleware/validate.middleware';
+import {
+  uploadImageMiddleware
+} from '../middleware/upload.middleware';
+
+import {
+  createProgramSchema,
+  updateProgramSchema,
+  programIdSchema,
+  programQuerySchema
 } from '../validators/program.validator';
+
 import { AppError } from '../errors/AppError';
-import { ZodSchema } from 'zod';
+
 import {
   listPrograms,
   getProgramById,
@@ -20,54 +36,153 @@ import {
 
 const router = Router();
 
-// Inline validators for query and params
-const validateQuery = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
-  const result = schema.safeParse(req.query);
-  if (!result.success) {
-    next(new AppError('Invalid query parameters', 400));
-    return;
-  }
-  Object.assign(req.query, result.data);
-  next();
-};
+const validateQuery =
+  (schema: ZodSchema) =>
+  (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+  ): void => {
+    const result =
+      schema.safeParse(req.query);
 
-const validateParams = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
-  const result = schema.safeParse(req.params);
-  if (!result.success) {
-    next(new AppError('Invalid request parameters', 400));
-    return;
-  }
-  Object.assign(req.params, result.data);
-  next();
-};
+    if (!result.success) {
+      next(
+        new AppError(
+          'Invalid query parameters',
+          400
+        )
+      );
+      return;
+    }
 
-// Public GET
-router.get('/', validateQuery(programQuerySchema), listPrograms);
-router.get('/:id', validateParams(programIdSchema), getProgramById);
+    Object.assign(
+      req.query,
+      result.data
+    );
 
-// Admin WRITE
+    next();
+  };
+
+const validateParams =
+  (schema: ZodSchema) =>
+  (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+  ): void => {
+    const result =
+      schema.safeParse(req.params);
+
+    if (!result.success) {
+      next(
+        new AppError(
+          'Invalid request parameters',
+          400
+        )
+      );
+      return;
+    }
+
+    Object.assign(
+      req.params,
+      result.data
+    );
+
+    next();
+  };
+
+/**
+ * Admin GET
+ *
+ * Must come before /:id.
+ */
+router.get(
+  '/admin',
+  requireAuth,
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN
+  ),
+  validateQuery(
+    programQuerySchema
+  ),
+  (req, res, next) => {
+    res.locals.isAdmin = true;
+    next();
+  },
+  listPrograms
+);
+
+/**
+ * Public GET
+ */
+router.get(
+  '/',
+  validateQuery(
+    programQuerySchema
+  ),
+  listPrograms
+);
+
+router.get(
+  '/:id',
+  validateParams(
+    programIdSchema
+  ),
+  getProgramById
+);
+
+/**
+ * Admin CREATE
+ */
 router.post(
   '/',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateBody(createProgramSchema),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN
+  ),
+  uploadImageMiddleware.single('image'),
+  validateBody(
+    createProgramSchema
+  ),
   createProgram
 );
 
+/**
+ * Admin UPDATE
+ */
 router.patch(
   '/:id',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(programIdSchema),
-  validateBody(updateProgramSchema),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN
+  ),
+  validateParams(
+    programIdSchema
+  ),
+  uploadImageMiddleware.single('image'),
+  validateBody(
+    updateProgramSchema
+  ),
   updateProgram
 );
 
+/**
+ * Admin DELETE
+ */
 router.delete(
   '/:id',
   requireAuth,
-  requireRole('SUPER_ADMIN', 'CONTENT_ADMIN'),
-  validateParams(programIdSchema),
+  requireRole(
+    Role.SUPER_ADMIN,
+    Role.CONTENT_ADMIN
+  ),
+  validateParams(
+    programIdSchema
+  ),
   deleteProgram
 );
 

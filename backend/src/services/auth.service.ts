@@ -1,75 +1,250 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, {
+  JwtPayload,
+  SignOptions
+} from 'jsonwebtoken';
 import crypto from 'crypto';
+import { z } from 'zod';
+
 import { prisma } from '../config/database';
 import { config } from '../config/env';
 import { AppError } from '../errors/AppError';
-import { z } from 'zod';
-import { loginSchema, resetPasswordSchema, signupSchema } from '../validators/auth.validator';
-import { sendResetPasswordEmail, sendVerificationEmail } from '../utils/email';
+
+import {
+  loginSchema,
+  resetPasswordSchema,
+  signupSchema
+} from '../validators/auth.validator';
+
+import {
+  sendResetPasswordEmail,
+  sendVerificationEmail
+} from '../utils/email';
+
 import { googleAuthService } from './google-auth.service';
 
-const generateAccessToken = (userId: string, role: string) => {
-  return jwt.sign({ userId, role }, config.jwt.access, { expiresIn: '15m' });
+const ACCESS_TOKEN_EXPIRES_IN = '15m';
+const REFRESH_TOKEN_EXPIRES_IN = '7d';
+
+const EMAIL_VERIFICATION_TTL_MS =
+  24 * 60 * 60 * 1000;
+
+const PASSWORD_RESET_TTL_MS =
+  15 * 60 * 1000;
+
+type RefreshTokenPayload = JwtPayload & {
+  userId: string;
 };
 
-const generateRefreshToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwt.refresh, { expiresIn: '7d' });
+const generateAccessToken = (
+  userId: string,
+  role: string
+): string => {
+  const options: SignOptions = {
+    expiresIn: ACCESS_TOKEN_EXPIRES_IN
+  };
+
+  return jwt.sign(
+    {
+      userId,
+      role
+    },
+    config.jwt.access,
+    options
+  );
+};
+
+const generateRefreshToken = (
+  userId: string
+): string => {
+  const options: SignOptions = {
+    expiresIn: REFRESH_TOKEN_EXPIRES_IN
+  };
+
+  return jwt.sign(
+    {
+      userId
+    },
+    config.jwt.refresh,
+    options
+  );
 };
 
 const hashToken = (token: string): string => {
-  return crypto.createHash('sha256').update(token).digest('hex');
+  return crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+};
+
+const normalizeEmail = (email: string): string => {
+  return email.trim().toLowerCase();
+};
+
+const createVerificationToken = () => {
+  const rawToken = crypto
+    .randomBytes(32)
+    .toString('hex');
+
+  return {
+    rawToken,
+    tokenHash: hashToken(rawToken),
+    expiresAt: new Date(
+      Date.now() + EMAIL_VERIFICATION_TTL_MS
+    )
+  };
+};
+
+const createPasswordResetToken = () => {
+  const rawToken = crypto
+    .randomBytes(32)
+    .toString('hex');
+
+  return {
+    rawToken,
+    tokenHash: hashToken(rawToken),
+    expiresAt: new Date(
+      Date.now() + PASSWORD_RESET_TTL_MS
+    )
+  };
+};
+
+const getRefreshTokenPayload = (
+  token: string
+): RefreshTokenPayload => {
+  try {
+    const decoded = jwt.verify(
+      token,
+      config.jwt.refresh
+    );
+
+    if (
+      typeof decoded !== 'object' ||
+      decoded === null ||
+      typeof decoded.userId !== 'string' ||
+      decoded.userId.trim().length === 0
+    ) {
+      throw new Error('Invalid refresh token payload');
+    }
+
+    return decoded as RefreshTokenPayload;
+  } catch {
+    throw new AppError(
+      'Invalid or expired refresh token',
+      401
+    );
+  }
+};
+
+const getSafeUser = (user: {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  photoUrl: string | null;
+}) => {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    photoUrl: user.photoUrl
+  };
 };
 
 export const authService = {
-  async signup(payload: z.infer<typeof signupSchema>) {
-    const { email, password, name } = payload;
-    
-    const emailNormalized = email.toLowerCase().trim();
-    const existingUser = await prisma.user.findUnique({ where: { email: emailNormalized } });
+  async signup(
+    payload: z.infer<typeof signupSchema>
+  ) {
+    const emailNormalized = normalizeEmail(
+      payload.email
+    );
+
+    const existingUser =
+      await prisma.user.findUnique({
+        where: {
+          email: emailNormalized
+        }
+      });
 
     if (existingUser) {
-      // Do not throw 'User already exists' to prevent enumeration
+      // Do not reveal whether the account already exists.
       return;
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
-    
-    const rawVerifyToken = crypto.randomBytes(32).toString('hex');
-    const emailVerifyTokenHash = hashToken(rawVerifyToken);
-    const emailVerifyExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const passwordHash = await bcrypt.hash(
+      payload.password,
+      12
+    );
+
+    const verification =
+      createVerificationToken();
 
     const user = await prisma.user.create({
       data: {
-        name: name.trim(),
+        name: payload.name.trim(),
         email: emailNormalized,
         passwordHash,
-        emailVerifyTokenHash,
-        emailVerifyExpiry,
-        role: 'PUBLIC_USER'
+        emailVerifyTokenHash:
+          verification.tokenHash,
+        emailVerifyExpiry:
+          verification.expiresAt,
+        role: 'PUBLIC_USER',
+        isVerified: false,
+        isActive: true
       }
     });
 
-    const verifyLink = `${config.frontendUrl}/verify-email/${rawVerifyToken}`;
-    await sendVerificationEmail(user.email, verifyLink);
+    const verifyLink =
+      `${config.frontendUrl}/verify-email/` +
+      verification.rawToken;
+
+    try {
+      await sendVerificationEmail(
+        user.email,
+        verifyLink
+      );
+    } catch (error) {
+      // Keep the account and verification token so the
+      // user can use "resend verification email".
+      throw error;
+    }
   },
 
   async verifyEmail(token: string) {
-    const hashedToken = hashToken(token);
-    
-    const user = await prisma.user.findFirst({
-      where: {
-        emailVerifyTokenHash: hashedToken,
-        emailVerifyExpiry: { gt: new Date() }
-      }
-    });
+    const normalizedToken = token.trim();
+
+    if (!normalizedToken) {
+      throw new AppError(
+        'Invalid or expired verification link',
+        400
+      );
+    }
+
+    const hashedToken =
+      hashToken(normalizedToken);
+
+    const user =
+      await prisma.user.findFirst({
+        where: {
+          emailVerifyTokenHash: hashedToken,
+          emailVerifyExpiry: {
+            gt: new Date()
+          }
+        }
+      });
 
     if (!user) {
-      throw new AppError('Invalid or expired verification link', 400);
+      throw new AppError(
+        'Invalid or expired verification link',
+        400
+      );
     }
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: {
+        id: user.id
+      },
       data: {
         isVerified: true,
         emailVerifyTokenHash: null,
@@ -78,58 +253,113 @@ export const authService = {
     });
   },
 
-  async resendVerificationEmail(email: string) {
-    const emailNormalized = email.toLowerCase().trim();
-    const user = await prisma.user.findUnique({ where: { email: emailNormalized } });
-    
+  async resendVerificationEmail(
+    email: string
+  ) {
+    const emailNormalized =
+      normalizeEmail(email);
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          email: emailNormalized
+        }
+      });
+
     if (!user || user.isVerified) {
-      // Return silently to prevent enumeration
+      // Prevent account enumeration.
       return;
     }
 
-    const rawVerifyToken = crypto.randomBytes(32).toString('hex');
-    const emailVerifyTokenHash = hashToken(rawVerifyToken);
-    const emailVerifyExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const verification =
+      createVerificationToken();
 
     await prisma.user.update({
-      where: { id: user.id },
-      data: { emailVerifyTokenHash, emailVerifyExpiry }
+      where: {
+        id: user.id
+      },
+      data: {
+        emailVerifyTokenHash:
+          verification.tokenHash,
+        emailVerifyExpiry:
+          verification.expiresAt
+      }
     });
 
-    const verifyLink = `${config.frontendUrl}/verify-email/${rawVerifyToken}`;
-    await sendVerificationEmail(user.email, verifyLink);
+    const verifyLink =
+      `${config.frontendUrl}/verify-email/` +
+      verification.rawToken;
+
+    await sendVerificationEmail(
+      user.email,
+      verifyLink
+    );
   },
 
-  async login(payload: z.infer<typeof loginSchema>) {
-    const { email, password } = payload;
-    const emailNormalized = email.toLowerCase().trim();
-    const user = await prisma.user.findUnique({ where: { email: emailNormalized } });
+  async login(
+    payload: z.infer<typeof loginSchema>
+  ) {
+    const emailNormalized =
+      normalizeEmail(payload.email);
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          email: emailNormalized
+        }
+      });
 
     if (!user || !user.isActive) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError(
+        'Invalid email or password',
+        401
+      );
     }
 
     if (!user.passwordHash) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError(
+        'Invalid email or password',
+        401
+      );
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    const isMatch =
+      await bcrypt.compare(
+        payload.password,
+        user.passwordHash
+      );
+
     if (!isMatch) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError(
+        'Invalid email or password',
+        401
+      );
     }
 
     if (!user.isVerified) {
-      throw new AppError('Please verify your email before logging in.', 403);
+      throw new AppError(
+        'Please verify your email before logging in.',
+        403
+      );
     }
 
-    const accessToken = generateAccessToken(user.id, user.role);
-    
-    const rawRefreshToken = generateRefreshToken(user.id);
-    const refreshTokenHash = hashToken(rawRefreshToken);
+    const accessToken =
+      generateAccessToken(
+        user.id,
+        user.role
+      );
+
+    const refreshToken =
+      generateRefreshToken(user.id);
+
+    const refreshTokenHash =
+      hashToken(refreshToken);
 
     await prisma.user.update({
-      where: { id: user.id },
-      data: { 
+      where: {
+        id: user.id
+      },
+      data: {
         lastLoginAt: new Date(),
         refreshTokenHash
       }
@@ -137,58 +367,100 @@ export const authService = {
 
     return {
       accessToken,
-      refreshToken: rawRefreshToken,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        photoUrl: user.photoUrl
-      }
+      refreshToken,
+      user: getSafeUser(user)
     };
   },
 
-  async handleGoogleLogin(code: string) {
-    const profile = await googleAuthService.verifyAndExtractProfileFromCode(code);
-    const emailNormalized = profile.email.toLowerCase().trim();
+  async handleGoogleLogin(
+    code: string
+  ) {
+    if (!code || !code.trim()) {
+      throw new AppError(
+        'Invalid Google authorization code',
+        400
+      );
+    }
 
-    let user = await prisma.user.findUnique({ where: { googleId: profile.googleId } });
+    const profile =
+      await googleAuthService
+        .verifyAndExtractProfileFromCode(
+          code
+        );
+
+    const emailNormalized =
+      normalizeEmail(profile.email);
+
+    let user =
+      await prisma.user.findUnique({
+        where: {
+          googleId: profile.googleId
+        }
+      });
 
     if (!user) {
-      user = await prisma.user.findUnique({ where: { email: emailNormalized } });
+      user =
+        await prisma.user.findUnique({
+          where: {
+            email: emailNormalized
+          }
+        });
+
       if (user) {
-        user = await prisma.user.update({
-          where: { id: user.id },
-          data: { 
-            googleId: profile.googleId,
-            photoUrl: user.photoUrl || profile.photoUrl || ''
-          }
-        });
+        user =
+          await prisma.user.update({
+            where: {
+              id: user.id
+            },
+            data: {
+              googleId: profile.googleId,
+              photoUrl:
+                user.photoUrl ||
+                profile.photoUrl ||
+                ''
+            }
+          });
       } else {
-        user = await prisma.user.create({
-          data: {
-            name: profile.name,
-            email: emailNormalized,
-            googleId: profile.googleId,
-            photoUrl: profile.photoUrl || '',
-            isVerified: true,
-            role: 'PUBLIC_USER'
-          }
-        });
+        user =
+          await prisma.user.create({
+            data: {
+              name: profile.name.trim(),
+              email: emailNormalized,
+              googleId: profile.googleId,
+              photoUrl:
+                profile.photoUrl || '',
+              isVerified: true,
+              isActive: true,
+              role: 'PUBLIC_USER'
+            }
+          });
       }
     }
 
     if (!user.isActive) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError(
+        'Invalid email or password',
+        401
+      );
     }
 
-    const accessToken = generateAccessToken(user.id, user.role);
-    const rawRefreshToken = generateRefreshToken(user.id);
-    const refreshTokenHash = hashToken(rawRefreshToken);
+    const accessToken =
+      generateAccessToken(
+        user.id,
+        user.role
+      );
+
+    const refreshToken =
+      generateRefreshToken(user.id);
+
+    const refreshTokenHash =
+      hashToken(refreshToken);
 
     await prisma.user.update({
-      where: { id: user.id },
-      data: { 
+      where: {
+        id: user.id
+      },
+      data: {
         lastLoginAt: new Date(),
         refreshTokenHash
       }
@@ -196,114 +468,227 @@ export const authService = {
 
     return {
       accessToken,
-      refreshToken: rawRefreshToken,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        photoUrl: user.photoUrl
-      }
+      refreshToken,
+      user: getSafeUser(user)
     };
   },
 
-  async logout(refreshToken: string) {
-    if (!refreshToken) return;
-    
-    const refreshTokenHash = hashToken(refreshToken);
-    
-    await prisma.user.updateMany({
-      where: { refreshTokenHash },
-      data: { refreshTokenHash: null }
-    });
-  },
+  async logout(
+    refreshToken: string
+  ) {
+    const token = refreshToken?.trim();
 
-  async refreshAccessToken(token: string) {
-    let decoded: { userId: string };
-    
-    try {
-      decoded = jwt.verify(token, config.jwt.refresh) as { userId: string };
-    } catch (error) {
-      throw new AppError('Invalid or expired refresh token', 401);
-    }
-
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
-    
-    if (!user || !user.isActive) {
-      throw new AppError('Invalid or expired refresh token', 401);
-    }
-
-    const calculatedHash = hashToken(token);
-    if (user.refreshTokenHash !== calculatedHash) {
-      throw new AppError('Invalid or expired refresh token', 401);
-    }
-
-    if (!user.isVerified) {
-       throw new AppError('Please verify your email before logging in.', 403);
-    }
-
-    const newAccessToken = generateAccessToken(user.id, user.role);
-    
-    const newRawRefreshToken = generateRefreshToken(user.id);
-    const newRefreshTokenHash = hashToken(newRawRefreshToken);
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshTokenHash: newRefreshTokenHash }
-    });
-
-    return { accessToken: newAccessToken, refreshToken: newRawRefreshToken };
-  },
-
-  async forgotPassword(email: string) {
-    const emailNormalized = email.toLowerCase().trim();
-    const user = await prisma.user.findUnique({ where: { email: emailNormalized } });
-    
-    if (!user || !user.isActive) {
-      // Don't reveal if user exists
+    if (!token) {
       return;
     }
 
-    const rawResetToken = crypto.randomBytes(32).toString('hex');
-    const resetPasswordTokenHash = hashToken(rawResetToken);
-    const resetPasswordExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+    const refreshTokenHash =
+      hashToken(token);
 
-    await prisma.user.update({
-      where: { id: user.id },
+    await prisma.user.updateMany({
+      where: {
+        refreshTokenHash
+      },
       data: {
-        resetPasswordTokenHash,
-        resetPasswordExpiry
+        refreshTokenHash: null
       }
     });
-
-    const resetLink = `${config.frontendUrl}/reset-password/${rawResetToken}`;
-    await sendResetPasswordEmail(user.email, resetLink);
   },
 
-  async resetPassword(payload: z.infer<typeof resetPasswordSchema>) {
-    const { token, newPassword } = payload;
-    const hashedToken = hashToken(token);
+  async refreshAccessToken(
+    token: string
+  ) {
+    const normalizedToken = token.trim();
 
-    const user = await prisma.user.findFirst({
+    if (!normalizedToken) {
+      throw new AppError(
+        'Invalid or expired refresh token',
+        401
+      );
+    }
+
+    const decoded =
+      getRefreshTokenPayload(
+        normalizedToken
+      );
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          id: decoded.userId
+        }
+      });
+
+    if (!user || !user.isActive) {
+      throw new AppError(
+        'Invalid or expired refresh token',
+        401
+      );
+    }
+
+    const calculatedHash =
+      hashToken(normalizedToken);
+
+    if (
+      !user.refreshTokenHash ||
+      user.refreshTokenHash !==
+        calculatedHash
+    ) {
+      throw new AppError(
+        'Invalid or expired refresh token',
+        401
+      );
+    }
+
+    if (!user.isVerified) {
+      throw new AppError(
+        'Please verify your email before logging in.',
+        403
+      );
+    }
+
+    const newAccessToken =
+      generateAccessToken(
+        user.id,
+        user.role
+      );
+
+    const newRefreshToken =
+      generateRefreshToken(user.id);
+
+    const newRefreshTokenHash =
+      hashToken(newRefreshToken);
+
+    /**
+     * Atomic token rotation:
+     *
+     * Only rotate if the currently stored hash is still
+     * the hash of the token supplied by the client.
+     *
+     * This prevents the same refresh token from being
+     * successfully rotated twice in concurrent requests.
+     */
+    const rotationResult =
+      await prisma.user.updateMany({
+        where: {
+          id: user.id,
+          refreshTokenHash:
+            calculatedHash
+        },
+        data: {
+          refreshTokenHash:
+            newRefreshTokenHash
+        }
+      });
+
+    if (rotationResult.count !== 1) {
+      throw new AppError(
+        'Invalid or expired refresh token',
+        401
+      );
+    }
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    };
+  },
+
+  async forgotPassword(
+    email: string
+  ) {
+    const emailNormalized =
+      normalizeEmail(email);
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          email: emailNormalized
+        }
+      });
+
+    if (!user || !user.isActive) {
+      // Prevent account enumeration.
+      return;
+    }
+
+    const reset =
+      createPasswordResetToken();
+
+    await prisma.user.update({
       where: {
-        resetPasswordTokenHash: hashedToken,
-        resetPasswordExpiry: { gt: new Date() }
+        id: user.id
+      },
+      data: {
+        resetPasswordTokenHash:
+          reset.tokenHash,
+        resetPasswordExpiry:
+          reset.expiresAt
       }
     });
 
-    if (!user) {
-      throw new AppError('Invalid or expired reset token', 400);
+    const resetLink =
+      `${config.frontendUrl}/reset-password/` +
+      reset.rawToken;
+
+    await sendResetPasswordEmail(
+      user.email,
+      resetLink
+    );
+  },
+
+  async resetPassword(
+    payload: z.infer<
+      typeof resetPasswordSchema
+    >
+  ) {
+    const token = payload.token.trim();
+
+    if (!token) {
+      throw new AppError(
+        'Invalid or expired reset token',
+        400
+      );
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const hashedToken =
+      hashToken(token);
+
+    const user =
+      await prisma.user.findFirst({
+        where: {
+          resetPasswordTokenHash:
+            hashedToken,
+          resetPasswordExpiry: {
+            gt: new Date()
+          }
+        }
+      });
+
+    if (!user || !user.isActive) {
+      throw new AppError(
+        'Invalid or expired reset token',
+        400
+      );
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(
+        payload.newPassword,
+        12
+      );
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: {
+        id: user.id
+      },
       data: {
         passwordHash: hashedPassword,
         resetPasswordTokenHash: null,
         resetPasswordExpiry: null,
-        refreshTokenHash: null // Invalidate existing refresh sessions
+
+        // Invalidate the existing refresh session.
+        refreshTokenHash: null
       }
     });
   }

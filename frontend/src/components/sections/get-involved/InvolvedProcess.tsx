@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function InvolvedProcess() {
+    const { t } = useLanguage();
   const steps = [
     { title: "Submit", desc: "Share your interest." },
     { title: "Review", desc: "We review your details." },
@@ -10,7 +13,7 @@ export function InvolvedProcess() {
     <section className="section-padding bg-background border-b border-border/50">
       <div className="container-default max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-h2 mb-4">What Happens Next</h2>
+          <h2 className="text-h2 mb-4">{t('get-Involved.involvedProcess.text1')}</h2>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative">

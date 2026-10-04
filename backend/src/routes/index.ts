@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import authRoutes from './auth.routes';
 import adminRoutes from './admin.routes';
 import healthRoutes from './health.routes';
@@ -12,22 +13,36 @@ import volunteerRoutes from './volunteer.routes';
 import partnerRoutes from './partner.routes';
 import contactRoutes from './contact.routes';
 import donationRoutes from './donation.routes';
-import { authLimiter } from '../middleware/rateLimit.middleware';
+import impactRoutes from './impact.routes';
 
 const router = Router();
 
 router.use('/health', healthRoutes);
-router.use('/auth', authLimiter, authRoutes);
-router.use('/admin/dashboard', adminRoutes);
+
+router.use('/auth', authRoutes);
+
+router.use('/admin', adminRoutes);
+
 router.use('/gallery', galleryRoutes);
+
 router.use('/programs', programRoutes);
+
 router.use('/team', teamRoutes);
+
 router.use('/media', mediaRoutes);
+
 router.use('/library', libraryRoutes);
+
 router.use('/transparency', transparencyRoutes);
+
 router.use('/volunteers', volunteerRoutes);
+
 router.use('/partners', partnerRoutes);
+
 router.use('/contact', contactRoutes);
+
 router.use('/donations', donationRoutes);
+
+router.use('/impact', impactRoutes);
 
 export default router;

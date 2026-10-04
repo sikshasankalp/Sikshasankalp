@@ -1,59 +1,198 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+
 import { config } from '../config/env';
 import { AppError } from '../errors/AppError';
 
-// Initialize only if keys are present to avoid startup crash if not configured
 let razorpayInstance: Razorpay | null = null;
-if (config.razorpay.keyId && config.razorpay.keySecret) {
+
+const getRazorpayInstance = (): Razorpay => {
+  if (razorpayInstance) {
+    return razorpayInstance;
+  }
+
+  if (
+    !config.razorpay.keyId ||
+    !config.razorpay.keySecret
+  ) {
+    throw new AppError(
+      'Razorpay is not configured on the server.',
+      500
+    );
+  }
+
   razorpayInstance = new Razorpay({
     key_id: config.razorpay.keyId,
-    key_secret: config.razorpay.keySecret,
+    key_secret: config.razorpay.keySecret
   });
-}
+
+  return razorpayInstance;
+};
+
+const safeCompareHex = (
+  expected: string,
+  received: string
+): boolean => {
+  if (
+    !/^[a-fA-F0-9]{64}$/.test(expected) ||
+    !/^[a-fA-F0-9]{64}$/.test(received)
+  ) {
+    return false;
+  }
+
+  const expectedBuffer = Buffer.from(
+    expected,
+    'hex'
+  );
+
+  const receivedBuffer = Buffer.from(
+    received,
+    'hex'
+  );
+
+  if (
+    expectedBuffer.length !==
+    receivedBuffer.length
+  ) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    expectedBuffer,
+    receivedBuffer
+  );
+};
 
 export const razorpayService = {
-  get razorpay() {
-    if (!razorpayInstance) {
-      throw new AppError('Razorpay is not configured on the server.', 500);
-    }
-    return razorpayInstance;
+  get razorpay(): Razorpay {
+    return getRazorpayInstance();
   },
 
-  async createOrder(amountInPaise: number, receiptId: string) {
-    const options = {
+  async createOrder(
+    amountInPaise: number,
+    receiptId: string
+  ) {
+    if (
+      !Number.isSafeInteger(amountInPaise) ||
+      amountInPaise <= 0
+    ) {
+      throw new AppError(
+        'Invalid Razorpay order amount.',
+        400
+      );
+    }
+
+    if (
+      !receiptId ||
+      receiptId.trim().length === 0
+    ) {
+      throw new AppError(
+        'Invalid Razorpay receipt ID.',
+        400
+      );
+    }
+
+    return this.razorpay.orders.create({
       amount: amountInPaise,
       currency: 'INR',
-      receipt: receiptId,
-    };
-    
-    return this.razorpay.orders.create(options);
+      receipt: receiptId
+    });
   },
 
-  verifySignature(orderId: string, paymentId: string, signature: string): boolean {
+  async fetchPayment(
+    paymentId: string
+  ) {
+    if (
+      !paymentId ||
+      paymentId.trim().length === 0
+    ) {
+      throw new AppError(
+        'Invalid Razorpay payment ID.',
+        400
+      );
+    }
+
+    try {
+      return await this.razorpay.payments.fetch(
+        paymentId
+      );
+    } catch {
+      throw new AppError(
+        'Unable to verify Razorpay payment.',
+        502
+      );
+    }
+  },
+
+  verifySignature(
+    orderId: string,
+    paymentId: string,
+    signature: string
+  ): boolean {
     if (!config.razorpay.keySecret) {
-      throw new AppError('Razorpay secret is not configured.', 500);
+      throw new AppError(
+        'Razorpay secret is not configured.',
+        500
+      );
     }
-    
-    const body = orderId + '|' + paymentId;
-    const expectedSignature = crypto
-      .createHmac('sha256', config.razorpay.keySecret)
-      .update(body.toString())
-      .digest('hex');
-      
-    return expectedSignature === signature;
+
+    if (
+      !orderId ||
+      !paymentId ||
+      !signature
+    ) {
+      return false;
+    }
+
+    const body =
+      `${orderId}|${paymentId}`;
+
+    const expectedSignature =
+      crypto
+        .createHmac(
+          'sha256',
+          config.razorpay.keySecret
+        )
+        .update(body, 'utf8')
+        .digest('hex');
+
+    return safeCompareHex(
+      expectedSignature,
+      signature
+    );
   },
 
-  verifyWebhookSignature(rawBody: Buffer, signature: string): boolean {
+  verifyWebhookSignature(
+    rawBody: Buffer,
+    signature: string
+  ): boolean {
     if (!config.razorpay.webhookSecret) {
-      throw new AppError('Razorpay webhook secret is not configured.', 500);
+      throw new AppError(
+        'Razorpay webhook secret is not configured.',
+        500
+      );
     }
-    
-    const expectedSignature = crypto
-      .createHmac('sha256', config.razorpay.webhookSecret)
-      .update(rawBody)
-      .digest('hex');
-      
-    return expectedSignature === signature;
+
+    if (
+      !rawBody ||
+      !Buffer.isBuffer(rawBody) ||
+      !signature
+    ) {
+      return false;
+    }
+
+    const expectedSignature =
+      crypto
+        .createHmac(
+          'sha256',
+          config.razorpay.webhookSecret
+        )
+        .update(rawBody)
+        .digest('hex');
+
+    return safeCompareHex(
+      expectedSignature,
+      signature
+    );
   }
 };

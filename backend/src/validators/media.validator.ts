@@ -1,35 +1,122 @@
 import { z } from 'zod';
 
-const queryBoolean = z
-  .union([z.boolean(), z.enum(['true', 'false'])])
-  .transform((val) => val === 'true' || val === true)
+const booleanInput = z
+  .union([
+    z.boolean(),
+    z.enum(['true', 'false'])
+  ])
+  .transform(
+    (value) =>
+      value === true || value === 'true'
+  )
   .optional();
 
-export const createMediaSchema = z.object({
-  title: z.string().trim().min(2).max(200),
-  publication: z.string().trim().min(2).max(150),
-  description: z.string().trim().max(1000).optional(),
-  thumbnailUrl: z.string().url().max(2048).optional(),
-  cloudinaryPublicId: z.string().trim().max(500).optional(),
-  externalUrl: z.string().url().max(2048),
-  publishedAt: z.coerce.date().optional(),
-  isFeatured: queryBoolean,
-  isPublished: queryBoolean,
-}).strict();
+const optionalText = (
+  min: number,
+  max: number
+) =>
+  z
+    .string()
+    .trim()
+    .min(min)
+    .max(max)
+    .optional();
 
-export const updateMediaSchema = createMediaSchema.partial().strict();
+export const createMediaSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(2)
+      .max(200)
+      .optional(),
 
-export const mediaIdSchema = z.object({
-  id: z.string().uuid(),
-}).strict();
+    publication: z
+      .string()
+      .trim()
+      .min(2)
+      .max(150)
+      .optional(),
 
-export const mediaQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(50).default(12),
-  featured: queryBoolean,
-  published: queryBoolean,
-}).strict();
+    description: optionalText(1, 1000),
 
-export type CreateMediaInput = z.infer<typeof createMediaSchema>;
-export type UpdateMediaInput = z.infer<typeof updateMediaSchema>;
-export type MediaQueryInput = z.infer<typeof mediaQuerySchema>;
+    thumbnailUrl: z
+      .string()
+      .trim()
+      .url()
+      .max(2048)
+      .optional(),
+
+    externalUrl: z
+      .string()
+      .trim()
+      .url()
+      .max(2048),
+
+    category: optionalText(1, 100),
+
+    displayLocation: optionalText(1, 100),
+
+    publishedAt: z
+      .coerce
+      .date()
+      .optional(),
+
+    isFeatured: booleanInput,
+
+    isPublished: booleanInput
+  })
+  .strict();
+
+export const updateMediaSchema =
+  createMediaSchema.partial().strict();
+
+export const mediaIdSchema = z
+  .object({
+    id: z.string().uuid()
+  })
+  .strict();
+
+export const mediaQuerySchema = z
+  .object({
+    page: z
+      .coerce
+      .number()
+      .int()
+      .positive()
+      .default(1),
+
+    limit: z
+      .coerce
+      .number()
+      .int()
+      .positive()
+      .max(50)
+      .default(12),
+
+    category: z
+      .string()
+      .trim()
+      .max(100)
+      .optional(),
+
+    displayLocation: z
+      .string()
+      .trim()
+      .max(100)
+      .optional(),
+
+    featured: booleanInput,
+
+    published: booleanInput
+  })
+  .strict();
+
+export type CreateMediaInput =
+  z.infer<typeof createMediaSchema>;
+
+export type UpdateMediaInput =
+  z.infer<typeof updateMediaSchema>;
+
+export type MediaQueryInput =
+  z.infer<typeof mediaQuerySchema>;

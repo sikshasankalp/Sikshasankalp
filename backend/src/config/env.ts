@@ -1,42 +1,188 @@
 import dotenv from 'dotenv';
+
 dotenv.config();
 
-const getEnv = (key: string, fallback?: string): string => {
-  const value = process.env[key];
-  if (!value && process.env.NODE_ENV === 'production' && !fallback) {
-    throw new Error(`Environment variable ${key} is required in production.`);
+type NodeEnv = 'development' | 'test' | 'production';
+
+const getRequiredEnv = (key: string): string => {
+  const value = process.env[key]?.trim();
+
+  if (!value) {
+    throw new Error(`Environment variable ${key} is required.`);
   }
-  return value || fallback || '';
+
+  return value;
 };
 
+const getOptionalEnv = (
+  key: string,
+  fallback: string
+): string => {
+  const value = process.env[key]?.trim();
+
+  return value || fallback;
+};
+
+const getNodeEnv = (): NodeEnv => {
+  const value = process.env.NODE_ENV?.trim() || 'development';
+
+  if (
+    value !== 'development' &&
+    value !== 'test' &&
+    value !== 'production'
+  ) {
+    throw new Error(
+      'NODE_ENV must be development, test, or production.'
+    );
+  }
+
+  return value;
+};
+
+const nodeEnv = getNodeEnv();
+
+const getEnv = (
+  key: string,
+  fallback?: string
+): string => {
+  const value = process.env[key]?.trim();
+
+  if (value) {
+    return value;
+  }
+
+  if (fallback !== undefined && nodeEnv !== 'production') {
+    return fallback;
+  }
+
+  throw new Error(
+    `Environment variable ${key} is required${
+      nodeEnv === 'production' ? ' in production' : ''
+    }.`
+  );
+};
+
+const getPort = (): number => {
+  const rawPort = getEnv('PORT', '5000');
+  const port = Number(rawPort);
+
+  if (
+    !Number.isInteger(port) ||
+    port < 1 ||
+    port > 65535
+  ) {
+    throw new Error(
+      'PORT must be a valid number between 1 and 65535.'
+    );
+  }
+
+  return port;
+};
+
+const getPositiveNumber = (
+  key: string,
+  fallback: string
+): number => {
+  const rawValue = getEnv(key, fallback);
+  const value = Number(rawValue);
+
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(
+      `${key} must be a positive integer.`
+    );
+  }
+
+  return value;
+};
+
+const getSecret = (
+  key: string,
+  minLength = 16
+): string => {
+  const value = getRequiredEnv(key);
+
+  if (value.length < minLength) {
+    throw new Error(
+      `${key} must be at least ${minLength} characters long.`
+    );
+  }
+
+  return value;
+};
+
+const normalizeUrl = (value: string): string => {
+  return value.replace(/\/+$/, '');
+};
+
+const databaseUrl = getRequiredEnv('DATABASE_URL');
+
+const frontendUrl = normalizeUrl(
+  getEnv('FRONTEND_URL', 'http://localhost:5173')
+);
+
+const googleCallbackUrl = normalizeUrl(
+  getEnv(
+    'GOOGLE_CALLBACK_URL',
+    'http://localhost:5000/api/auth/google/callback'
+  )
+);
+
+if (nodeEnv === 'production') {
+  const productionLocalhostValues = [
+    ['FRONTEND_URL', frontendUrl],
+    ['GOOGLE_CALLBACK_URL', googleCallbackUrl],
+    ['DATABASE_URL', databaseUrl]
+  ] as const;
+
+  for (const [key, value] of productionLocalhostValues) {
+    if (
+      value.includes('localhost') ||
+      value.includes('127.0.0.1') ||
+      value.includes('0.0.0.0')
+    ) {
+      throw new Error(
+        `${key} cannot use a local address in production.`
+      );
+    }
+  }
+}
+
 export const config = {
-  port: process.env.PORT || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  databaseUrl: getEnv('DATABASE_URL'),
+  port: getPort(),
+
+  nodeEnv,
+
+  databaseUrl,
+
   jwt: {
-    access: getEnv('JWT_ACCESS_SECRET'),
-    refresh: getEnv('JWT_REFRESH_SECRET'),
+    access: getSecret('JWT_ACCESS_SECRET', 32),
+    refresh: getSecret('JWT_REFRESH_SECRET', 32)
   },
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+
+  frontendUrl,
+
   smtp: {
-    host: getEnv('SMTP_HOST'),
-    port: parseInt(getEnv('SMTP_PORT', '465'), 10),
-    user: getEnv('SMTP_USER'),
-    password: getEnv('SMTP_PASSWORD'),
+    host: getRequiredEnv('SMTP_HOST'),
+    port: getPositiveNumber('SMTP_PORT', '465'),
+    user: getRequiredEnv('SMTP_USER'),
+    password: getRequiredEnv('SMTP_PASSWORD')
   },
+
   googleAuth: {
-    clientId: getEnv('GOOGLE_CLIENT_ID'),
-    clientSecret: getEnv('GOOGLE_CLIENT_SECRET'),
-    callbackUrl: getEnv('GOOGLE_CALLBACK_URL'),
+    clientId: getRequiredEnv('GOOGLE_CLIENT_ID'),
+    clientSecret: getSecret('GOOGLE_CLIENT_SECRET', 16),
+    callbackUrl: googleCallbackUrl
   },
+
   cloudinary: {
-    cloudName: getEnv('CLOUDINARY_CLOUD_NAME'),
-    apiKey: getEnv('CLOUDINARY_API_KEY'),
-    apiSecret: getEnv('CLOUDINARY_API_SECRET'),
+    cloudName: getRequiredEnv('CLOUDINARY_CLOUD_NAME'),
+    apiKey: getRequiredEnv('CLOUDINARY_API_KEY'),
+    apiSecret: getSecret('CLOUDINARY_API_SECRET', 16)
   },
+
   razorpay: {
-    keyId: getEnv('RAZORPAY_KEY_ID'),
-    keySecret: getEnv('RAZORPAY_KEY_SECRET'),
-    webhookSecret: getEnv('RAZORPAY_WEBHOOK_SECRET'),
+    keyId: getRequiredEnv('RAZORPAY_KEY_ID'),
+    keySecret: getSecret('RAZORPAY_KEY_SECRET', 16),
+    webhookSecret: getSecret('RAZORPAY_WEBHOOK_SECRET', 16)
   }
 };

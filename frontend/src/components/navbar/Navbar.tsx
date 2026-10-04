@@ -4,14 +4,17 @@ import { Menu, X, ChevronDown, Globe } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { Button } from '../buttons/Button';
 import { mainNavigation, moreNavigation } from '../../data/navigation';
+import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('English');
+  const { language: currentLanguage, setLanguage: setCurrentLanguage, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { user, isAdmin, logout } = useAuth();
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -88,8 +91,8 @@ export function Navbar() {
                 aria-expanded={isMoreDropdownOpen}
                 aria-haspopup="true"
               >
-                More
-                <ChevronDown className={`w-[14px] h-[14px] transition-transform ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
+                {t('navbar.navbar.text1')}
+                                              <ChevronDown className={`w-[14px] h-[14px] transition-transform ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
               {/* Dropdown Menu */}
@@ -153,8 +156,8 @@ export function Navbar() {
                       currentLanguage === 'English' ? 'text-brand-primary font-medium bg-brand-primary/5' : 'text-content-secondary'
                     }`}
                   >
-                    English
-                  </button>
+                    {t('navbar.navbar.text2')}
+                                                        </button>
                   <button
                     onClick={() => {
                       setCurrentLanguage('Hindi');
@@ -171,28 +174,41 @@ export function Navbar() {
             </div>
             
             {/* CTA */}
-            {localStorage.getItem('admin_token') ? (
-              <Button variant="accent" size="sm" to="/donate" className="text-[14px] px-4 py-1.5">
-                Donate Now
-              </Button>
+            {user ? (
+              <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <Link to="/admin/dashboard" className="text-[14px] font-medium text-content-secondary hover:text-brand-primary transition-colors">
+                    {t('navbar.navbar.text3')}
+                                                        </Link>
+                )}
+                <Link to="/account/donations" className="text-[14px] font-medium text-content-secondary hover:text-brand-primary transition-colors">
+                  {t('navbar.navbar.text4')}
+                                                  </Link>
+                <Button variant="outline" size="sm" onClick={() => logout()} className="text-[14px] px-4 py-1.5">
+                  {t('navbar.navbar.text5')}
+                                                  </Button>
+                <Button variant="accent" size="sm" to="/donate" className="text-[14px] px-4 py-1.5">
+                  {t('navbar.navbar.text6')}
+                                                  </Button>
+              </div>
             ) : (
-              <Button variant="accent" size="sm" to="/admin/login" className="text-[14px] px-4 py-1.5">
-                Login
-              </Button>
+              <Button variant="accent" size="sm" to="/login" className="text-[14px] px-4 py-1.5">
+                {t('navbar.navbar.text7')}
+                                                </Button>
             )}
           </div>
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="flex flex-1 items-center justify-end gap-4 lg:hidden">
-          {localStorage.getItem('admin_token') ? (
+          {user ? (
             <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
-              Donate
-            </Button>
+              {t('navbar.navbar.text8')}
+                                      </Button>
           ) : (
-            <Button variant="accent" size="sm" to="/admin/login" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
-              Login
-            </Button>
+            <Button variant="accent" size="sm" to="/login" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
+              {t('navbar.navbar.text9')}
+                                          </Button>
           )}
           
           <button
@@ -218,7 +234,7 @@ export function Navbar() {
       >
         <div className="flex-1 px-4 py-6 flex flex-col gap-6">
           <nav className="flex flex-col gap-1 border-b border-border pb-6">
-            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">Main</span>
+            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text10')}</span>
             {mainNavigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -238,7 +254,7 @@ export function Navbar() {
           </nav>
           
           <nav className="flex flex-col gap-1 pb-6">
-            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">More</span>
+            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text11')}</span>
             {moreNavigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -255,6 +271,36 @@ export function Navbar() {
                 </Link>
               );
             })}
+            
+            {user && (
+              <>
+                <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3 mt-4">{t('navbar.navbar.text12')}</span>
+                {isAdmin && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+                  >
+                    {t('navbar.navbar.text13')}
+                                                        </Link>
+                )}
+                <Link
+                  to="/account/donations"
+                  className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {t('navbar.navbar.text14')}
+                                                  </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-left px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+                >
+                  {t('navbar.navbar.text15')}
+                                                  </button>
+              </>
+            )}
           </nav>
         </div>
         

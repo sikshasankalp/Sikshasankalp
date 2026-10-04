@@ -1,101 +1,221 @@
-import { Request, Response, NextFunction } from 'express';
-import { libraryService } from '../services/library.service';
-import { CreateLibraryInput, UpdateLibraryInput, LibraryQueryInput } from '../validators/library.validator';
+import {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
 
-export const listLibraryResources = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+import { libraryService } from '../services/library.service';
+import { cloudinaryService } from '../services/cloudinary.service';
+
+import {
+  CreateLibraryInput,
+  UpdateLibraryInput,
+  LibraryQueryInput,
+} from '../validators/library.validator';
+
+export const listLibraryResources = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const query = req.query as unknown as LibraryQueryInput;
-    const isPublicRequest = true; // GET endpoints are public
-    const result = await libraryService.listLibraryResources(query, isPublicRequest);
-    
+    const isPublicRequest = !res.locals.isAdmin;
+
+    const result =
+      await libraryService.listLibraryResources(
+        query,
+        isPublicRequest,
+      );
+
     res.json({
       success: true,
       data: result.data,
-      meta: result.meta
+      meta: result.meta,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getLibraryResourceById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getLibraryResourceById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const id = req.params.id as string;
-    const isPublicRequest = true; // GET endpoints are public
-    const item = await libraryService.getLibraryResourceById(id, isPublicRequest);
-    
+    const isPublicRequest = !res.locals.isAdmin;
+
+    const item =
+      await libraryService.getLibraryResourceById(
+        id,
+        isPublicRequest,
+      );
+
     res.json({
       success: true,
-      data: item
+      data: item,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const createLibraryResource = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createLibraryResource = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  let uploadedImage:
+    | {
+        secure_url: string;
+        public_id: string;
+      }
+    | null = null;
+
   try {
     const data = req.body as CreateLibraryInput;
-    
-    const serviceInput: CreateLibraryInput = {
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      fileUrl: data.fileUrl,
-      cloudinaryPublicId: data.cloudinaryPublicId,
-      thumbnailUrl: data.thumbnailUrl,
-      fileType: data.fileType,
-      fileSize: data.fileSize,
-      isPublished: data.isPublished
-    };
 
-    const item = await libraryService.createLibraryResource(serviceInput);
-    
+    if (req.file) {
+      uploadedImage =
+        await cloudinaryService.uploadImage(
+          req.file.buffer,
+          'shiksha-sankalp/library',
+        );
+    }
+
+    const item =
+      await libraryService.createLibraryResource(
+        data,
+        data.fileUrl,
+        uploadedImage?.public_id,
+        uploadedImage?.secure_url,
+      );
+
+    uploadedImage = null;
+
     res.status(201).json({
       success: true,
-      data: item
+      data: item,
     });
   } catch (error) {
+   if (uploadedImage) {
+  const uploadedPublicId = uploadedImage.public_id;
+
+  await cloudinaryService
+    .deleteImage(uploadedPublicId)
+    .catch((cleanupError) => {
+      console.error(
+        `New library thumbnail cleanup failed for ${uploadedPublicId}:`,
+        cleanupError,
+      );
+    });
+}
+
     next(error);
   }
 };
 
-export const updateLibraryResource = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateLibraryResource = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  let uploadedImage:
+    | {
+        secure_url: string;
+        public_id: string;
+      }
+    | null = null;
+
   try {
     const id = req.params.id as string;
     const data = req.body as UpdateLibraryInput;
-    
-    const serviceInput: UpdateLibraryInput = {
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      fileUrl: data.fileUrl,
-      cloudinaryPublicId: data.cloudinaryPublicId,
-      thumbnailUrl: data.thumbnailUrl,
-      fileType: data.fileType,
-      fileSize: data.fileSize,
-      isPublished: data.isPublished
-    };
 
-    const item = await libraryService.updateLibraryResource(id, serviceInput);
-    
+    if (req.file) {
+      uploadedImage =
+        await cloudinaryService.uploadImage(
+          req.file.buffer,
+          'shiksha-sankalp/library',
+        );
+    }
+
+    const result =
+      await libraryService.updateLibraryResource(
+        id,
+        data,
+        data.fileUrl,
+        uploadedImage?.public_id,
+        uploadedImage?.secure_url,
+      );
+
+    uploadedImage = null;
+
+    if (
+      req.file &&
+      result.previousCloudinaryPublicId
+    ) {
+      await cloudinaryService
+        .deleteImage(
+          result.previousCloudinaryPublicId,
+        )
+        .catch((cleanupError) => {
+          console.error(
+            `Old library thumbnail cleanup failed for ${result.previousCloudinaryPublicId}:`,
+            cleanupError,
+          );
+        });
+    }
+
     res.json({
       success: true,
-      data: item
+      data: result.item,
     });
-  } catch (error) {
-    next(error);
+ } catch (error) {
+  if (uploadedImage) {
+    const uploadedPublicId = uploadedImage.public_id;
+
+    await cloudinaryService
+      .deleteImage(uploadedPublicId)
+      .catch((cleanupError) => {
+        console.error(
+          `New library thumbnail cleanup failed for ${uploadedPublicId}:`,
+          cleanupError,
+        );
+      });
   }
+
+  next(error);
+}
 };
 
-export const deleteLibraryResource = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteLibraryResource = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const id = req.params.id as string;
-    await libraryService.deleteLibraryResource(id);
-    
+
+    const result =
+      await libraryService.deleteLibraryResource(id);
+
+    if (result.cloudinaryPublicId) {
+      await cloudinaryService
+        .deleteImage(result.cloudinaryPublicId)
+        .catch((cleanupError) => {
+          console.error(
+            `Library thumbnail cleanup failed for ${result.cloudinaryPublicId}:`,
+            cleanupError,
+          );
+        });
+    }
+
     res.json({
       success: true,
-      message: 'Library resource deleted successfully'
+      message:
+        'Library resource deleted successfully',
     });
   } catch (error) {
     next(error);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../buttons/Button';
+import { useLanguage } from "../../../context/LanguageContext";
 
 const FORM_OPTIONS = [
   { id: 'teaching', label: 'Teaching' },
@@ -12,6 +13,7 @@ const FORM_OPTIONS = [
 ];
 
 export function InvolvedForm() {
+    const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -23,6 +25,8 @@ export function InvolvedForm() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [botcheck, setBotcheck] = useState(false);
   
   const handleInterestToggle = (id: string) => {
     setFormData(prev => ({
@@ -33,15 +37,82 @@ export function InvolvedForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = () => {
+    if (!formData.name.trim()) return 'Name is required.';
+    
+    // Basic Indian mobile number validation (optional +91, 10 digits)
+    const mobileRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+    if (!formData.mobile.trim() || !mobileRegex.test(formData.mobile.replace(/\s/g, ''))) {
+      return 'Please enter a valid Indian mobile number.';
+    }
+    
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      return 'Please enter a valid email address.';
+    }
+
+    if (!formData.city.trim()) return 'City is required.';
+    if (formData.interests.length === 0) return 'Please select at least one way you would like to help.';
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
     setIsSubmitting(true);
-    // Simulate API call delay to show state
-    setTimeout(() => {
+    
+    try {
+      const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      if (!accessKey) {
+        throw new Error('Form configuration is missing. Please contact support.');
+      }
+
+      // Map interests back to labels for the email
+      const selectedInterests = formData.interests
+        .map(id => FORM_OPTIONS.find(opt => opt.id === id)?.label)
+        .filter(Boolean)
+        .join(', ');
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: 'New Volunteer Application — Shiksha Sankalp Foundation',
+          botcheck,
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.mobile,
+          city: formData.city,
+          help: selectedInterests,
+          skills: formData.skills,
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setIsSuccess(true);
+        setFormData({ name: '', mobile: '', email: '', city: '', skills: '', interests: [] });
+      } else {
+        throw new Error(result.message || 'Submission failed');
+      }
+    } catch (err: any) {
+      console.error('Form submission error:', err);
+      setError(err?.message || 'Something went wrong. Please try again later.');
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({ name: '', mobile: '', email: '', city: '', skills: '', interests: [] });
-    }, 1000);
+    }
   };
 
   if (isSuccess) {
@@ -49,13 +120,13 @@ export function InvolvedForm() {
       <section className="section-padding bg-surface-muted border-b border-border/50">
         <div className="container-default max-w-3xl mx-auto text-center py-12">
           <div className="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">✓</div>
-          <h2 className="text-h2 mb-4">Thank You for Reaching Out!</h2>
+          <h2 className="text-h2 mb-4">{t('get-Involved.involvedForm.text1')}</h2>
           <p className="text-body-large text-content-secondary mb-8">
-            Your information has been securely submitted. Our team will review your details and get in touch with you shortly.
-          </p>
+            {t('get-Involved.involvedForm.text2')}
+                              </p>
           <Button onClick={() => setIsSuccess(false)} variant="outline">
-            Submit Another Response
-          </Button>
+            {t('get-Involved.involvedForm.text3')}
+                              </Button>
         </div>
       </section>
     );
@@ -65,18 +136,25 @@ export function InvolvedForm() {
     <section className="section-padding bg-surface-muted border-b border-border/50">
       <div className="container-default max-w-4xl mx-auto">
         <div className="mb-10 md:mb-16 text-center md:text-left">
-          <h2 className="text-h2 mb-4">Volunteer Application</h2>
+          <h2 className="text-h2 mb-4">{t('get-Involved.involvedForm.text4')}</h2>
           <p className="text-body-large text-content-secondary max-w-2xl">
-            Fill out the form below to let us know how you'd like to help. We'll connect with you to find the perfect role.
-          </p>
+            {t('get-Involved.involvedForm.text5')}
+                                </p>
         </div>
         
         <form onSubmit={handleSubmit} className="bg-background border border-border/60 rounded-xl p-6 md:p-10 shadow-sm">
+          {error && (
+            <div className="mb-6 p-4 bg-error/10 text-error rounded-lg text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} checked={botcheck} onChange={(e) => setBotcheck(e.target.checked)} />
           
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-8">
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="text-sm font-bold text-content-primary">
-                Full Name <span className="text-brand-primary">*</span>
+                {t('get-Involved.involvedForm.text6')} <span className="text-brand-primary">*</span>
               </label>
               <input 
                 type="text" 
@@ -91,7 +169,7 @@ export function InvolvedForm() {
             
             <div className="flex flex-col gap-2">
               <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
-                Mobile Number <span className="text-brand-primary">*</span>
+                {t('get-Involved.involvedForm.text7')} <span className="text-brand-primary">*</span>
               </label>
               <input 
                 type="tel" 
@@ -106,7 +184,7 @@ export function InvolvedForm() {
             
             <div className="flex flex-col gap-2">
               <label htmlFor="email" className="text-sm font-bold text-content-primary">
-                Email Address <span className="text-content-muted font-normal ml-1">(Optional)</span>
+                {t('get-Involved.involvedForm.text8')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
               </label>
               <input 
                 type="email" 
@@ -120,7 +198,7 @@ export function InvolvedForm() {
             
             <div className="flex flex-col gap-2">
               <label htmlFor="city" className="text-sm font-bold text-content-primary">
-                City / Location <span className="text-brand-primary">*</span>
+                {t('get-Involved.involvedForm.text9')} <span className="text-brand-primary">*</span>
               </label>
               <input 
                 type="text" 
@@ -136,7 +214,7 @@ export function InvolvedForm() {
           
           <div className="mb-10">
             <label className="text-sm font-bold text-content-primary block mb-4">
-              How would you like to help? <span className="text-content-muted font-normal ml-1">(Select all that apply)</span>
+              {t('get-Involved.involvedForm.text10')} <span className="text-content-muted font-normal ml-1">(Select all that apply)</span>
             </label>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
               {FORM_OPTIONS.map(option => (
@@ -162,7 +240,7 @@ export function InvolvedForm() {
           
           <div className="mb-10 flex flex-col gap-2">
             <label htmlFor="skills" className="text-sm font-bold text-content-primary">
-              Relevant Skills or Experience <span className="text-content-muted font-normal ml-1">(Optional)</span>
+              {t('get-Involved.involvedForm.text11')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
             </label>
             <textarea 
               id="skills" 
@@ -179,8 +257,8 @@ export function InvolvedForm() {
               {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </Button>
             <p className="text-xs text-content-muted mt-4">
-              By submitting this form, you agree to let us contact you regarding volunteer opportunities. We respect your privacy and will never share your data.
-            </p>
+              {t('get-Involved.involvedForm.text12')}
+                                      </p>
           </div>
         </form>
       </div>

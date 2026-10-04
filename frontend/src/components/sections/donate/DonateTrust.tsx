@@ -1,6 +1,8 @@
 import { ShieldCheck } from 'lucide-react';
+import { useLanguage } from "../../../context/LanguageContext";
 
 export function DonateTrust() {
+    const { t } = useLanguage();
   return (
     <section className="py-12 bg-surface-muted border-b border-border/50">
       <div className="container-default max-w-4xl mx-auto flex gap-6 items-start">
@@ -8,10 +10,10 @@ export function DonateTrust() {
           <ShieldCheck className="w-6 h-6 text-content-primary" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-content-primary mb-2">Transparency & Security</h3>
+          <h3 className="text-lg font-bold text-content-primary mb-2">{t('donate.donateTrust.text1')}</h3>
           <p className="text-body text-content-secondary leading-relaxed">
-            All contributions directly support the foundation's educational and community initiatives. Payment processing is handled through secure, encrypted gateways, and sensitive payment data never touches our servers. Official receipts will be generated and emailed to you upon successful completion of the transaction.
-          </p>
+            {t('donate.donateTrust.text2')}
+                                </p>
         </div>
       </div>
     </section>

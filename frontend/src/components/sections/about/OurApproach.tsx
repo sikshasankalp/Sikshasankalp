@@ -1,4 +1,7 @@
+import { useLanguage } from "../../../context/LanguageContext";
+
 export function OurApproach() {
+    const { t } = useLanguage();
   const approaches = [
     "Reaching children where they are",
     "Connecting them with education",
@@ -12,10 +15,10 @@ export function OurApproach() {
       <div className="container-default">
         <div className="grid md:grid-cols-[1fr_2fr] gap-12 lg:gap-24 items-start">
           <div>
-            <h2 className="text-h2 mb-4">Our Approach</h2>
+            <h2 className="text-h2 mb-4">{t('about.ourApproach.text1')}</h2>
             <p className="text-body-large">
-              We believe in holistic intervention. Our methodology ensures that every aspect of a child's educational journey is supported from start to finish.
-            </p>
+              {t('about.ourApproach.text2')}
+                                      </p>
           </div>
           
           <div className="space-y-8">

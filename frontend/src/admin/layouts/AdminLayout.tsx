@@ -5,7 +5,7 @@ import {
   Users, Radio, Library, ShieldCheck, UserPlus, Handshake, 
   MessageSquare, Settings, LogOut, Menu, X 
 } from 'lucide-react';
-import { adminLogout } from '../services/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const ADMIN_LINKS = [
   { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,10 +25,11 @@ const ADMIN_LINKS = [
 export default function AdminLayout() {
   const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    adminLogout();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
 
   const closeSidebar = () => setIsMobileOpen(false);
@@ -97,12 +98,12 @@ export default function AdminLayout() {
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-content-primary">
-                {localStorage.getItem('admin_email') || 'Admin User'}
+                {user?.name || 'Admin User'}
               </p>
-              <p className="text-xs text-content-muted">Administrator</p>
+              <p className="text-xs text-content-muted">{user?.role?.replace('_', ' ')}</p>
             </div>
             <div className="w-9 h-9 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-sm">
-              {localStorage.getItem('admin_email') ? localStorage.getItem('admin_email')![0].toUpperCase() : 'A'}
+              {user?.name ? user.name[0].toUpperCase() : 'A'}
             </div>
           </div>
         </header>
