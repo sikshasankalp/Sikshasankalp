@@ -18,6 +18,15 @@ class GoogleAuthService {
       config.googleAuth.clientSecret,
       config.googleAuth.callbackUrl
     );
+
+    // SAFE STARTUP DIAGNOSTIC — remove after confirming production values
+    const id = config.googleAuth.clientId;
+    const idFingerprint =
+      id.length >= 12
+        ? `${id.slice(0, 6)}...${id.slice(-6)} (len=${id.length})`
+        : `(len=${id.length})`;
+    console.log('[GoogleAuth] callbackUrl:', config.googleAuth.callbackUrl);
+    console.log('[GoogleAuth] clientId fingerprint:', idFingerprint);
   }
 
   getAuthorizationUrl(state: string): string {
