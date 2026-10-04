@@ -1,3 +1,4 @@
+import { API_BASE_URL as API_URL } from '../../../config/env';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../buttons/Button';
@@ -32,7 +33,7 @@ export function DonateMain() {
   } | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
 
   useEffect(() => {
     if (user && formData.name === '' && formData.email === '') {

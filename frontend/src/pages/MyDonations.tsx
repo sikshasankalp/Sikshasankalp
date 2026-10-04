@@ -1,3 +1,4 @@
+import { API_BASE_URL as API_URL } from '../config/env';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -15,7 +16,7 @@ export default function MyDonations() {
   const [error, setError] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
 
   useEffect(() => {
     if (!user) return;
