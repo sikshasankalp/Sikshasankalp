@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "build": "tsc && node -e \"require('fs').cpSync('src/assets', 'dist/assets', {recursive: true})\"",
-    "start": "node dist/server.js",
+    "build": "prisma generate && tsc && node -e \"require('fs').cpSync('src/assets', 'dist/assets', {recursive: true})\"",
+    "start": "npx prisma migrate deploy && node dist/server.js",
     "lint": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
