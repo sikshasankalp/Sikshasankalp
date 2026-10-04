@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../../config/env';
+import { API_URL } from '../../config/env';
 
 import { fetchWithAuth } from '../apiClient';
 
@@ -20,7 +20,7 @@ export interface DonationOrderResponse {
 }
 
 export const createDonationOrder = async (data: DonationOrderRequest): Promise<DonationOrderResponse> => {
-  const response = await fetchWithAuth(`${API_URL}/api/donations/order`, {
+  const response = await fetchWithAuth(`${API_URL}/donations/order`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export const verifyDonationPayment = async (
   razorpay_payment_id: string,
   razorpay_signature: string
 ): Promise<any> => {
-  const response = await fetchWithAuth(`${API_URL}/api/donations/verify`, {
+  const response = await fetchWithAuth(`${API_URL}/donations/verify`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ export interface DonationListResponse {
 
 export const fetchDonationsAdmin = async (params: Record<string, string | number | boolean> = {}): Promise<DonationListResponse> => {
   const query = new URLSearchParams(params as Record<string, string>).toString();
-  const response = await fetchWithAuth(`${API_URL}/api/donations?${query}`, {
+  const response = await fetchWithAuth(`${API_URL}/donations?${query}`, {
     credentials: 'include'
   });
   const result = await response.json();
@@ -98,7 +98,7 @@ export const fetchDonationsAdmin = async (params: Record<string, string | number
 };
 
 export const fetchDonationById = async (id: string): Promise<Donation> => {
-  const response = await fetchWithAuth(`${API_URL}/api/donations/${id}`, {
+  const response = await fetchWithAuth(`${API_URL}/donations/${id}`, {
     credentials: 'include'
   });
   const result = await response.json();

@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../../../config/env';
+import { API_URL } from '../../../config/env';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../buttons/Button';
@@ -183,7 +183,7 @@ export function DonateMain() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href={`${API_URL}/api/donations/receipt/${successData.receiptToken}`}
+              href={`${API_URL}/donations/receipt/${successData.receiptToken}`}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-brand-primary-dark transition-colors"

@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../components/buttons/Button';
 import { useLanguage } from "../../context/LanguageContext";
-import { API_BASE_URL } from '../../config/env';
+import { API_URL } from '../../config/env';
 
 export default function Login() {
     const { t } = useLanguage();
@@ -57,8 +57,7 @@ export default function Login() {
             variant="outline" 
             className="w-full flex items-center justify-center gap-2"
             onClick={() => {
-              const baseUrl = API_BASE_URL;
-              window.location.href = `${baseUrl}/api/auth/google`;
+              window.location.href = `${API_URL}/auth/google`;
             }}
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">

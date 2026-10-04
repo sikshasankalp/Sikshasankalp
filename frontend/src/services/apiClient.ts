@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../config/env';
+import { API_URL } from '../config/env';
 
 
 let refreshPromise: Promise<boolean> | null = null;
@@ -13,7 +13,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
 
   if (response.status === 401) {
     if (!refreshPromise) {
-      refreshPromise = fetch(`${API_URL}/api/auth/refresh`, {
+      refreshPromise = fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
       }).then(res => res.ok).catch(() => false).finally(() => {

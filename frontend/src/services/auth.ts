@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../config/env';
+import { API_URL } from '../config/env';
 
 
 export interface LoginRequest {
@@ -20,8 +20,26 @@ export interface User {
   photoUrl?: string;
 }
 
+const parseResponse = async (response: Response) => {
+  let result;
+  try {
+    result = await response.json();
+  } catch (err) {
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status} ${response.statusText}`);
+    }
+    throw new Error('Invalid response from server');
+  }
+  
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || 'Request failed');
+  }
+  
+  return result;
+};
+
 export const login = async (data: LoginRequest): Promise<User> => {
-  const response = await fetch(`${API_URL}/api/auth/login`, {
+  const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -30,40 +48,31 @@ export const login = async (data: LoginRequest): Promise<User> => {
     credentials: 'include',
   });
   
-  const result = await response.json();
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || 'Login failed');
-  }
+  const result = await parseResponse(response);
   return result.data.user;
 };
 
 export const logout = async (): Promise<void> => {
-  const response = await fetch(`${API_URL}/api/auth/logout`, {
+  const response = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
     credentials: 'include',
   });
   
-  const result = await response.json();
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || 'Logout failed');
-  }
+  await parseResponse(response);
 };
 
 export const checkAuth = async (): Promise<User> => {
-  const response = await fetch(`${API_URL}/api/auth/me`, {
+  const response = await fetch(`${API_URL}/auth/me`, {
     method: 'GET',
     credentials: 'include',
   });
   
-  const result = await response.json();
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || 'Authentication failed');
-  }
+  const result = await parseResponse(response);
   return result.data.user;
 };
 
 export const signup = async (data: SignupRequest): Promise<{ success: boolean; message: string }> => {
-  const response = await fetch(`${API_URL}/api/auth/signup`, {
+  const response = await fetch(`${API_URL}/auth/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -71,9 +80,5 @@ export const signup = async (data: SignupRequest): Promise<{ success: boolean; m
     body: JSON.stringify(data),
   });
   
-  const result = await response.json();
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || 'Signup failed');
-  }
-  return result;
+  return await parseResponse(response);
 };

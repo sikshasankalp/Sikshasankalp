@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../../config/env';
+import { API_URL } from '../../config/env';
 
 
 export interface DashboardStats {
@@ -25,7 +25,7 @@ export interface DashboardStats {
 }
 
 export const getDashboardData = async (): Promise<DashboardStats> => {
-  const response = await fetch(`${API_URL}/api/admin`, {
+  const response = await fetch(`${API_URL}/admin`, {
     credentials: 'include',
   });
   if (!response.ok) {

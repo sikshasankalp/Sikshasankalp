@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from '../config/env';
+import { API_URL } from '../config/env';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ export default function MyDonations() {
 
     const fetchDonations = async () => {
       try {
-        const res = await fetchWithAuth(`${API_URL}/api/donations/my`);
+        const res = await fetchWithAuth(`${API_URL}/donations/my`);
         
         const data = await res.json();
         
@@ -45,7 +45,7 @@ export default function MyDonations() {
   const handleDownload = async (id: string, receiptNumber: string) => {
     try {
       setDownloadingId(id);
-      const res = await fetchWithAuth(`${API_URL}/api/donations/${id}/receipt`);
+      const res = await fetchWithAuth(`${API_URL}/donations/${id}/receipt`);
       
       if (!res.ok) {
         throw new Error('Failed to download receipt');
