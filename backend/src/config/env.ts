@@ -159,6 +159,26 @@ if (nodeEnv === 'production') {
   }
 }
 
+const getEmailUser = (): string => {
+  const value = cleanEnvValue(process.env.EMAIL_USER) || cleanEnvValue(process.env.SMTP_USER);
+
+  if (!value) {
+    throw new Error('Environment variable EMAIL_USER is required.');
+  }
+
+  return value;
+};
+
+const getEmailPass = (): string => {
+  const value = cleanEnvValue(process.env.EMAIL_PASS) || cleanEnvValue(process.env.SMTP_PASSWORD);
+
+  if (!value) {
+    throw new Error('Environment variable EMAIL_PASS is required.');
+  }
+
+  return value;
+};
+
 export const config = {
   port: getPort(),
 
@@ -173,11 +193,9 @@ export const config = {
 
   frontendUrl,
 
-  smtp: {
-    host: getRequiredEnv('SMTP_HOST'),
-    port: getPositiveNumber('SMTP_PORT', '465'),
-    user: getRequiredEnv('SMTP_USER'),
-    password: getRequiredEnv('SMTP_PASSWORD')
+  email: {
+    user: getEmailUser(),
+    pass: getEmailPass(),
   },
 
   googleAuth: {
@@ -196,7 +214,5 @@ export const config = {
     keyId: getRequiredEnv('RAZORPAY_KEY_ID'),
     keySecret: getSecret('RAZORPAY_KEY_SECRET', 16),
     webhookSecret: getSecret('RAZORPAY_WEBHOOK_SECRET', 16)
-  },
-
-  brevoApiKey: cleanEnvValue(process.env.BREVO_API_KEY)
+  }
 };
