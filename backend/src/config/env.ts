@@ -196,5 +196,7 @@ export const config = {
     keyId: getRequiredEnv('RAZORPAY_KEY_ID'),
     keySecret: getSecret('RAZORPAY_KEY_SECRET', 16),
     webhookSecret: getSecret('RAZORPAY_WEBHOOK_SECRET', 16)
-  }
+  },
+
+  brevoApiKey: cleanEnvValue(process.env.BREVO_API_KEY)
 };
