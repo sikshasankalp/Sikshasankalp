@@ -1,8 +1,26 @@
+import { useState, useEffect } from 'react';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { useLanguage } from "../../../context/LanguageContext";
+import { fetchGallery, type GalleryItem } from '../../../services/api/gallery';
 
 export function ImpactStories() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
+  const [storyImage, setStoryImage] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const items = await fetchGallery({ displayLocation: 'IMPACT_STORIES' });
+        if (items && items.length > 0) {
+          setStoryImage(items[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load Impact story image:', err);
+      }
+    };
+    loadImage();
+  }, []);
+
   return (
     <section className="section-padding bg-surface-muted border-y border-border/50">
       <div className="container-default max-w-5xl mx-auto">
@@ -10,7 +28,16 @@ export function ImpactStories() {
         
         <div className="grid md:grid-cols-[1fr_1.5fr] gap-10 md:gap-16 bg-background rounded-xl border border-border overflow-hidden p-6 md:p-10">
           <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden bg-surface-muted border border-border/50">
-            <PlaceholderImage className="w-full h-full border-none" text="Beneficiary Real Photo" />
+            {storyImage ? (
+              <img
+                src={storyImage.imageUrl}
+                alt={storyImage.title || "Beneficiary Story"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <PlaceholderImage className="w-full h-full border-none" text="Beneficiary Real Photo" />
+            )}
           </div>
           
           <div className="flex flex-col justify-center space-y-6">

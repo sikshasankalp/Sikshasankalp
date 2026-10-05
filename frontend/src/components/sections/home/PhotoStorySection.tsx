@@ -5,16 +5,18 @@ import type { GalleryItem } from '../../../services/api/gallery';
 import { useLanguage } from "../../../context/LanguageContext";
 
 export function PhotoStorySection() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const [impactImage, setImpactImage] = useState<GalleryItem | null>(null);
   const [programsImage, setProgramsImage] = useState<GalleryItem | null>(null);
+  const [familyImage, setFamilyImage] = useState<GalleryItem | null>(null);
 
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const [impactItems, programsItems] = await Promise.all([
+        const [impactItems, programsItems, familyItems] = await Promise.all([
           fetchGallery({ displayLocation: 'HOME_IMPACT' }),
-          fetchGallery({ displayLocation: 'HOME_PROGRAMS' })
+          fetchGallery({ displayLocation: 'HOME_PROGRAMS' }),
+          fetchGallery({ displayLocation: 'HOME_FAMILY' })
         ]);
         
         if (impactItems && impactItems.length > 0) {
@@ -23,12 +25,16 @@ export function PhotoStorySection() {
         if (programsItems && programsItems.length > 0) {
           setProgramsImage(programsItems[0]);
         }
+        if (familyItems && familyItems.length > 0) {
+          setFamilyImage(familyItems[0]);
+        }
       } catch (err) {
         console.error('Failed to load PhotoStory images:', err);
       }
     };
     loadImages();
   }, []);
+
   return (
     <section className="py-16 md:py-24 bg-surface-muted">
       <div className="container-default">
@@ -72,7 +78,15 @@ export function PhotoStorySection() {
           
           {/* Small Image 2 */}
           <div className="md:col-span-4 h-[200px] md:h-full relative rounded-xl overflow-hidden group">
-            <PlaceholderImage className="w-full h-full" text="Family Support" />
+            {familyImage ? (
+              <img 
+                src={familyImage.imageUrl} 
+                alt={familyImage.title || "Family Support"} 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" 
+              />
+            ) : (
+              <PlaceholderImage className="w-full h-full" text="Family Support" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-4 md:p-5">
               <span className="text-white font-medium">{t('home.photoStorySection.text3')}</span>
             </div>

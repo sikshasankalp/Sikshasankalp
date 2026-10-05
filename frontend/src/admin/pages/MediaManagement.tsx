@@ -18,10 +18,27 @@ type UnifiedMedia = {
   original: GalleryItem | MediaCoverageItem;
 };
 
-const DISPLAY_LOCATIONS = [
-  'HOME_HERO', 'HOME_IMPACT', 'HOME_PROGRAMS', 'ABOUT_MAIN', 
-  'STORY_MAIN', 'STORY_TIMELINE', 'PROGRAMS', 'IMPACT', 
-  'GALLERY', 'MEDIA_COVERAGE', 'TEAM', 'DIGITAL_LIBRARY'
+export const DISPLAY_LOCATIONS = [
+  { value: 'HOME_HERO', label: 'Homepage – Main Hero' },
+  { value: 'HOME_IMPACT', label: 'Homepage – Photo Story 1 Large (Children Learning)' },
+  { value: 'HOME_PROGRAMS', label: 'Homepage – Photo Story 2 Small (School Admission)' },
+  { value: 'HOME_FAMILY', label: 'Homepage – Photo Story 3 Small (Family Support)' },
+  { value: 'HOME_MEDIA', label: 'Homepage – Media Coverage Screenshots' },
+  { value: 'HOME_LIBRARY', label: 'Homepage – Digital Library Section' },
+  { value: 'STORY_MAIN', label: 'Homepage Teaser & Our Story – Main Hero Photo' },
+  { value: 'STORY_TIMELINE', label: 'Our Story – Timeline Milestones' },
+  { value: 'ABOUT_MAIN', label: 'About Us – Main Hero' },
+  { value: 'PROGRAMS', label: 'Programs – Main Hero' },
+  { value: 'PROGRAMS_FEATURED', label: 'Programs – Featured Card (Digital Shiksha)' },
+  { value: 'IMPACT', label: 'Impact – Main Hero' },
+  { value: 'IMPACT_STORIES', label: 'Impact – Beneficiary Real Photo' },
+  { value: 'IMPACT_EDUCATION', label: 'Impact – Education Real Photo' },
+  { value: 'DIGITAL_LIBRARY', label: 'Digital Library – Main Hero' },
+  { value: 'GALLERY', label: 'Gallery Page – Main Hero' },
+  { value: 'PARTNER', label: 'Partner With Us – Main Hero' },
+  { value: 'VOLUNTEER', label: 'Get Involved / Volunteers – Main Hero' },
+  { value: 'TRANSPARENCY', label: 'Transparency – Main Hero' },
+  { value: 'MEDIA_COVERAGE', label: 'Media Page – Press Coverage' }
 ];
 
 export default function MediaManagement() {
@@ -355,9 +372,9 @@ export default function MediaManagement() {
                     onChange={(e) => setDisplayLocation(e.target.value)}
                     className="w-full px-4 py-2 bg-surface-muted/30 border border-border/50 rounded-lg focus:outline-none focus:border-brand-primary text-content-primary"
                   >
-                    <option value="">-- None --</option>
+                    <option value="">-- None / General Gallery --</option>
                     {DISPLAY_LOCATIONS.map(loc => (
-                      <option key={loc} value={loc}>{loc}</option>
+                      <option key={loc.value} value={loc.value}>{loc.label}</option>
                     ))}
                   </select>
                 </div>

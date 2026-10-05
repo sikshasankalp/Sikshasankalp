@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Button } from '../../buttons/Button';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { BookText, FileText, MonitorPlay, FileArchive, Laptop, BookOpenCheck, LibraryBig } from 'lucide-react';
 import { useLanguage } from "../../../context/LanguageContext";
+import { fetchGallery, type GalleryItem } from '../../../services/api/gallery';
 
 const resources = [
   { icon: BookText, label: "NCERT Books" },
@@ -14,7 +16,23 @@ const resources = [
 ];
 
 export function DigitalLibrarySection() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
+  const [libraryImage, setLibraryImage] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const items = await fetchGallery({ displayLocation: 'HOME_LIBRARY' });
+        if (items && items.length > 0) {
+          setLibraryImage(items[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load home library image:', err);
+      }
+    };
+    loadImage();
+  }, []);
+
   return (
     <section className="py-16 md:py-24 bg-background border-y border-border">
       <div className="container-default">
@@ -44,11 +62,20 @@ export function DigitalLibrarySection() {
             
             <Button to="/digital-library" variant="primary">
               {t('home.digitalLibrarySection.text3')}
-                                      </Button>
+            </Button>
           </div>
           
           <div className="relative h-[380px] lg:h-[480px] w-full rounded-2xl overflow-hidden shadow-soft">
-            <PlaceholderImage className="w-full h-full" text="Digital Learning / Laptop / Student Image" />
+            {libraryImage ? (
+              <img
+                src={libraryImage.imageUrl}
+                alt={libraryImage.title || "Digital Learning"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <PlaceholderImage className="w-full h-full" text="Digital Learning / Laptop / Student Image" />
+            )}
           </div>
         </div>
       </div>

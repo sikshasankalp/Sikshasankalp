@@ -1,8 +1,26 @@
+import { useState, useEffect } from 'react';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { useLanguage } from "../../../context/LanguageContext";
+import { fetchGallery, type GalleryItem } from '../../../services/api/gallery';
 
 export function ImpactEducation() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
+  const [eduImage, setEduImage] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const items = await fetchGallery({ displayLocation: 'IMPACT_EDUCATION' });
+        if (items && items.length > 0) {
+          setEduImage(items[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load Impact education image:', err);
+      }
+    };
+    loadImage();
+  }, []);
+
   return (
     <section className="section-padding bg-background border-b border-border/50">
       <div className="container-default max-w-5xl mx-auto">
@@ -12,14 +30,23 @@ export function ImpactEducation() {
             <div className="space-y-6 text-body-large text-content-secondary leading-relaxed">
               <p>
                 {t('impact.impactEducation.text2')}
-                                            </p>
+              </p>
               <p>
                 {t('impact.impactEducation.text3')}
-                                            </p>
+              </p>
             </div>
           </div>
           <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-surface-muted border border-border/50">
-            <PlaceholderImage className="w-full h-full border-none" text="Education Impact Real Photo" />
+            {eduImage ? (
+              <img
+                src={eduImage.imageUrl}
+                alt={eduImage.title || "Education Impact"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <PlaceholderImage className="w-full h-full border-none" text="Education Impact Real Photo" />
+            )}
           </div>
         </div>
       </div>

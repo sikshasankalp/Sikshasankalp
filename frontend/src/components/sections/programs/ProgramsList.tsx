@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -10,9 +11,26 @@ import {
 } from 'lucide-react';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { useLanguage } from "../../../context/LanguageContext";
+import { fetchGallery, type GalleryItem } from '../../../services/api/gallery';
 
 export function ProgramsList() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
+  const [featuredImage, setFeaturedImage] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const items = await fetchGallery({ displayLocation: 'PROGRAMS_FEATURED' });
+        if (items && items.length > 0) {
+          setFeaturedImage(items[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load featured program image:', err);
+      }
+    };
+    loadImage();
+  }, []);
+
   return (
     <section className="section-padding bg-background">
       <div className="container-default">
@@ -23,13 +41,22 @@ export function ProgramsList() {
               <MonitorPlay className="w-10 h-10 mb-6 text-brand-accent" />
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
                 {t('programs.programsList.text1')}
-                                            </h2>
+              </h2>
               <p className="text-lg text-white/90 leading-relaxed mb-6">
                 {t('programs.programsList.text2')}
-                                            </p>
+              </p>
             </div>
             <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-white/20">
-              <PlaceholderImage className="w-full h-full border-none bg-black/20" text="Digital Shiksha Real Photo" />
+              {featuredImage ? (
+                <img
+                  src={featuredImage.imageUrl}
+                  alt={featuredImage.title || "Digital Shiksha"}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <PlaceholderImage className="w-full h-full border-none bg-black/20" text="Digital Shiksha Real Photo" />
+              )}
             </div>
           </div>
         </div>
@@ -43,21 +70,21 @@ export function ProgramsList() {
               <h3 className="text-h4 mb-3">{t('programs.programsList.text3')}</h3>
               <p className="text-body text-content-secondary">
                 {t('programs.programsList.text4')}
-                                            </p>
+              </p>
             </div>
             <div className="flex flex-col border-t border-border pt-6">
               <GraduationCap className="w-8 h-8 mb-4 text-brand-primary" />
               <h3 className="text-h4 mb-3">{t('programs.programsList.text5')}</h3>
               <p className="text-body text-content-secondary">
                 {t('programs.programsList.text6')}
-                                            </p>
+              </p>
             </div>
             <div className="flex flex-col border-t border-border pt-6">
               <BookMarked className="w-8 h-8 mb-4 text-brand-primary" />
               <h3 className="text-h4 mb-3">{t('programs.programsList.text7')}</h3>
               <p className="text-body text-content-secondary">
                 {t('programs.programsList.text8')}
-                                            </p>
+              </p>
             </div>
           </div>
 
@@ -71,7 +98,7 @@ export function ProgramsList() {
                   <h4 className="text-lg font-bold mb-2 text-content-primary">{t('programs.programsList.text10')}</h4>
                   <p className="text-body text-content-secondary">
                     {t('programs.programsList.text11')}
-                                                        </p>
+                  </p>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -80,7 +107,7 @@ export function ProgramsList() {
                   <h4 className="text-lg font-bold mb-2 text-content-primary">{t('programs.programsList.text12')}</h4>
                   <p className="text-body text-content-secondary">
                     {t('programs.programsList.text13')}
-                                                        </p>
+                  </p>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -89,7 +116,7 @@ export function ProgramsList() {
                   <h4 className="text-lg font-bold mb-2 text-content-primary">{t('programs.programsList.text14')}</h4>
                   <p className="text-body text-content-secondary">
                     {t('programs.programsList.text15')}
-                                                        </p>
+                  </p>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -98,7 +125,7 @@ export function ProgramsList() {
                   <h4 className="text-lg font-bold mb-2 text-content-primary">{t('programs.programsList.text16')}</h4>
                   <p className="text-body text-content-secondary">
                     {t('programs.programsList.text17')}
-                                                        </p>
+                  </p>
                 </div>
               </div>
             </div>
