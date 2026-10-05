@@ -282,16 +282,16 @@ export function ContactMain() {
             <div>
               <h2 className="text-xl font-bold text-content-primary mb-4">{t('contact.contactMain.text18')}</h2>
               <div className="flex flex-wrap gap-4">
-                <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold">
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Instagram">
                   IG
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Facebook">
                   FB
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold">
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="X (Twitter)">
                   X
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold">
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="LinkedIn">
                   IN
                 </a>
               </div>

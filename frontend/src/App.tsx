@@ -19,6 +19,8 @@ import PartnerWithUs from './pages/PartnerWithUs';
 import Contact from './pages/Contact';
 import Donate from './pages/Donate';
 import MyDonations from './pages/MyDonations';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsOfService from './pages/Legal/TermsOfService';
 
 // Admin Page Imports
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -63,12 +65,15 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/account/donations" element={<MyDonations />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
         </Route>
 
           <Route path="/login" element={<LoginRoute />} />
           <Route path="/register" element={<RegisterRoute />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/admin/login" element={<Navigate to="/login" replace />} />
 
           {/* Admin Routes */}
         

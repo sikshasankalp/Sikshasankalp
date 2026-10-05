@@ -133,7 +133,7 @@ export function InvolvedForm() {
   }
 
   return (
-    <section className="section-padding bg-surface-muted border-b border-border/50">
+    <section id="volunteer" className="section-padding bg-surface-muted border-b border-border/50 scroll-mt-24">
       <div className="container-default max-w-4xl mx-auto">
         <div className="mb-10 md:mb-16 text-center md:text-left">
           <h2 className="text-h2 mb-4">{t('get-Involved.involvedForm.text4')}</h2>
