@@ -194,8 +194,8 @@ export const config = {
   frontendUrl,
 
   email: {
-    user: getEmailUser(),
-    pass: getEmailPass(),
+    user: cleanEnvValue(process.env.EMAIL_USER) || cleanEnvValue(process.env.SMTP_USER) || 'sikshasankalpfoundation@gmail.com',
+    pass: cleanEnvValue(process.env.EMAIL_PASS) || cleanEnvValue(process.env.SMTP_PASSWORD),
   },
 
   googleAuth: {
@@ -214,5 +214,7 @@ export const config = {
     keyId: getRequiredEnv('RAZORPAY_KEY_ID'),
     keySecret: getSecret('RAZORPAY_KEY_SECRET', 16),
     webhookSecret: getSecret('RAZORPAY_WEBHOOK_SECRET', 16)
-  }
+  },
+
+  brevoApiKey: cleanEnvValue(process.env.BREVO_API_KEY)
 };
