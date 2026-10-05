@@ -10,7 +10,8 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
-  signupSchema
+  signupSchema,
+  setPasswordSchema
 } from '../validators/auth.validator';
 
 import { AuthRequest } from '../types/auth.types';
@@ -400,10 +401,41 @@ export const me = async (
         name: req.user.name,
         email: req.user.email,
         role: req.user.role,
-        photoUrl: req.user.photoUrl
+        photoUrl: req.user.photoUrl,
+        hasPassword: req.user.hasPassword
       }
     }
   });
+};
+
+export const setPassword = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new AppError('Unauthorized', 401);
+    }
+
+    const parsed = setPasswordSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0]?.message || 'Invalid password data';
+      throw new AppError(issue, 400);
+    }
+
+    await authService.setPassword(req.user.id, parsed.data.password);
+
+    res.set('Cache-Control', 'no-store');
+
+    res.json({
+      success: true,
+      message: 'Password set successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const refresh = async (

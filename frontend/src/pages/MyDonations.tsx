@@ -2,19 +2,28 @@ import { API_URL } from '../config/env';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, Loader2, KeyRound, CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/buttons/Button';
 import { fetchWithAuth } from '../services/apiClient';
+import { setPassword as apiSetPassword } from '../services/auth';
 import { useLanguage } from "../context/LanguageContext";
 
 export default function MyDonations() {
     const { t } = useLanguage();
-  const { user, isLoading: isAuthLoading } = useAuth();
+  const { user, isLoading: isAuthLoading, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [donations, setDonations] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  // Password Setup / Change state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   
 
@@ -68,6 +77,39 @@ export default function MyDonations() {
     }
   };
 
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (newPassword.length < 8) {
+      setPasswordError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match.');
+      return;
+    }
+
+    setIsSavingPassword(true);
+    try {
+      const res = await apiSetPassword({
+        password: newPassword,
+        confirmPassword
+      });
+      setPasswordSuccess(res.message || 'Password saved successfully!');
+      setNewPassword('');
+      setConfirmPassword('');
+      setShowPasswordForm(false);
+      await refreshUser();
+    } catch (err: any) {
+      setPasswordError(err?.message || 'Failed to update password.');
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
   if (isAuthLoading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>;
   }
@@ -80,6 +122,102 @@ export default function MyDonations() {
     <div className="section-padding min-h-screen bg-background pt-24">
       <div className="container-default max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-content-primary">{t('pages.myDonations.text1')}</h1>
+
+        {/* Account Security / Password Setup Section */}
+        <div className="bg-surface border border-border rounded-xl p-6 shadow-sm mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0 mt-0.5">
+                <KeyRound className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-content-primary">
+                  {user.hasPassword ? 'Password & Security' : 'Set Account Password'}
+                </h3>
+                <p className="text-sm text-content-secondary mt-0.5">
+                  {user.hasPassword
+                    ? 'Your account has a password configured. You can update it anytime.'
+                    : 'You currently sign in via Google. Set a password to also sign in directly with your email and password.'}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant={user.hasPassword ? 'outline' : 'primary'}
+              size="sm"
+              onClick={() => {
+                setShowPasswordForm(!showPasswordForm);
+                setPasswordError(null);
+                setPasswordSuccess(null);
+              }}
+              className="shrink-0 text-sm"
+            >
+              {showPasswordForm ? 'Cancel' : user.hasPassword ? 'Change Password' : 'Set Password'}
+            </Button>
+          </div>
+
+          {passwordSuccess && (
+            <div className="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 text-sm flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{passwordSuccess}</span>
+            </div>
+          )}
+
+          {passwordError && (
+            <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-200 text-sm">
+              {passwordError}
+            </div>
+          )}
+
+          {showPasswordForm && (
+            <form onSubmit={handlePasswordSubmit} className="mt-6 pt-6 border-t border-border/60 max-w-md space-y-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-content-primary">
+                  {user.hasPassword ? 'New Password' : 'Password'}
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="At least 8 characters"
+                  className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-content-primary focus:outline-none focus:border-brand-primary"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-content-primary">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="Re-enter password"
+                  className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-content-primary focus:outline-none focus:border-brand-primary"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <Button type="submit" variant="primary" size="sm" disabled={isSavingPassword}>
+                  {isSavingPassword ? 'Saving...' : 'Save Password'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPasswordForm(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
         
         {isLoading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-brand-primary" /></div>

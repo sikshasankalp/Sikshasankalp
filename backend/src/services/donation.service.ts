@@ -7,7 +7,7 @@ import {
 import { razorpayService } from './razorpay.service';
 import crypto from 'crypto';
 import { receiptService } from './receipt.service';
-import { sendDonationReceiptEmail } from '../utils/email';
+import { sendDonationReceiptEmail, maskEmailForLogs } from '../utils/email';
 
 import {
   CreateDonationOrderInput,
@@ -47,14 +47,34 @@ const generateReceiptNumber = async (): Promise<string> => {
 };
 
 const handleDonationEmail = async (donation: Prisma.DonationGetPayload<{}>) => {
-  if (!donation.email || donation.receiptEmailSentAt) return;
+  // Always fetch fresh donation record from DB to guarantee current state
+  const currentDonation = await prisma.donation.findUnique({
+    where: { id: donation.id }
+  });
+
+  if (!currentDonation) {
+    console.error(`[DonationEmail] Donation ${donation.id} not found in database.`);
+    return;
+  }
+
+  const maskedEmail = maskEmailForLogs(currentDonation.email);
+
+  if (!currentDonation.email) {
+    console.log(`[DonationEmail] Donation ${currentDonation.id} has no email address. Skipping receipt email.`);
+    return;
+  }
+
+  if (currentDonation.receiptEmailSentAt) {
+    console.log(`[DonationEmail] Donation ${currentDonation.id}: Receipt email already marked sent at ${currentDonation.receiptEmailSentAt.toISOString()}. Skipping.`);
+    return;
+  }
 
   const leaseTimeout = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes ago
 
   // Optimistic lock by claiming the attempt if it hasn't been claimed recently
   const lock = await prisma.donation.updateMany({
     where: {
-      id: donation.id,
+      id: currentDonation.id,
       receiptEmailSentAt: null,
       OR: [
         { receiptEmailAttemptedAt: null },
@@ -66,35 +86,72 @@ const handleDonationEmail = async (donation: Prisma.DonationGetPayload<{}>) => {
     }
   });
 
-  if (lock.count === 0) return;
+  if (lock.count === 0) {
+    console.log(`[DonationEmail] Donation ${currentDonation.id}: Send lock active by another process. Skipping redundant attempt.`);
+    return;
+  }
+
+  console.log(`[DonationEmail] Acquired send lock for donation ${currentDonation.id} (recipient: ${maskedEmail}).`);
 
   try {
-    const pdfBuffer = await receiptService.generateReceiptPDF(donation);
-    await sendDonationReceiptEmail(
-      donation.email,
-      donation.donorName,
-      donation.amount,
-      donation.receiptNumber!,
-      donation.createdAt,
+    let receiptNum = currentDonation.receiptNumber;
+    if (!receiptNum) {
+      receiptNum = await generateReceiptNumber();
+      await prisma.donation.update({
+        where: { id: currentDonation.id },
+        data: {
+          receiptNumber: receiptNum,
+          receiptGeneratedAt: currentDonation.receiptGeneratedAt || new Date()
+        }
+      });
+      currentDonation.receiptNumber = receiptNum;
+      console.log(`[DonationEmail] Generated missing receipt number ${receiptNum} for donation ${currentDonation.id}.`);
+    }
+
+    console.log(`[DonationEmail] Generating PDF for donation ${currentDonation.id}...`);
+    const pdfBuffer = await receiptService.generateReceiptPDF(currentDonation);
+    const pdfSizeKb = (pdfBuffer.length / 1024).toFixed(2);
+    console.log(`[DonationEmail] PDF generated (${pdfSizeKb} KB). Dispatching receipt email...`);
+
+    const result = await sendDonationReceiptEmail(
+      currentDonation.email,
+      currentDonation.donorName,
+      currentDonation.amount,
+      receiptNum,
+      currentDonation.createdAt,
       pdfBuffer
     );
-    
+
+    console.log(`[DonationEmail] Receipt email sent successfully for donation ${currentDonation.id}. Response: ${result.response}`);
+
     // Mark as sent and clear the attempt lock
     await prisma.donation.update({
-      where: { id: donation.id },
+      where: { id: currentDonation.id },
       data: { 
         receiptEmailSentAt: new Date(),
         receiptEmailAttemptedAt: null
       }
     });
-  } catch (error) {
-    console.error('Failed to send donation receipt email:', error);
+    console.log(`[DonationEmail] Marked receiptEmailSentAt and cleared lock for donation ${currentDonation.id}.`);
+  } catch (error: any) {
+    console.error(`[DonationEmail] Failed to send receipt email for donation ${currentDonation.id}:`, {
+      message: error?.message,
+      code: error?.code,
+      command: error?.command,
+      responseCode: error?.responseCode,
+      response: error?.response
+    });
     // Explicitly reset the lock so it can be retried immediately if a clean catch occurs.
     // If the process hard-crashes, the leaseTimeout handles it after 5 minutes.
-    await prisma.donation.update({
-      where: { id: donation.id },
-      data: { receiptEmailAttemptedAt: null }
-    });
+    try {
+      await prisma.donation.update({
+        where: { id: currentDonation.id },
+        data: { receiptEmailAttemptedAt: null }
+      });
+      console.log(`[DonationEmail] Reset receiptEmailAttemptedAt lock to null for retry on donation ${currentDonation.id}.`);
+    } catch (resetErr) {
+      console.error(`[DonationEmail] Failed to reset lock on donation ${currentDonation.id}:`, resetErr);
+    }
   }
 };
 
@@ -749,6 +806,44 @@ export const donationService = {
     const pdfBuffer = await receiptService.generateReceiptPDF(donation);
     const filename = `${donation.receiptNumber?.replace(/\//g, '-')}.pdf`;
 
+    // Self-healing: if receipt email has not been sent yet, trigger non-blocking retry
+    if (!donation.receiptEmailSentAt && donation.email) {
+      handleDonationEmail(donation).catch((err) =>
+        console.error('[DonationEmail] Background retry on receipt access failed:', err)
+      );
+    }
+
     return { pdfBuffer, filename };
+  },
+
+  async retryReceiptEmail(id: string) {
+    const donation = await prisma.donation.findUnique({
+      where: { id }
+    });
+
+    if (!donation) {
+      throw new AppError('Donation not found', 404);
+    }
+
+    if (donation.status !== 'SUCCESS') {
+      throw new AppError('Donation is not successful yet', 400);
+    }
+
+    // Clear previous attempt lock so handleDonationEmail can attempt immediately
+    await prisma.donation.update({
+      where: { id: donation.id },
+      data: { receiptEmailAttemptedAt: null }
+    });
+
+    await handleDonationEmail(donation);
+
+    const refreshed = await prisma.donation.findUnique({
+      where: { id: donation.id }
+    });
+
+    return {
+      success: Boolean(refreshed?.receiptEmailSentAt),
+      receiptEmailSentAt: refreshed?.receiptEmailSentAt
+    };
   }
 };

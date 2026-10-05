@@ -142,13 +142,15 @@ const getSafeUser = (user: {
   email: string;
   role: string;
   photoUrl: string | null;
+  passwordHash?: string | null;
 }) => {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
-    photoUrl: user.photoUrl
+    photoUrl: user.photoUrl,
+    hasPassword: Boolean(user.passwordHash)
   };
 };
 
@@ -689,6 +691,28 @@ export const authService = {
 
         // Invalidate the existing refresh session.
         refreshTokenHash: null
+      }
+    });
+  },
+
+  async setPassword(
+    userId: string,
+    newPasswordPlain: string
+  ) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user || !user.isActive) {
+      throw new AppError('User not found or inactive', 404);
+    }
+
+    const hashedPassword = await bcrypt.hash(newPasswordPlain, 12);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash: hashedPassword
       }
     });
   }

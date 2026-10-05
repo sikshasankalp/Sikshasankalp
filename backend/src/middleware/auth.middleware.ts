@@ -115,7 +115,8 @@ export const requireAuth = async (
           role: true,
           photoUrl: true,
           isActive: true,
-          isVerified: true
+          isVerified: true,
+          passwordHash: true
         }
       });
 
@@ -137,7 +138,16 @@ export const requireAuth = async (
      * The database is the source of truth for the user's role.
      * We intentionally do not trust the role stored in the JWT.
      */
-    req.user = user;
+    req.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      photoUrl: user.photoUrl,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      hasPassword: Boolean(user.passwordHash)
+    };
 
     next();
   } catch {

@@ -1,5 +1,27 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
 import { config } from '../config/env';
+
+// Prefer IPv4 globally to avoid IPv6 timeouts/routing failures in container environments like Render
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
+export const maskEmailForLogs = (email: string | null | undefined): string => {
+  if (!email || !email.includes('@')) return '[no-email]';
+  const parts = email.split('@');
+  const userPart = parts[0];
+  const domainPart = parts[1];
+  const maskedUser = userPart.length > 2 ? `${userPart.slice(0, 2)}***` : '***';
+  return `${maskedUser}@${domainPart}`;
+};
+
+export interface EmailSendResult {
+  messageId: string;
+  response: string;
+  accepted: string[];
+  rejected: string[];
+}
 
 const transporter = nodemailer.createTransport({
   host: config.smtp.host,
@@ -9,9 +31,16 @@ const transporter = nodemailer.createTransport({
     user: config.smtp.user,
     pass: config.smtp.password,
   },
-});
+  // Explicit timeouts to prevent connection hanging
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 30000,
+} as any);
 
 export const sendResetPasswordEmail = async (to: string, resetLink: string) => {
+  const maskedTo = maskEmailForLogs(to);
+  console.log(`[EmailService] Sending password reset email to ${maskedTo}...`);
+
   const mailOptions = {
     from: `"Shiksha Sankalp Foundation" <${config.smtp.user}>`,
     to,
@@ -25,10 +54,24 @@ export const sendResetPasswordEmail = async (to: string, resetLink: string) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] Password reset email delivered to ${maskedTo}. MessageId: ${info.messageId}`);
+  } catch (error: any) {
+    console.error(`[EmailService] Password reset email failed for ${maskedTo}:`, {
+      message: error?.message,
+      code: error?.code,
+      command: error?.command,
+      responseCode: error?.responseCode
+    });
+    throw error;
+  }
 };
 
 export const sendVerificationEmail = async (to: string, verifyLink: string) => {
+  const maskedTo = maskEmailForLogs(to);
+  console.log(`[EmailService] Sending verification email to ${maskedTo}...`);
+
   const mailOptions = {
     from: `"Shiksha Sankalp Foundation" <${config.smtp.user}>`,
     to,
@@ -42,7 +85,18 @@ export const sendVerificationEmail = async (to: string, verifyLink: string) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] Verification email delivered to ${maskedTo}. MessageId: ${info.messageId}`);
+  } catch (error: any) {
+    console.error(`[EmailService] Verification email failed for ${maskedTo}:`, {
+      message: error?.message,
+      code: error?.code,
+      command: error?.command,
+      responseCode: error?.responseCode
+    });
+    throw error;
+  }
 };
 
 export const sendDonationReceiptEmail = async (
@@ -52,7 +106,13 @@ export const sendDonationReceiptEmail = async (
   receiptNumber: string,
   date: Date,
   pdfBuffer: Buffer
-) => {
+): Promise<EmailSendResult> => {
+  const maskedTo = maskEmailForLogs(to);
+  const cleanReceiptNumber = receiptNumber?.replace(/\//g, '-') || 'Receipt';
+  const attachmentSizeKb = (pdfBuffer.length / 1024).toFixed(2);
+
+  console.log(`[EmailService] Preparing donation receipt email for ${maskedTo} (Receipt: ${receiptNumber}, Attachment: ${attachmentSizeKb} KB)...`);
+
   const mailOptions = {
     from: `"Shiksha Sankalp Foundation" <${config.smtp.user}>`,
     to,
@@ -68,12 +128,30 @@ export const sendDonationReceiptEmail = async (
     `,
     attachments: [
       {
-        filename: `${receiptNumber.replace(/\//g, '-')}.pdf`,
+        filename: `${cleanReceiptNumber}.pdf`,
         content: pdfBuffer,
         contentType: 'application/pdf'
       }
     ]
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] Donation receipt email delivered to SMTP provider for ${maskedTo}. Response: ${info.response}, MessageId: ${info.messageId}`);
+    return {
+      messageId: info.messageId,
+      response: info.response,
+      accepted: Array.isArray(info.accepted) ? info.accepted.map(String) : [],
+      rejected: Array.isArray(info.rejected) ? info.rejected.map(String) : []
+    };
+  } catch (error: any) {
+    console.error(`[EmailService] Failed to send receipt email to ${maskedTo}:`, {
+      message: error?.message,
+      code: error?.code,
+      command: error?.command,
+      responseCode: error?.responseCode,
+      response: error?.response
+    });
+    throw error;
+  }
 };

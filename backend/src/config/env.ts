@@ -4,8 +4,20 @@ dotenv.config();
 
 type NodeEnv = 'development' | 'test' | 'production';
 
+const cleanEnvValue = (val: string | undefined): string => {
+  if (!val) return '';
+  let cleaned = val.trim();
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned;
+};
+
 const getRequiredEnv = (key: string): string => {
-  const value = process.env[key]?.trim();
+  const value = cleanEnvValue(process.env[key]);
 
   if (!value) {
     throw new Error(`Environment variable ${key} is required.`);
@@ -18,13 +30,13 @@ const getOptionalEnv = (
   key: string,
   fallback: string
 ): string => {
-  const value = process.env[key]?.trim();
+  const value = cleanEnvValue(process.env[key]);
 
   return value || fallback;
 };
 
 const getNodeEnv = (): NodeEnv => {
-  const value = process.env.NODE_ENV?.trim() || 'development';
+  const value = cleanEnvValue(process.env.NODE_ENV) || 'development';
 
   if (
     value !== 'development' &&
@@ -36,7 +48,7 @@ const getNodeEnv = (): NodeEnv => {
     );
   }
 
-  return value;
+  return value as NodeEnv;
 };
 
 const nodeEnv = getNodeEnv();
@@ -45,7 +57,7 @@ const getEnv = (
   key: string,
   fallback?: string
 ): string => {
-  const value = process.env[key]?.trim();
+  const value = cleanEnvValue(process.env[key]);
 
   if (value) {
     return value;

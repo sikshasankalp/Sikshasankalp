@@ -9,6 +9,7 @@ export interface AuthenticatedUser {
   photoUrl: string | null;
   isActive: boolean;
   isVerified: boolean;
+  hasPassword?: boolean;
 }
 
 export interface AuthRequest extends Request {

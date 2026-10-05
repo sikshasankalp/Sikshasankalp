@@ -96,9 +96,14 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-1.5 relative">
-            <label htmlFor="password" className="text-sm font-bold text-content-primary">
-              {t('auth.login.text6')}
-                                      </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="password" className="text-sm font-bold text-content-primary">
+                {t('auth.login.text6')}
+              </label>
+              <Link to="/forgot-password" className="text-xs font-semibold text-brand-primary hover:underline">
+                Forgot password?
+              </Link>
+            </div>
             <div className="relative">
               <input 
                 type={showPassword ? 'text' : 'password'}

@@ -11,7 +11,8 @@ import {
     verifyEmail,
     resendVerificationEmail,
     googleLogin,
-    googleCallback
+    googleCallback,
+    setPassword
 } from '../controllers/auth.controller';
 
 import { requireAuth } from '../middleware/auth.middleware';
@@ -61,6 +62,25 @@ router.post(
     '/reset-password',
     strictAuthLimiter,
     resetPassword
+);
+
+router.post(
+    '/password/forgot',
+    strictAuthLimiter,
+    forgotPassword
+);
+
+router.post(
+    '/password/reset',
+    strictAuthLimiter,
+    resetPassword
+);
+
+router.post(
+    '/password/set',
+    requireAuth,
+    strictAuthLimiter,
+    setPassword
 );
 
 router.get('/me', requireAuth, me);

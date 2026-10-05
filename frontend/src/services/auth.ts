@@ -18,6 +18,7 @@ export interface User {
   email: string;
   role: string;
   photoUrl?: string;
+  hasPassword?: boolean;
 }
 
 const parseResponse = async (response: Response) => {
@@ -80,5 +81,42 @@ export const signup = async (data: SignupRequest): Promise<{ success: boolean; m
     body: JSON.stringify(data),
   });
   
+  return await parseResponse(response);
+};
+
+export const setPassword = async (data: { password: string; confirmPassword: string }): Promise<{ success: boolean; message: string }> => {
+  const response = await fetch(`${API_URL}/auth/password/set`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+
+  return await parseResponse(response);
+};
+
+export const forgotPassword = async (email: string): Promise<{ success: boolean; message: string }> => {
+  const response = await fetch(`${API_URL}/auth/password/forgot`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  return await parseResponse(response);
+};
+
+export const resetPassword = async (data: { token: string; newPassword: string }): Promise<{ success: boolean; message: string }> => {
+  const response = await fetch(`${API_URL}/auth/password/reset`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
   return await parseResponse(response);
 };

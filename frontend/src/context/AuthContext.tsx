@@ -7,6 +7,7 @@ export interface User {
   email: string;
   role: string;
   photoUrl?: string;
+  hasPassword?: boolean;
 }
 
 interface AuthContextType {
@@ -14,6 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -22,6 +24,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const refreshUser = async () => {
+    try {
+      const userData = await checkAuth();
+      setUser(userData);
+    } catch {
+      setUser(null);
+    }
+  };
 
   useEffect(() => {
     async function initAuth() {
@@ -53,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'CONTENT_ADMIN' || user?.role === 'FINANCE_ADMIN';
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, refreshUser, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

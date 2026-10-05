@@ -25,6 +25,8 @@ import AdminLayout from './admin/layouts/AdminLayout';
 import AdminRoute from './admin/components/AdminRoute';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import ResetPassword from './pages/Auth/ResetPassword';
 import Dashboard from './admin/pages/Dashboard';
 import PlaceholderAdminPage from './admin/pages/PlaceholderAdminPage';
 import MediaManagement from './admin/pages/MediaManagement';
@@ -65,6 +67,8 @@ function App() {
 
           <Route path="/login" element={<LoginRoute />} />
           <Route path="/register" element={<RegisterRoute />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Admin Routes */}
         
