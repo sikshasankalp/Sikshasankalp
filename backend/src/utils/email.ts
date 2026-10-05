@@ -31,10 +31,12 @@ const transporter = nodemailer.createTransport({
     user: config.smtp.user,
     pass: config.smtp.password,
   },
-  // Explicit timeouts to prevent connection hanging
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-  socketTimeout: 30000,
+  pool: true,
+  maxConnections: 3,
+  family: 4,
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
 } as any);
 
 export const sendResetPasswordEmail = async (to: string, resetLink: string) => {

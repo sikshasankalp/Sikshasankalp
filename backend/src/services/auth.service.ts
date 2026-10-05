@@ -633,10 +633,16 @@ export const authService = {
       `${config.frontendUrl}/reset-password/` +
       reset.rawToken;
 
-    await sendResetPasswordEmail(
-      user.email,
-      resetLink
-    );
+    try {
+      await sendResetPasswordEmail(
+        user.email,
+        resetLink
+      );
+    } catch (emailError) {
+      console.error('[AuthService] Failed to send password reset email:', emailError);
+      // Do not rethrow: always return identical generic success to prevent account enumeration
+      // and prevent 500 server errors on the client.
+    }
   },
 
   async resetPassword(
