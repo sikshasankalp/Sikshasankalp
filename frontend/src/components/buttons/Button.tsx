@@ -52,19 +52,63 @@ export function Button({
   const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-md shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
+  const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    e.preventDefault();
+    const id = hash.replace(/^#/, '');
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.pushState(null, '', hash);
+    }
+  };
+
   if ('to' in props && props.to) {
-    const { to, ...rest } = props as ButtonAsRouterLinkProps;
+    const { to, onClick, ...rest } = props as ButtonAsRouterLinkProps;
+    if (typeof to === 'string' && to.startsWith('#')) {
+      return (
+        <a
+          href={to}
+          className={combinedClassName}
+          onClick={(e) => {
+            if (onClick) (onClick as any)(e);
+            if (!e.defaultPrevented) {
+              handleHashClick(e, to);
+            }
+          }}
+          {...(rest as any)}
+        >
+          {children}
+        </a>
+      );
+    }
     return (
-      <Link to={to} className={combinedClassName} {...rest}>
+      <Link to={to} className={combinedClassName} onClick={onClick} {...rest}>
         {children}
       </Link>
     );
   }
 
   if ('href' in props && props.href) {
-    const { href, ...rest } = props as ButtonAsLinkProps;
+    const { href, onClick, ...rest } = props as ButtonAsLinkProps;
+    if (typeof href === 'string' && href.startsWith('#') && href.length > 1) {
+      return (
+        <a
+          href={href}
+          className={combinedClassName}
+          onClick={(e) => {
+            if (onClick) onClick(e);
+            if (!e.defaultPrevented) {
+              handleHashClick(e, href);
+            }
+          }}
+          {...rest}
+        >
+          {children}
+        </a>
+      );
+    }
     return (
-      <a href={href} className={combinedClassName} {...rest}>
+      <a href={href} className={combinedClassName} onClick={onClick} {...rest}>
         {children}
       </a>
     );
