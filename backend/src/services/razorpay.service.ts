@@ -21,6 +21,11 @@ const getRazorpayInstance = (): Razorpay => {
     );
   }
 
+  const keyIdPrefix = config.razorpay.keyId.substring(0, 8);
+  console.log(
+    `[Razorpay] Initializing client with keyId prefix: ${keyIdPrefix}... (len=${config.razorpay.keyId.length})`
+  );
+
   razorpayInstance = new Razorpay({
     key_id: config.razorpay.keyId,
     key_secret: config.razorpay.keySecret
@@ -92,11 +97,30 @@ export const razorpayService = {
       );
     }
 
-    return this.razorpay.orders.create({
-      amount: amountInPaise,
-      currency: 'INR',
-      receipt: receiptId
-    });
+    try {
+      return await this.razorpay.orders.create({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: receiptId
+      });
+    } catch (error: any) {
+      const errorDescription =
+        error?.error?.description || error?.message || 'Failed to create Razorpay order';
+      const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 502;
+
+      console.error('[Razorpay] Order creation failed:', {
+        statusCode,
+        code: error?.error?.code || 'UNKNOWN',
+        description: errorDescription
+      });
+
+      throw new AppError(
+        statusCode === 401
+          ? 'Payment gateway authentication failed. Please check server configuration.'
+          : `Payment gateway error: ${errorDescription}`,
+        statusCode >= 400 && statusCode < 500 ? statusCode : 502
+      );
+    }
   },
 
   async fetchPayment(

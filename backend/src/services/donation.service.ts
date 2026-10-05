@@ -328,6 +328,7 @@ export const donationService = {
     data: CreateDonationOrderInput,
     userId: string
   ) {
+    console.log('[DonationService] Creating initial donation record in DB...');
     const donation =
       await prisma.donation.create({
         data: {
@@ -342,6 +343,7 @@ export const donationService = {
           userId
         }
       });
+    console.log('[DonationService] Donation DB record created successfully');
 
     try {
       const amountInPaise =
@@ -349,11 +351,13 @@ export const donationService = {
           donation.amount
         );
 
+      console.log('[DonationService] Creating Razorpay order...');
       const order =
         await razorpayService.createOrder(
           amountInPaise,
           donation.id
         );
+      console.log('[DonationService] Razorpay order created successfully');
 
       return await prisma.donation.update({
         where: {
@@ -365,6 +369,10 @@ export const donationService = {
         }
       });
     } catch (error) {
+      console.error(
+        '[DonationService] Order creation error:',
+        error instanceof Error ? error.message : error
+      );
       await prisma.donation.update({
         where: {
           id: donation.id
