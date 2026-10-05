@@ -265,10 +265,15 @@ export function ContactMain() {
                 <div>
                   <p className="text-content-primary font-medium leading-relaxed">
                     {t('contact.contactMain.text17')}
-                                                        </p>
-                  <p className="text-sm text-content-muted mt-2">
-                    (Map integration pending official details)
                   </p>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=KH-103,+Alawardi+Pur,+Near+Durga+Mandir,+Gautam+Buddha+Nagar,+Uttar+Pradesh+201308"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:underline mt-2"
+                  >
+                    View on Google Maps →
+                  </a>
                 </div>
               </div>
             </div>

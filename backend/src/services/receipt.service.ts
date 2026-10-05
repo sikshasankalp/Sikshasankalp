@@ -141,7 +141,7 @@ export const receiptService = {
         doc.fontSize(8);
         doc.fillColor('#ffffff');
         doc.rect(32, height - 80, width - 64, 48).fill('#1a5f7a');
-        const footerText = 'SIKSHA SANKALP FOUNDATION | KH-103, Near Durga Mandir, Allavardipur Jalpura, Kulesara, Dadri, Gautam Buddha Nagar,\nUP - 201306 | PAN: ABOTS8425N | 12A: ABOTS8425NE20261 | 80G: ABOTS8425NE20261 | CSR: CSR00115589';
+        const footerText = 'SIKSHA SANKALP FOUNDATION | KH-103, Alawardi Pur, Near Durga Mandir, Gautam Buddha Nagar, Uttar Pradesh – 201308\nPAN: ABOTS8425N | 12A: ABOTS8425NE20261 | 80G: ABOTS8425NE20261 | CSR: CSR00115589';
         doc.text(footerText, 32, height - 70, { align: 'center', width: width - 64 });
 
         doc.end();

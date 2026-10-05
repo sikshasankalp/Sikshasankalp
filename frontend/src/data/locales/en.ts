@@ -20,8 +20,8 @@ export const en = {
       "text3": "Explore",
       "text4": "Get Involved",
       "text5": "Contact",
-      "text6": "123 NGO Office Area,",
-      "text7": "New Delhi, India 110001",
+      "text6": "KH-103, Alawardi Pur, Near Durga Mandir,",
+      "text7": "Gautam Buddha Nagar, Uttar Pradesh – 201308",
       "text8": "sikshasankalpfoundation@gmail.com",
       "text9": "Help us build a better future",
       "text10": "Your contribution goes directly towards providing education, resources, and support to children who need it most.",
@@ -161,7 +161,7 @@ export const en = {
       "text14": "Official Email",
       "text15": "sikshasankalpfoundation@gmail.com",
       "text16": "Visit Us",
-      "text17": "Official address and location details will be updated here soon.",
+      "text17": "KH-103, Alawardi Pur, Near Durga Mandir, Gautam Buddha Nagar, Uttar Pradesh – 201308",
       "text18": "Connect Socially"
     }
   },
