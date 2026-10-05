@@ -23,10 +23,12 @@ const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000;
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const GOOGLE_STATE_MAX_AGE = 10 * 60 * 1000;
 
+const isProduction = config.nodeEnv === 'production';
+
 const cookieOptionsBase: CookieOptions = {
   httpOnly: true,
-  secure: config.nodeEnv === 'production',
-  sameSite: 'strict',
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
   path: '/'
 };
 
@@ -42,8 +44,8 @@ const refreshTokenOptions: CookieOptions = {
 
 const googleStateCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: config.nodeEnv === 'production',
-  sameSite: 'lax',
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
   path: '/api/auth/google',
   maxAge: GOOGLE_STATE_MAX_AGE
 };
@@ -253,6 +255,8 @@ export const googleCallback = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log('[GoogleOAuth Callback] Callback reached');
+
     const code = getSingleQueryValue(
       req.query.code
     );
@@ -265,26 +269,38 @@ export const googleCallback = async (
         req.cookies?.googleOAuthState
       );
 
+    const hasCode = Boolean(code);
+    const hasReceivedState = Boolean(receivedState);
+    const hasStoredState = Boolean(storedState);
+    const isStateValid = Boolean(
+      storedState &&
+      receivedState &&
+      safeEqualStrings(storedState, receivedState)
+    );
+
+    console.log(
+      `[GoogleOAuth Callback] State verification check: hasCode=${hasCode}, hasReceivedState=${hasReceivedState}, hasStoredState=${hasStoredState}, stateMatch=${isStateValid}`
+    );
+
     if (
       !code ||
       !receivedState ||
       !storedState ||
-      !safeEqualStrings(
-        storedState,
-        receivedState
-      )
+      !isStateValid
     ) {
+      console.warn('[GoogleOAuth Callback] State verification failure');
       clearGoogleStateCookie(res);
 
       res.set('Cache-Control', 'no-store');
 
-      res.redirect(
-        `${config.frontendUrl}/login?error=GoogleAuthFailed`
-      );
+      const failureRedirect = `${config.frontendUrl}/login?error=GoogleAuthFailed`;
+      console.log('[GoogleOAuth Callback] Final redirect URL:', failureRedirect);
+      res.redirect(failureRedirect);
 
       return;
     }
 
+    console.log('[GoogleOAuth Callback] State verification success');
     clearGoogleStateCookie(res);
 
     const {
@@ -294,6 +310,10 @@ export const googleCallback = async (
       code
     );
 
+    console.log('[GoogleOAuth Callback] Google profile/user resolved');
+    console.log('[GoogleOAuth Callback] Token generation success');
+
+    console.log('[GoogleOAuth Callback] Cookie-setting reached');
     res.cookie(
       'accessToken',
       accessToken,
@@ -308,15 +328,21 @@ export const googleCallback = async (
 
     res.set('Cache-Control', 'no-store');
 
-    res.redirect(config.frontendUrl);
+    const successRedirect = config.frontendUrl;
+    console.log('[GoogleOAuth Callback] Final redirect URL:', successRedirect);
+    res.redirect(successRedirect);
   } catch (error) {
+    console.error(
+      '[GoogleOAuth Callback] OAuth failure:',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
     clearGoogleStateCookie(res);
 
     res.set('Cache-Control', 'no-store');
 
-    res.redirect(
-      `${config.frontendUrl}/login?error=GoogleAuthFailed`
-    );
+    const errorRedirect = `${config.frontendUrl}/login?error=GoogleAuthFailed`;
+    console.log('[GoogleOAuth Callback] Final redirect URL:', errorRedirect);
+    res.redirect(errorRedirect);
   }
 };
 
