@@ -50,7 +50,7 @@ const validateQuery =
       return;
     }
 
-    req.query = result.data as Request['query'];
+    Object.assign(req.query, result.data);
     next();
   };
 
@@ -73,7 +73,7 @@ const validateParams =
       return;
     }
 
-    req.params = result.data as Request['params'];
+    Object.assign(req.params, result.data);
     next();
   };
 

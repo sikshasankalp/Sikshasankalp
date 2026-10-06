@@ -47,9 +47,9 @@ export default function LibraryManagement() {
       const res = await fetchLibraryAdmin({ limit: 100 });
       setResources(res.data);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Failed to load library resources.');
+      setError(err?.message || 'Failed to load library resources.');
     } finally {
       setLoading(false);
     }
