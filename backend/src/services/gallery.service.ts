@@ -84,8 +84,8 @@ export const galleryService = {
     query: GalleryQueryInput,
     isPublicRequest: boolean
   ) {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 12;
+    const page = Math.max(1, Number(query.page) || 1);
+    const limit = Math.max(1, Number(query.limit) || 12);
     const skip = (page - 1) * limit;
 
     const where: Prisma.GalleryItemWhereInput = {};
