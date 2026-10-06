@@ -23,14 +23,12 @@ const app = express();
 app.disable('x-powered-by');
 
 /**
- * Trust the first reverse proxy in production.
+ * Trust reverse proxy in production/hosted environments (Render, Cloudflare).
  *
- * This is appropriate when the deployment has exactly one
- * trusted reverse proxy/load balancer in front of the app.
+ * This allows Express and express-rate-limit to correctly resolve the true client
+ * IP from X-Forwarded-For rather than grouping all visitors into the proxy IP.
  */
-if (config.nodeEnv === 'production') {
-  app.set('trust proxy', 1);
-}
+app.set('trust proxy', true);
 
 /**
  * Security headers.

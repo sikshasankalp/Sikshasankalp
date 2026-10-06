@@ -50,7 +50,7 @@ router.get(
 
 router.post('/logout', logout);
 
-router.post('/refresh', authLimiter, refresh);
+router.post('/refresh', refresh);
 
 router.post(
     '/forgot-password',

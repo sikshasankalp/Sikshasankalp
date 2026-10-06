@@ -1,4 +1,6 @@
 import http from 'node:http';
+import bcrypt from 'bcrypt';
+import { Role } from '@prisma/client';
 
 import app from './app';
 import { config } from './config/env';
@@ -7,11 +9,54 @@ import { prisma } from './config/database';
 let server: http.Server | undefined;
 let isShuttingDown = false;
 
+const bootstrapAdminUser = async (): Promise<void> => {
+  try {
+    const adminEmail = (process.env.ADMIN_EMAIL || 'sikshasankalpfoundation@gmail.com').trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Siksha@2026!';
+    const adminName = process.env.ADMIN_NAME || 'Shiksha Sankalp Admin';
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: adminEmail }
+    });
+
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
+
+    if (!existingUser) {
+      await prisma.user.create({
+        data: {
+          email: adminEmail,
+          name: adminName,
+          passwordHash,
+          role: Role.SUPER_ADMIN,
+          isVerified: true,
+          isActive: true
+        }
+      });
+      console.log(`[BOOTSTRAP] Admin account created: ${adminEmail}`);
+    } else {
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          passwordHash,
+          role: Role.SUPER_ADMIN,
+          isVerified: true,
+          isActive: true
+        }
+      });
+      console.log(`[BOOTSTRAP] Admin account synced & verified: ${adminEmail}`);
+    }
+  } catch (error) {
+    console.error('[BOOTSTRAP] Warning: Failed to bootstrap admin account:', error);
+  }
+};
+
 const startServer = async (): Promise<void> => {
   try {
     await prisma.$connect();
 
     console.log('Database connected successfully');
+
+    await bootstrapAdminUser();
 
     server = app.listen(config.port, () => {
       console.log(

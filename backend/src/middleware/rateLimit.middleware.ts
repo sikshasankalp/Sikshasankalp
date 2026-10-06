@@ -17,6 +17,11 @@ const createRateLimiter = (
 
     standardHeaders: true,
     legacyHeaders: false,
+    validate: {
+      trustProxy: false,
+      xForwardedForHeader: false,
+      default: false
+    },
 
     skip: options.skip,
 
@@ -35,41 +40,38 @@ const createRateLimiter = (
  *
  * Applied to all /api routes from app.ts.
  *
- * Razorpay webhook is excluded because:
- * - it is an external payment-provider callback
- * - it already has HMAC signature verification
- * - rate limiting it globally could cause legitimate webhook
- *   deliveries/retries to be rejected
+ * Excludes payment webhooks and OPTIONS preflight.
+ * Generous threshold (3000 requests / 15 min) so public gallery/pages
+ * never get blocked during normal browsing.
  */
 export const apiLimiter = createRateLimiter(
   15 * 60 * 1000,
-  100,
+  3000,
   'Too many requests from this IP, please try again after 15 minutes.',
   {
-    skip: (req) => req.path === '/donations/webhook'
+    skip: (req) => req.path === '/donations/webhook' || req.method === 'OPTIONS'
   }
 );
 
 /**
  * Authentication rate limiter.
  *
- * Used on login/register/other authentication endpoints
- * where repeated attempts need stronger protection.
+ * Used on login endpoints. 60 attempts in 5 minutes window.
  */
 export const authLimiter = createRateLimiter(
-  15 * 60 * 1000,
-  20,
-  'Too many authentication attempts, please try again after 15 minutes.'
+  5 * 60 * 1000,
+  60,
+  'Too many authentication attempts, please try again after 5 minutes.'
 );
 
 /**
  * Strict rate limiter.
  *
  * Used for sensitive authentication operations such as
- * password reset, verification, or similar high-risk actions.
+ * password reset or verification.
  */
 export const strictAuthLimiter = createRateLimiter(
-  15 * 60 * 1000,
-  5,
-  'Too many sensitive operations requested, please try again after 15 minutes.'
+  10 * 60 * 1000,
+  20,
+  'Too many sensitive operations requested, please try again after 10 minutes.'
 );
