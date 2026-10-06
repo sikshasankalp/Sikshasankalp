@@ -140,11 +140,19 @@ export const verifyEmail = async (
 
     res.set('Cache-Control', 'no-store');
 
+    // If accessed directly via browser address bar
+    if (req.headers.accept?.includes('text/html')) {
+      return res.redirect(`${config.frontendUrl}/login?verified=true`);
+    }
+
     res.json({
       success: true,
       message: 'Email verified successfully'
     });
   } catch (error) {
+    if (req.headers.accept?.includes('text/html')) {
+      return res.redirect(`${config.frontendUrl}/login?error=verification_failed`);
+    }
     next(error);
   }
 };

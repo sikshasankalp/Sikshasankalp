@@ -1,31 +1,61 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../components/buttons/Button';
 import { useLanguage } from "../../context/LanguageContext";
 import { API_URL } from '../../config/env';
 
 export default function Login() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isVerifiedParam = searchParams.get('verified') === 'true';
+
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [resendSuccess, setResendSuccess] = useState('');
+  const [isResending, setIsResending] = useState(false);
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError('Please enter your email address to resend verification link.');
+      return;
+    }
+    setIsResending(true);
+    setResendSuccess('');
+    try {
+      const res = await fetch(`${API_URL}/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setResendSuccess('Verification email sent! Please check your inbox and spam folder.');
+        setError('');
+      } else {
+        setError(data.message || 'Failed to resend verification link.');
+      }
+    } catch {
+      setError('Network error while resending verification email.');
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
+    setResendSuccess('');
 
     try {
       await login({ email, password });
-      // The redirection will be handled by App.tsx routes or AuthProvider if needed, 
-      // but typically we can navigate directly based on roles or let the App re-render.
-      // We will let the user's role determine where to go.
       navigate('/');
     } catch (err: any) {
       setError(err?.message || 'Invalid credentials. Please try again.');
@@ -42,12 +72,35 @@ export default function Login() {
           <h1 className="text-2xl font-display font-bold text-content-primary mb-2">{t('auth.login.text1')}</h1>
           <p className="text-sm text-content-secondary">
             {t('auth.login.text2')}
-                                </p>
+          </p>
         </div>
 
+        {isVerifiedParam && (
+          <div className="bg-green-50 text-green-700 p-3.5 rounded-lg text-sm mb-6 border border-green-200 flex items-center gap-2.5">
+            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            <span className="font-medium">Email verified successfully! You can now sign in below.</span>
+          </div>
+        )}
+
+        {resendSuccess && (
+          <div className="bg-blue-50 text-blue-700 p-3.5 rounded-lg text-sm mb-6 border border-blue-200">
+            {resendSuccess}
+          </div>
+        )}
+
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-6 border border-red-100">
-            {error}
+          <div className="bg-red-50 text-red-600 p-3.5 rounded-lg text-sm mb-6 border border-red-100">
+            <p>{error}</p>
+            {error.toLowerCase().includes('verify your email') && (
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={isResending}
+                className="text-xs font-semibold text-brand-primary underline hover:text-brand-secondary disabled:opacity-50 block mt-2"
+              >
+                {isResending ? 'Sending verification link...' : 'Resend Verification Email'}
+              </button>
+            )}
           </div>
         )}
 

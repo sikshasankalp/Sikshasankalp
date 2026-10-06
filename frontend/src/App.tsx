@@ -29,6 +29,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
+import VerifyEmail from './pages/Auth/VerifyEmail';
 import Dashboard from './admin/pages/Dashboard';
 import PlaceholderAdminPage from './admin/pages/PlaceholderAdminPage';
 import MediaManagement from './admin/pages/MediaManagement';
@@ -73,6 +74,7 @@ function App() {
           <Route path="/register" element={<RegisterRoute />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/admin/login" element={<Navigate to="/login" replace />} />
 
           {/* Admin Routes */}
