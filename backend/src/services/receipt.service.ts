@@ -12,7 +12,7 @@ export const receiptService = {
           margin: 40,
           info: {
             Title: `Donation Receipt - ${donation.receiptNumber}`,
-            Author: 'Shiksha Sankalp Foundation',
+            Author: 'Siksha Sankalp Foundation',
           },
         });
 

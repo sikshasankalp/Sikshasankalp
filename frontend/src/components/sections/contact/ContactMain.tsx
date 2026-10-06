@@ -72,7 +72,7 @@ export function ContactMain() {
         },
         body: JSON.stringify({
           access_key: accessKey,
-          subject: 'New Contact Inquiry — Shiksha Sankalp Foundation',
+          subject: 'New Contact Inquiry — Siksha Sankalp Foundation',
           botcheck,
           name: formData.name,
           mobile: formData.mobile,

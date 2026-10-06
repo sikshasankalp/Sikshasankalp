@@ -4,7 +4,7 @@ const IMPACT_AREAS = [
   'Foundational Education & Learning',
   'School Admission & Transition Support',
   'Essential Educational Materials',
-  'Free Digital Shiksha & Library Access',
+  'Free Digital Siksha & Library Access',
   'Health Checkups & Hygiene Initiatives',
   'Direct Family & Community Support'
 ];

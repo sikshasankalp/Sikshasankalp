@@ -16,7 +16,7 @@ import {
 import { AppError } from '../errors/AppError';
 
 const GALLERY_CLOUDINARY_FOLDER =
-  'shiksha-sankalp/gallery';
+  'siksha-sankalp/gallery';
 
 export const listGallery = async (
   req: Request,

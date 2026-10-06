@@ -75,7 +75,7 @@ export function PartnerForm() {
         },
         body: JSON.stringify({
           access_key: accessKey,
-          subject: 'New Partnership Enquiry — Shiksha Sankalp Foundation',
+          subject: 'New Partnership Enquiry — Siksha Sankalp Foundation',
           botcheck,
           orgName: formData.orgName,
           contactPerson: formData.contactPerson,

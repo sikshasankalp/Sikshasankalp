@@ -13,7 +13,7 @@ interface CloudinaryUploadResult {
   public_id: string;
 }
 
-const DEFAULT_FOLDER = 'shiksha-sankalp/gallery';
+const DEFAULT_FOLDER = 'siksha-sankalp/gallery';
 
 export const cloudinaryService = {
   async uploadImage(

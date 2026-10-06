@@ -78,7 +78,7 @@ export const createMedia = async (
       const uploadResult =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/media'
+          'siksha-sankalp/media'
         );
 
       thumbnailUrl =
@@ -180,7 +180,7 @@ export const updateMedia = async (
       const uploadResult =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/media'
+          'siksha-sankalp/media'
         );
 
       thumbnailUrl =

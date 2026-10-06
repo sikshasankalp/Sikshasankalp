@@ -13,7 +13,7 @@ const bootstrapAdminUser = async (): Promise<void> => {
   try {
     const adminEmail = (process.env.ADMIN_EMAIL || 'sikshasankalpfoundation@gmail.com').trim().toLowerCase();
     const adminPassword = process.env.ADMIN_PASSWORD || 'Siksha@2026!';
-    const adminName = process.env.ADMIN_NAME || 'Shiksha Sankalp Admin';
+    const adminName = process.env.ADMIN_NAME || 'Siksha Sankalp Admin';
 
     const existingUser = await prisma.user.findUnique({
       where: { email: adminEmail }

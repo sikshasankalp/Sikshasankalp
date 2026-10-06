@@ -29,7 +29,7 @@ export const DISPLAY_LOCATIONS = [
   { value: 'STORY_TIMELINE', label: 'Our Story – Timeline Milestones' },
   { value: 'ABOUT_MAIN', label: 'About Us – Main Hero' },
   { value: 'PROGRAMS', label: 'Programs – Main Hero' },
-  { value: 'PROGRAMS_FEATURED', label: 'Programs – Featured Card (Digital Shiksha)' },
+  { value: 'PROGRAMS_FEATURED', label: 'Programs – Featured Card (Digital Siksha)' },
   { value: 'IMPACT', label: 'Impact – Main Hero' },
   { value: 'IMPACT_STORIES', label: 'Impact – Beneficiary Real Photo' },
   { value: 'IMPACT_EDUCATION', label: 'Impact – Education Real Photo' },

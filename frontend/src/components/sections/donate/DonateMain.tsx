@@ -83,7 +83,7 @@ export function DonateMain() {
         key: order.keyId,
         amount: order.amount,
         currency: order.currency,
-        name: 'Shiksha Sankalp Foundation',
+        name: 'Siksha Sankalp Foundation',
         description: 'Donation',
         order_id: order.razorpayOrderId,
         handler: async function (response: any) {

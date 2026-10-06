@@ -45,7 +45,7 @@ export function StoryTimeline() {
     },
     {
       title: "From an Initiative to a Foundation",
-      content: "What started as an individual effort to teach children on the streets eventually grew. The collective efforts, support, and growing impact led to the formal establishment of Shiksha Sankalp Foundation.",
+      content: "What started as an individual effort to teach children on the streets eventually grew. The collective efforts, support, and growing impact led to the formal establishment of Siksha Sankalp Foundation.",
     }
   ];
 

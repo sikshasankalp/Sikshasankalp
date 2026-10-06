@@ -85,7 +85,7 @@ export const createTeamMember = async (
       const uploadResult =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/team'
+          'siksha-sankalp/team'
         );
 
       photoUrl = uploadResult.secure_url;
@@ -172,7 +172,7 @@ export const updateTeamMember = async (
       const uploadResult =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/team'
+          'siksha-sankalp/team'
         );
 
       photoUrl = uploadResult.secure_url;

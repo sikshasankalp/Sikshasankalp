@@ -19,7 +19,7 @@ import {
 } from '../validators/program.validator';
 
 const PROGRAM_CLOUDINARY_FOLDER =
-  'shiksha-sankalp/programs';
+  'siksha-sankalp/programs';
 
 export const listPrograms = async (
   req: Request,

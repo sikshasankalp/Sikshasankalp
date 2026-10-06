@@ -37,7 +37,7 @@ async function sendViaBrevo(payload: {
 
   const body: any = {
     sender: {
-      name: 'Shiksha Sankalp Foundation',
+      name: 'Siksha Sankalp Foundation',
       email: config.email.user
     },
     to: [
@@ -113,7 +113,7 @@ export const sendResetPasswordEmail = async (to: string, resetLink: string) => {
   console.log(`[EmailService] Sending password reset email to ${maskedTo}...`);
 
   const mailOptions = {
-    from: `"Shiksha Sankalp Foundation" <${config.email.user}>`,
+    from: `"Siksha Sankalp Foundation" <${config.email.user}>`,
     to,
     subject,
     html,
@@ -138,7 +138,7 @@ export const sendVerificationEmail = async (to: string, verifyLink: string) => {
   const subject = 'Verify your Email Address';
   const html = `
     <h2>Email Verification</h2>
-    <p>Welcome to Shiksha Sankalp Foundation! Please verify your email address by clicking the link below:</p>
+    <p>Welcome to Siksha Sankalp Foundation! Please verify your email address by clicking the link below:</p>
     <a href="${verifyLink}">Verify Email</a>
     <p>This link will expire in 24 hours.</p>
     <p>If you did not create an account, please ignore this email.</p>
@@ -156,7 +156,7 @@ export const sendVerificationEmail = async (to: string, verifyLink: string) => {
   console.log(`[EmailService] Sending verification email to ${maskedTo}...`);
 
   const mailOptions = {
-    from: `"Shiksha Sankalp Foundation" <${config.email.user}>`,
+    from: `"Siksha Sankalp Foundation" <${config.email.user}>`,
     to,
     subject,
     html,
@@ -187,15 +187,15 @@ export const sendDonationReceiptEmail = async (
   const maskedTo = maskEmailForLogs(to);
   const cleanReceiptNumber = receiptNumber?.replace(/\//g, '-') || 'Receipt';
   const attachmentSizeKb = (pdfBuffer.length / 1024).toFixed(2);
-  const subject = 'Donation Receipt – Shiksha Sankalp Foundation';
+  const subject = 'Donation Receipt – Siksha Sankalp Foundation';
   const html = `
     <h2>Thank You for Your Donation!</h2>
     <p>Dear ${donorName},</p>
     <p>We have successfully received your generous donation of <strong>₹${amount.toLocaleString('en-IN')}</strong> on ${date.toLocaleDateString('en-IN')}.</p>
     <p>Your official receipt (No: ${receiptNumber}) is attached to this email.</p>
-    <p>Your support empowers education and transforms lives. Thank you for being a part of Shiksha Sankalp Foundation.</p>
+    <p>Your support empowers education and transforms lives. Thank you for being a part of Siksha Sankalp Foundation.</p>
     <br/>
-    <p>Warm regards,<br/>Shiksha Sankalp Foundation</p>
+    <p>Warm regards,<br/>Siksha Sankalp Foundation</p>
   `;
 
   if (config.brevoApiKey) {
@@ -214,7 +214,7 @@ export const sendDonationReceiptEmail = async (
   console.log(`[EmailService] Preparing donation receipt email for ${maskedTo} (Receipt: ${receiptNumber}, Attachment: ${attachmentSizeKb} KB)...`);
 
   const mailOptions = {
-    from: `"Shiksha Sankalp Foundation" <${config.email.user}>`,
+    from: `"Siksha Sankalp Foundation" <${config.email.user}>`,
     to,
     subject,
     html,

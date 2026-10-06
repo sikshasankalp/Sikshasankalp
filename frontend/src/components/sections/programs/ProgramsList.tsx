@@ -50,12 +50,12 @@ export function ProgramsList() {
               {featuredImage ? (
                 <img
                   src={featuredImage.imageUrl}
-                  alt={featuredImage.title || "Digital Shiksha"}
+                  alt={featuredImage.title || "Digital Siksha"}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
               ) : (
-                <PlaceholderImage className="w-full h-full border-none bg-black/20" text="Digital Shiksha Real Photo" />
+                <PlaceholderImage className="w-full h-full border-none bg-black/20" text="Digital Siksha Real Photo" />
               )}
             </div>
           </div>

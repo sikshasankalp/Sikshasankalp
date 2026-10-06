@@ -27,7 +27,7 @@ export const en = {
       "text10": "Your contribution goes directly towards providing education, resources, and support to children who need it most.",
       "text11": "Make a Donation",
       "text12": "&copy;",
-      "text13": "Shiksha Sankalp Foundation. All rights reserved.",
+      "text13": "Siksha Sankalp Foundation. All rights reserved.",
       "text14": "Login"
     }
   },
@@ -53,7 +53,7 @@ export const en = {
   "auth": {
     "login": {
       "text1": "Welcome Back",
-      "text2": "Sign in to Shiksha Sankalp Foundation",
+      "text2": "Sign in to Siksha Sankalp Foundation",
       "text3": "Continue with Google",
       "text4": "Or continue with email",
       "text5": "Email Address",
@@ -66,7 +66,7 @@ export const en = {
       "text2": "Your account has been created. Redirecting to login...",
       "text3": "Go to Login Now",
       "text4": "Create Account",
-      "text5": "Join Shiksha Sankalp Foundation",
+      "text5": "Join Siksha Sankalp Foundation",
       "text6": "Full Name",
       "text7": "Email Address",
       "text8": "Password",
@@ -106,7 +106,7 @@ export const en = {
   },
   "about": {
     "aboutHero": {
-      "text1": "Shiksha Sankalp Foundation",
+      "text1": "Siksha Sankalp Foundation",
       "text2": "Connecting underprivileged children with education, mainstream schooling, dignity, and better opportunities."
     },
     "closingCTA": {
@@ -129,7 +129,7 @@ export const en = {
     },
     "whoWeAre": {
       "text1": "Who We Are",
-      "text2": "Shiksha Sankalp Foundation is a grassroots initiative dedicated to bridging the educational gap for underprivileged children. We work closely with communities to ensure that poverty and challenging living conditions do not become barriers to a child's right to education.",
+      "text2": "Siksha Sankalp Foundation is a grassroots initiative dedicated to bridging the educational gap for underprivileged children. We work closely with communities to ensure that poverty and challenging living conditions do not become barriers to a child's right to education.",
       "text3": "Beyond just providing school access, we focus on family support and the dignity of every child, fostering a safe and encouraging environment where they can thrive. Our goal is to replace the harsh realities of the streets with the hope and structure of mainstream schooling, nurturing their potential for a brighter future."
     }
   },
@@ -180,7 +180,7 @@ export const en = {
       "text4": "Create Account",
       "text5": "Donation Successful",
       "text6": "Thank you for supporting",
-      "text7": "Shiksha Sankalp Foundation.",
+      "text7": "Siksha Sankalp Foundation.",
       "text8": "Receipt No:",
       "text9": "Amount:",
       "text10": "Download Donation Receipt",
@@ -220,7 +220,7 @@ export const en = {
     },
     "galleryHero": {
       "text1": "Our Journey in Pictures",
-      "text2": "Explore the real moments and milestones of Shiksha Sankalp Foundation. These images capture the day-to-day ground realities, the progress of our students, and the communities we serve."
+      "text2": "Explore the real moments and milestones of Siksha Sankalp Foundation. These images capture the day-to-day ground realities, the progress of our students, and the communities we serve."
     }
   },
   "get-Involved": {
@@ -270,7 +270,7 @@ export const en = {
       "title1": "A Journey, A Resolution",
       "desc1": "On the journey from Mumbai to Delhi, Krishan Kumar saw the struggle up close. Spending time with children living on the footpaths, a question constantly arose — can these children be connected to education and better opportunities?",
       "btn1": "Read Full Story",
-      "text1": "This effort, which started with the Street Child Drive on February 14, gradually moved towards educating children, connecting them with schools and working with families. This resolution laid the foundation of Shiksha Sankalp Foundation."
+      "text1": "This effort, which started with the Street Child Drive on February 14, gradually moved towards educating children, connecting them with schools and working with families. This resolution laid the foundation of Siksha Sankalp Foundation."
     },
     "programsOverview": {
       "desc1": "Starting learning from where the children are.",
@@ -286,7 +286,7 @@ export const en = {
       "title1": "Education & Footpath Learning",
       "title2": "School Admission & Support",
       "title3": "Educational Support",
-      "title4": "Free Digital Shiksha & Library",
+      "title4": "Free Digital Siksha & Library",
       "title5": "Bath Tent & Dignity Support",
       "title6": "Health & Hygiene",
       "title7": "Family & Essential Support",
@@ -302,7 +302,7 @@ export const en = {
       "title1": "Beginning with education, journey to opportunities",
       "highlight": "Every child deserves an opportunity.",
       "text1": "Our Mission",
-      "text2": "Shiksha Sankalp Foundation works to connect underprivileged children with education, mainstream schooling and opportunities for a better future.",
+      "text2": "Siksha Sankalp Foundation works to connect underprivileged children with education, mainstream schooling and opportunities for a better future.",
       "belief": "We believe that a child's future should not be determined by their economic status or current place of residence."
     },
     "mediaCoverageSection": {
@@ -324,18 +324,18 @@ export const en = {
       "desc1": "Taking underprivileged children from the world of pavements to the world of schools.",
       "btn1": "Our Story",
       "btn2": "See Our Work",
-      "text1": "Shiksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future.",
-      "text2": "Free Digital Shiksha & Library &rarr;"
+      "text1": "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future.",
+      "text2": "Free Digital Siksha & Library &rarr;"
     },
     "digitalLibrarySection": {
       "desc1": "Education should not be limited to the four walls of a school. We are working towards providing useful educational material to children and students free of cost in digital form.",
       "text1": "Digital Initiative",
-      "text2": "Free Digital Shiksha & Library",
+      "text2": "Free Digital Siksha & Library",
       "text3": "View Digital Library"
     },
     "donateCTA": {
       "title1": "Your support can join a child's journey of education.",
-      "text1": "Your support can help Shiksha Sankalp Foundation further its efforts to provide education, learning resources and support to families in need.",
+      "text1": "Your support can help Siksha Sankalp Foundation further its efforts to provide education, learning resources and support to families in need.",
       "text2": "Donate Now"
     }
   },
@@ -407,7 +407,7 @@ export const en = {
       "text3": "Your education is your right. Make the most of these materials and keep learning."
     },
     "libraryHero": {
-      "text1": "Free Digital Shiksha & Library",
+      "text1": "Free Digital Siksha & Library",
       "text2": "A free educational resource space where students can access vital learning materials without financial barriers.",
       "text3": "Explore Resources",
       "text4": "Support This Initiative"
@@ -445,7 +445,7 @@ export const en = {
     },
     "mediaHero": {
       "text1": "Media Coverage",
-      "text2": "Documenting the external coverage and independent reporting of Shiksha Sankalp Foundation's work on the ground."
+      "text2": "Documenting the external coverage and independent reporting of Siksha Sankalp Foundation's work on the ground."
     },
     "mediaWhyItMatters": {
       "text1": "Why Documentation Matters",
@@ -463,7 +463,7 @@ export const en = {
     },
     "partnerForm": {
       "text1": "Enquiry Submitted Successfully",
-      "text2": "Thank you for your interest in partnering with Shiksha Sankalp Foundation. Our team will review your details and contact you shortly to begin the conversation.",
+      "text2": "Thank you for your interest in partnering with Siksha Sankalp Foundation. Our team will review your details and contact you shortly to begin the conversation.",
       "text3": "Submit Another Enquiry",
       "text4": "Partnership Enquiry",
       "text5": "Please provide details about your organisation and how you envision collaborating with us.",
@@ -512,7 +512,7 @@ export const en = {
       "text2": "The barriers to education for underprivileged children extend far beyond the classroom walls. Our programs are designed to meet children and their families where they are—addressing everything from immediate health and hygiene needs to school admissions and long-term educational support. Every initiative we run connects directly back to our core mission: ensuring that poverty does not dictate a child's future."
     },
     "programsList": {
-      "text1": "Free Digital Shiksha & Library",
+      "text1": "Free Digital Siksha & Library",
       "text2": "A major initiative providing free access to NCERT books, notes, study material, educational videos, PDFs, computer/digital learning resources, and competitive-exam material to bridge the digital divide.",
       "text3": "Education & Footpath Learning",
       "text4": "Reaching children where they are and creating access to basic learning and education right on the streets.",
@@ -538,7 +538,7 @@ export const en = {
   "story": {
     "storyClosingCTA": {
       "text1": "Support the Journey",
-      "text2": "The story of Shiksha Sankalp Foundation is written by the community. Invite yourself into the next chapter by exploring our impact or contributing to the mission.",
+      "text2": "The story of Siksha Sankalp Foundation is written by the community. Invite yourself into the next chapter by exploring our impact or contributing to the mission.",
       "text3": "Explore Programs",
       "text4": "See Our Impact",
       "text5": "Support the Mission"
@@ -582,7 +582,7 @@ export const en = {
     },
     "transparencyRegistration": {
       "text1": "Official Registration",
-      "text2": "Shiksha Sankalp Foundation",
+      "text2": "Siksha Sankalp Foundation",
       "text3": "Registration Type:",
       "text4": "Registered Trust",
       "text5": "Declaration Registration No:",

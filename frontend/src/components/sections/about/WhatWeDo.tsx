@@ -16,7 +16,7 @@ export function WhatWeDo() {
       description: 'Offering tutoring, mentoring, and resources to help students succeed academically and overcome learning gaps.'
     },
     {
-      title: 'Free Digital Shiksha & Library',
+      title: 'Free Digital Siksha & Library',
       description: 'Providing access to digital learning tools and a well-equipped library to bridge the digital divide.'
     },
     {

@@ -53,7 +53,7 @@ export const hi = {
   "auth": {
     "login": {
       "text1": "वापसी पर स्वागत है",
-      "text2": "Sign in to Shiksha Sankalp Foundation",
+      "text2": "Sign in to Siksha Sankalp Foundation",
       "text3": "Google के साथ जारी रखें",
       "text4": "या ईमेल जारी रखें",
       "text5": "मेल पता",
@@ -66,7 +66,7 @@ export const hi = {
       "text2": "आपका खाता तैयार कर दिया गया है। लॉगिन करने के लिए पुनः निर्देशित किया जा रहा है...",
       "text3": "अभी लॉगिन करें पर जाएं",
       "text4": "खाता बनाएं",
-      "text5": "Join Shiksha Sankalp Foundation",
+      "text5": "Join Siksha Sankalp Foundation",
       "text6": "पूरा नाम",
       "text7": "मेल पता",
       "text8": "पासवर्ड",
@@ -106,7 +106,7 @@ export const hi = {
   },
   "about": {
     "aboutHero": {
-      "text1": "Shiksha Sankalp Foundation",
+      "text1": "Siksha Sankalp Foundation",
       "text2": "वंचित बच्चों को शिक्षा, मुख्यधारा की स्कूली शिक्षा, गरिमा और बेहतर अवसरों से जोड़ना।"
     },
     "closingCTA": {
@@ -180,7 +180,7 @@ export const hi = {
       "text4": "खाता बनाएं",
       "text5": "दान सफल",
       "text6": "समर्थन के लिए धन्यवाद",
-      "text7": "Shiksha Sankalp Foundation.",
+      "text7": "Siksha Sankalp Foundation.",
       "text8": "रसीद संख्या:",
       "text9": "मात्रा:",
       "text10": "दान रसीद डाउनलोड करें",
@@ -270,7 +270,7 @@ export const hi = {
       "title1": "एक सफर, एक संकल्प",
       "desc1": "मुंबई से दिल्ली तक के सफर में कृष्ण कुमार ने संघर्ष को करीब से देखा। फुटपाथ पर रहने वाले बच्चों के साथ समय बिताते हुए एक सवाल लगातार सामने आया — क्या इन बच्चों को शिक्षा और बेहतर अवसरों से जोड़ा जा सकता है?",
       "btn1": "पूरी कहानी पढ़ें",
-      "text1": "14 फरवरी के Street Child Drive से शुरू हुआ यह प्रयास धीरे-धीरे बच्चों को पढ़ाने, स्कूलों से जोड़ने और परिवारों के साथ काम करने की दिशा में आगे बढ़ा। इसी संकल्प ने Shiksha Sankalp Foundation की नींव रखी।"
+      "text1": "14 फरवरी के Street Child Drive से शुरू हुआ यह प्रयास धीरे-धीरे बच्चों को पढ़ाने, स्कूलों से जोड़ने और परिवारों के साथ काम करने की दिशा में आगे बढ़ा। इसी संकल्प ने Siksha Sankalp Foundation की नींव रखी।"
     },
     "programsOverview": {
       "desc1": "जहाँ बच्चे हैं, वहीं से सीखने की शुरुआत।",
@@ -286,7 +286,7 @@ export const hi = {
       "title1": "Education & Footpath Learning",
       "title2": "School Admission & Support",
       "title3": "Educational Support",
-      "title4": "Free Digital Shiksha & Library",
+      "title4": "Free Digital Siksha & Library",
       "title5": "Bath Tent & Dignity Support",
       "title6": "Health & Hygiene",
       "title7": "Family & Essential Support",
@@ -324,7 +324,7 @@ export const hi = {
       "desc1": "वंचित बच्चों को फुटपाथ की दुनिया से निकालकर स्कूल की दुनिया तक पहुँचाना।",
       "btn1": "हमारी कहानी",
       "btn2": "हमारा काम देखें",
-      "text1": "Shiksha Sankalp Foundation वंचित और जरूरतमंद बच्चों को शिक्षा, मुख्यधारा के स्कूलों और बेहतर अवसरों से जोड़ने के लिए जमीनी स्तर पर काम करता है। हमारा प्रयास केवल शिक्षा तक सीमित नहीं है, बल्कि बच्चों और परिवारों को सम्मान, आत्मविश्वास और बेहतर भविष्य की दिशा में आगे बढ़ाना है।",
+      "text1": "Siksha Sankalp Foundation वंचित और जरूरतमंद बच्चों को शिक्षा, मुख्यधारा के स्कूलों और बेहतर अवसरों से जोड़ने के लिए जमीनी स्तर पर काम करता है। हमारा प्रयास केवल शिक्षा तक सीमित नहीं है, बल्कि बच्चों और परिवारों को सम्मान, आत्मविश्वास और बेहतर भविष्य की दिशा में आगे बढ़ाना है।",
       "text2": "मुफ़्त डिजिटल शिक्षा एवं लाइब्रेरी →"
     },
     "digitalLibrarySection": {
@@ -335,7 +335,7 @@ export const hi = {
     },
     "donateCTA": {
       "title1": "एक बच्चे की शिक्षा की यात्रा में आपका सहयोग जुड़ सकता है।",
-      "text1": "आपका सहयोग Shiksha Sankalp Foundation को शिक्षा, learning resources और जरूरतमंद परिवारों तक सहायता पहुँचाने के प्रयासों को आगे बढ़ाने में मदद कर सकता है।",
+      "text1": "आपका सहयोग Siksha Sankalp Foundation को शिक्षा, learning resources और जरूरतमंद परिवारों तक सहायता पहुँचाने के प्रयासों को आगे बढ़ाने में मदद कर सकता है।",
       "text2": "अभी दान करें"
     }
   },
@@ -582,7 +582,7 @@ export const hi = {
     },
     "transparencyRegistration": {
       "text1": "आधिकारिक पंजीकरण",
-      "text2": "Shiksha Sankalp Foundation",
+      "text2": "Siksha Sankalp Foundation",
       "text3": "पंजीकरण प्रकार:",
       "text4": "पंजीकृत ट्रस्ट",
       "text5": "घोषणा पंजीकरण संख्या:",

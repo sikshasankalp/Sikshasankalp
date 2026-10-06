@@ -81,7 +81,7 @@ export const createLibraryResource = async (
       uploadedImage =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/library',
+          'siksha-sankalp/library',
         );
     }
 
@@ -137,7 +137,7 @@ export const updateLibraryResource = async (
       uploadedImage =
         await cloudinaryService.uploadImage(
           req.file.buffer,
-          'shiksha-sankalp/library',
+          'siksha-sankalp/library',
         );
     }
 

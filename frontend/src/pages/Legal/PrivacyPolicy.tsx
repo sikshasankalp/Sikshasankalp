@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
             Privacy Policy
           </h1>
           <p className="mt-2 text-content-secondary text-sm">
-            Last Updated: October 2026 | Shiksha Sankalp Foundation
+            Last Updated: October 2026 | Siksha Sankalp Foundation
           </p>
         </div>
 
@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">1. Introduction</h2>
             <p>
-              Shiksha Sankalp Foundation (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy and personal data. This Privacy Policy outlines our practices regarding the collection, use, and disclosure of your information when you visit our website, make a donation, apply to volunteer, or interact with our community programs.
+              Siksha Sankalp Foundation (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy and personal data. This Privacy Policy outlines our practices regarding the collection, use, and disclosure of your information when you visit our website, make a donation, apply to volunteer, or interact with our community programs.
             </p>
           </section>
 
@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">5. Data Sharing and Disclosure</h2>
             <p>
-              Shiksha Sankalp Foundation does not sell, rent, or trade your personal information to third parties. We may disclose information only:
+              Siksha Sankalp Foundation does not sell, rent, or trade your personal information to third parties. We may disclose information only:
             </p>
             <ul className="list-disc pl-6 space-y-2 mt-2">
               <li>To trusted service providers who assist us in operating our digital platforms and communication systems (under confidentiality agreements).</li>
@@ -74,10 +74,10 @@ export default function PrivacyPolicy() {
               If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact our administrative office:
             </p>
             <div className="bg-surface-muted border border-border/70 rounded-xl p-4 mt-3 text-sm">
-              <p className="font-semibold text-content-primary">Shiksha Sankalp Foundation</p>
+              <p className="font-semibold text-content-primary">Siksha Sankalp Foundation</p>
               <p>KH-103, Alawardi Pur, Near Durga Mandir,</p>
               <p>Gautam Buddha Nagar, Uttar Pradesh – 201308</p>
-              <p className="mt-2">Email: <a href="mailto:info@shikshasankalp.org" className="text-primary hover:underline">info@shikshasankalp.org</a></p>
+              <p className="mt-2">Email: <a href="mailto:info@sikshasankalp.org" className="text-primary hover:underline">info@sikshasankalp.org</a></p>
               <p>Phone: <a href="tel:+918287843477" className="text-primary hover:underline">+91 82878 43477</a></p>
             </div>
           </section>

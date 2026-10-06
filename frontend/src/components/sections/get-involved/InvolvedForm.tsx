@@ -88,7 +88,7 @@ export function InvolvedForm() {
         },
         body: JSON.stringify({
           access_key: accessKey,
-          subject: 'New Volunteer Application — Shiksha Sankalp Foundation',
+          subject: 'New Volunteer Application — Siksha Sankalp Foundation',
           botcheck,
           name: formData.name,
           email: formData.email,

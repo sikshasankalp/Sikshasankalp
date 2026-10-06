@@ -30,7 +30,7 @@ export default function Settings() {
           <div className="space-y-3 text-sm">
             <div>
               <span className="text-xs text-content-muted uppercase font-bold tracking-wider">Account Name</span>
-              <p className="font-medium text-content-primary">{user?.name || 'Shiksha Sankalp Admin'}</p>
+              <p className="font-medium text-content-primary">{user?.name || 'Siksha Sankalp Admin'}</p>
             </div>
             <div>
               <span className="text-xs text-content-muted uppercase font-bold tracking-wider">Email Address</span>

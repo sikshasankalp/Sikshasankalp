@@ -3,7 +3,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 export function ImpactPrograms() {
     const { t } = useLanguage();
   const programs = [
-    { title: "Digital Shiksha & Library", description: "Providing critical access to digital learning tools and study materials to bridge the technological divide." },
+    { title: "Digital Siksha & Library", description: "Providing critical access to digital learning tools and study materials to bridge the technological divide." },
     { title: "Health & Hygiene", description: "Promoting physical wellbeing through health awareness, ensuring children are healthy enough to learn." },
     { title: "Family & Essential Support", description: "Stabilizing the home environment so that families can prioritize their children's long-term education." },
   ];

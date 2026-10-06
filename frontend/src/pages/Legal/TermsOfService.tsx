@@ -15,7 +15,7 @@ export default function TermsOfService() {
             Terms of Service
           </h1>
           <p className="mt-2 text-content-secondary text-sm">
-            Last Updated: October 2026 | Shiksha Sankalp Foundation
+            Last Updated: October 2026 | Siksha Sankalp Foundation
           </p>
         </div>
 
@@ -31,7 +31,7 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">2. Donations &amp; Tax Deductions (80G)</h2>
             <p className="mb-2">
-              All donations made to Shiksha Sankalp Foundation are utilized strictly towards charitable and educational initiatives, child welfare, digital literacy, and community support in accordance with our trust deed and Indian non-profit regulations.
+              All donations made to Siksha Sankalp Foundation are utilized strictly towards charitable and educational initiatives, child welfare, digital literacy, and community support in accordance with our trust deed and Indian non-profit regulations.
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Donations are eligible for tax deduction under Section 80G of the Income Tax Act, 1961, subject to accurate submission of donor PAN and details.</li>
@@ -43,21 +43,21 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">3. Intellectual Property Rights</h2>
             <p>
-              The content, graphics, photographs, branding, logo, and digital media published on this site are protected by copyright and intellectual property laws. Reproduction, modification, or distribution without prior written authorization from Shiksha Sankalp Foundation is prohibited.
+              The content, graphics, photographs, branding, logo, and digital media published on this site are protected by copyright and intellectual property laws. Reproduction, modification, or distribution without prior written authorization from Siksha Sankalp Foundation is prohibited.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">4. Volunteer Participation &amp; Code of Conduct</h2>
             <p>
-              Individuals volunteering with Shiksha Sankalp Foundation agree to uphold values of empathy, integrity, and child safety. Any discrimination, harassment, or misuse of foundation resources or access to vulnerable communities will result in immediate disqualification and legal remedies.
+              Individuals volunteering with Siksha Sankalp Foundation agree to uphold values of empathy, integrity, and child safety. Any discrimination, harassment, or misuse of foundation resources or access to vulnerable communities will result in immediate disqualification and legal remedies.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-content-primary mb-3">5. Disclaimer &amp; Limitation of Liability</h2>
             <p>
-              While we strive to keep information accurate and up-to-date, Shiksha Sankalp Foundation makes no warranties regarding the absolute completeness or reliability of website contents. In no event shall the foundation be liable for indirect or consequential damages arising from website usage.
+              While we strive to keep information accurate and up-to-date, Siksha Sankalp Foundation makes no warranties regarding the absolute completeness or reliability of website contents. In no event shall the foundation be liable for indirect or consequential damages arising from website usage.
             </p>
           </section>
 
@@ -72,10 +72,10 @@ export default function TermsOfService() {
             <h2 className="text-xl font-bold text-content-primary mb-3">7. Contact Information</h2>
             <p className="mb-2">For any questions concerning these Terms of Service, please contact us at:</p>
             <div className="bg-surface-muted border border-border/70 rounded-xl p-4 mt-3 text-sm">
-              <p className="font-semibold text-content-primary">Shiksha Sankalp Foundation</p>
+              <p className="font-semibold text-content-primary">Siksha Sankalp Foundation</p>
               <p>KH-103, Alawardi Pur, Near Durga Mandir,</p>
               <p>Gautam Buddha Nagar, Uttar Pradesh – 201308</p>
-              <p className="mt-2">Email: <a href="mailto:info@shikshasankalp.org" className="text-primary hover:underline">info@shikshasankalp.org</a></p>
+              <p className="mt-2">Email: <a href="mailto:info@sikshasankalp.org" className="text-primary hover:underline">info@sikshasankalp.org</a></p>
               <p>Phone: <a href="tel:+918287843477" className="text-primary hover:underline">+91 82878 43477</a></p>
             </div>
           </section>

@@ -45,7 +45,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-background border-r border-border/50 flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-border/50">
-          <span className="font-display font-bold text-lg text-content-primary truncate">Shiksha Admin</span>
+          <span className="font-display font-bold text-lg text-content-primary truncate">Siksha Admin</span>
           <button onClick={closeSidebar} className="lg:hidden text-content-secondary hover:text-content-primary">
             <X className="w-5 h-5" />
           </button>
