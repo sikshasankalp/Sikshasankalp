@@ -112,7 +112,7 @@ export const libraryQuerySchema = z
       .number()
       .int()
       .positive()
-      .max(50)
+      .max(100)
       .default(12),
 
     category: categorySchema.optional(),

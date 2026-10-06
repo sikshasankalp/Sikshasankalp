@@ -10,7 +10,7 @@ const ALLOWED_MIME_TYPES = new Set([
   'image/webp',
 ]);
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
 const fileFilter: multer.Options['fileFilter'] = (
   _req,

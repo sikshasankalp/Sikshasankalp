@@ -31,7 +31,6 @@ import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
 import VerifyEmail from './pages/Auth/VerifyEmail';
 import Dashboard from './admin/pages/Dashboard';
-import PlaceholderAdminPage from './admin/pages/PlaceholderAdminPage';
 import MediaManagement from './admin/pages/MediaManagement';
 import TeamManagement from './admin/pages/TeamManagement';
 import LibraryManagement from './admin/pages/LibraryManagement';
@@ -42,6 +41,7 @@ import TransparencyManagement from './admin/pages/TransparencyManagement';
 import VolunteersManagement from './admin/pages/VolunteersManagement';
 import PartnersManagement from './admin/pages/PartnersManagement';
 import MessagesManagement from './admin/pages/MessagesManagement';
+import Settings from './admin/pages/Settings';
 
 function App() {
   return (
@@ -94,7 +94,7 @@ function App() {
             <Route path="volunteers" element={<VolunteersManagement />} />
             <Route path="partners" element={<PartnersManagement />} />
             <Route path="messages" element={<MessagesManagement />} />
-            <Route path="settings" element={<PlaceholderAdminPage title="System Settings" />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
           </Routes>

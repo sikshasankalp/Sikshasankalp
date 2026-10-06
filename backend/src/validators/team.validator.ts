@@ -103,7 +103,7 @@ export const teamQuerySchema = z
       .number()
       .int()
       .positive()
-      .max(50)
+      .max(100)
       .default(12),
 
     published: queryBoolean
