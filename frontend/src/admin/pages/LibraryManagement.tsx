@@ -242,10 +242,21 @@ export default function LibraryManagement() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl my-8">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl my-8 relative overflow-hidden">
+            {submitting && (
+              <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+                <div className="w-14 h-14 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin mb-4" />
+                <h4 className="text-lg font-bold text-content-primary">
+                  {selectedFile ? 'Uploading thumbnail & saving resource...' : 'Saving changes...'}
+                </h4>
+                <p className="text-sm text-content-secondary max-w-xs mt-1">
+                  Please wait a moment while the digital resource is being updated.
+                </p>
+              </div>
+            )}
             <div className="flex justify-between items-center p-6 border-b border-border">
               <h2 className="text-xl font-bold">{editingId ? 'Edit Resource' : 'Add Resource'}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-content-secondary hover:text-content-primary">
+              <button disabled={submitting} onClick={() => setIsModalOpen(false)} className="text-content-secondary hover:text-content-primary disabled:opacity-50">
                 <X className="w-5 h-5" />
               </button>
             </div>

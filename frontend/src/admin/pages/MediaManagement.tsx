@@ -3,7 +3,7 @@ import { fetchGallery, createGalleryItem, updateGalleryItem, deleteGalleryItem }
 import type { GalleryItem } from '../../services/api/gallery';
 import { fetchMedia, createMediaItem, updateMediaItem, deleteMediaItem } from '../../services/api/media';
 import type { MediaCoverageItem } from '../../services/api/media';
-import { Plus, Edit2, Trash2, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Link as LinkIcon, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 type UnifiedMedia = {
   id: string;
@@ -58,6 +58,7 @@ export default function MediaManagement() {
   const [isPublished, setIsPublished] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadMedia = async () => {
     setIsLoading(true);
@@ -144,6 +145,11 @@ export default function MediaManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (type === 'IMAGE' && !editingItem && !file) {
+      return alert('Please select an image file');
+    }
+
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append('title', title);
     if (description) formData.append('description', description);
@@ -157,9 +163,6 @@ export default function MediaManagement() {
 
     try {
       if (type === 'IMAGE') {
-        if (!editingItem && !file) {
-          return alert('Please select an image file');
-        }
         if (editingItem) {
           await updateGalleryItem(editingItem.id, formData);
         } else {
@@ -178,6 +181,8 @@ export default function MediaManagement() {
       loadMedia();
     } catch (error: any) {
       alert(error.message || 'Failed to save media');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -281,7 +286,18 @@ export default function MediaManagement() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-background rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+          <div className="bg-background rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+            {isSubmitting && (
+              <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6 text-center rounded-xl animate-fadeIn">
+                <div className="w-14 h-14 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin mb-4" />
+                <h4 className="text-lg font-bold text-content-primary">
+                  {file ? 'Uploading image to Cloudinary...' : 'Saving changes...'}
+                </h4>
+                <p className="text-sm text-content-secondary max-w-xs mt-1">
+                  Please wait a moment while your media is being processed.
+                </p>
+              </div>
+            )}
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-content-primary">
                 {editingItem ? 'Edit Media' : 'Add New Media'}
@@ -423,16 +439,21 @@ export default function MediaManagement() {
               <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
                 <button
                   type="button"
+                  disabled={isSubmitting}
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg font-medium text-content-secondary hover:bg-surface-muted/50 transition-colors"
+                  className="px-4 py-2 rounded-lg font-medium text-content-secondary hover:bg-surface-muted/50 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-lg font-medium bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 rounded-lg font-medium bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {editingItem ? 'Update Media' : 'Save Media'}
+                  {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {isSubmitting
+                    ? (editingItem ? 'Updating...' : 'Saving...')
+                    : (editingItem ? 'Update Media' : 'Save Media')}
                 </button>
               </div>
             </form>
