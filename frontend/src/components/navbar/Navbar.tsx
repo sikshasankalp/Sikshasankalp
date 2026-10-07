@@ -60,19 +60,20 @@ export function Navbar() {
   });
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-border/40 ${
-        isScrolled 
-          ? 'bg-background/95 backdrop-blur-md shadow-sm py-2.5' 
-          : 'bg-background py-3 md:py-4'
-      }`}
-    >
-      {/* Full width container with minimal padding to push items to the edges like Spotify */}
-      <div className="w-full px-4 md:px-6 flex items-center justify-between">
-        {/* Left: Logo */}
-        <div className="flex-shrink-0">
-          <Logo />
-        </div>
+    <>
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-border/40 ${
+          isScrolled 
+            ? 'bg-background/95 backdrop-blur-md shadow-sm py-2.5' 
+            : 'bg-background py-3 md:py-4'
+        }`}
+      >
+        {/* Full width container with minimal padding to push items to the edges like Spotify */}
+        <div className="w-full px-4 md:px-6 flex items-center justify-between">
+          {/* Left: Logo */}
+          <div className="flex-shrink-0">
+            <Logo />
+          </div>
 
         {/* Right: All Navigation & Actions */}
         <nav className="hidden lg:flex items-center">
@@ -225,95 +226,99 @@ export function Navbar() {
           </button>
         </div>
       </div>
-
-      {/* Mobile Drawer */}
-      <div 
-        className={`fixed inset-0 top-[60px] md:top-[72px] bg-background z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col ${
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex-1 px-4 py-6 flex flex-col gap-6">
-          <nav className="flex flex-col gap-1 border-b border-border pb-6">
-            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text10')}</span>
-            {mainNavigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className={`px-3 py-3 rounded-md text-base font-medium transition-colors ${
-                    isActive 
-                      ? 'bg-brand-primary/5 text-brand-primary' 
-                      : 'text-content-primary hover:bg-surface-muted'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-          
-          <nav className="flex flex-col gap-1 pb-6">
-            <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text11')}</span>
-            {moreNavigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className={`px-3 py-3 rounded-md text-base font-medium transition-colors ${
-                    isActive 
-                      ? 'bg-brand-primary/5 text-brand-primary' 
-                      : 'text-content-secondary hover:bg-surface-muted'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-            
-            {user && (
-              <>
-                <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3 mt-4">{t('navbar.navbar.text12')}</span>
-                {isAdmin && (
-                  <Link
-                    to="/admin/dashboard"
-                    className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
-                  >
-                    {t('navbar.navbar.text13')}
-                                                        </Link>
-                )}
-                <Link
-                  to="/account/donations"
-                  className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {t('navbar.navbar.text14')}
-                                                  </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-left px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
-                >
-                  {t('navbar.navbar.text15')}
-                                                  </button>
-              </>
-            )}
-          </nav>
-        </div>
-        
-        <div className="p-4 border-t border-border bg-surface-muted mt-auto">
-          <button 
-            onClick={() => setCurrentLanguage(currentLanguage === 'English' ? 'Hindi' : 'English')}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-border rounded-md text-content-primary font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <Globe className="w-5 h-5 text-brand-primary" />
-            <span>{currentLanguage === 'English' ? 'Read in हिन्दी' : 'Read in English'}</span>
-          </button>
-        </div>
-      </div>
     </header>
+
+    {/* Mobile Drawer (placed outside header to prevent backdrop-filter containing block trap) */}
+    <div 
+      className={`fixed inset-x-0 bottom-0 top-[56px] md:top-[70px] bg-background z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col shadow-2xl ${
+        isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
+      }`}
+    >
+      <div className="flex-1 px-4 py-6 flex flex-col gap-6">
+        <nav className="flex flex-col gap-1 border-b border-border pb-6">
+          <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text10')}</span>
+          {mainNavigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-3 py-3 rounded-md text-base font-medium transition-colors ${
+                  isActive 
+                    ? 'bg-brand-primary/5 text-brand-primary' 
+                    : 'text-content-primary hover:bg-surface-muted'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        
+        <nav className="flex flex-col gap-1 pb-6">
+          <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3">{t('navbar.navbar.text11')}</span>
+          {moreNavigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-3 py-3 rounded-md text-base font-medium transition-colors ${
+                  isActive 
+                    ? 'bg-brand-primary/5 text-brand-primary' 
+                    : 'text-content-secondary hover:bg-surface-muted'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          
+          {user && (
+            <>
+              <span className="text-xs font-semibold text-content-muted uppercase tracking-wider mb-2 px-3 mt-4">{t('navbar.navbar.text12')}</span>
+              {isAdmin && (
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+                >
+                  {t('navbar.navbar.text13')}
+                </Link>
+              )}
+              <Link
+                to="/account/donations"
+                className="px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('navbar.navbar.text14')}
+              </Link>
+              <button
+                onClick={() => {
+                  logout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left px-3 py-3 rounded-md text-base font-medium transition-colors text-content-secondary hover:bg-surface-muted"
+              >
+                {t('navbar.navbar.text15')}
+              </button>
+            </>
+          )}
+        </nav>
+      </div>
+      
+      <div className="p-4 border-t border-border bg-surface-muted mt-auto">
+        <button 
+          onClick={() => setCurrentLanguage(currentLanguage === 'English' ? 'Hindi' : 'English')}
+          className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-border rounded-md text-content-primary font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+        >
+          <Globe className="w-5 h-5 text-brand-primary" />
+          <span>{currentLanguage === 'English' ? 'Read in हिन्दी' : 'Read in English'}</span>
+        </button>
+      </div>
+    </div>
+  </>
   );
 }
