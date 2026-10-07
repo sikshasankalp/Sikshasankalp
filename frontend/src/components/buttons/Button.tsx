@@ -59,7 +59,7 @@ export function Button({
 
   const renderContent = () => (
     <>
-      <span>{children}</span>
+      <span className="inline-flex items-center justify-center gap-2">{children}</span>
       {isInteractive ? (
         <>
           <span className="inline-block text-brand-primary group-hover/btn:hidden transition-all duration-200 ml-1.5 font-mono text-[1.15em] leading-none shrink-0">
