@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../buttons/Button';
 import { SmoothInput } from '../../common/SmoothInput';
 import { useLanguage } from "../../../context/LanguageContext";
+import { API_URL } from '../../../config/env';
 
 const FORM_OPTIONS = [
   { id: 'teaching', label: 'Teaching' },
@@ -70,44 +71,59 @@ export function InvolvedForm() {
     setIsSubmitting(true);
     
     try {
-      const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-      if (!accessKey) {
-        throw new Error('Form configuration is missing. Please contact support.');
-      }
-
-      // Map interests back to labels for the email
+      // Map interests back to labels
       const selectedInterests = formData.interests
         .map(id => FORM_OPTIONS.find(opt => opt.id === id)?.label)
         .filter(Boolean)
         .join(', ');
 
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: 'New Volunteer Application — Siksha Sankalp Foundation',
-          botcheck,
-          name: formData.name,
-          email: formData.email,
-          mobile: formData.mobile,
-          city: formData.city,
-          help: selectedInterests,
-          skills: formData.skills,
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        setIsSuccess(true);
-        setFormData({ name: '', mobile: '', email: '', city: '', skills: '', interests: [] });
-      } else {
-        throw new Error(result.message || 'Submission failed');
+      // 1. Save directly to Database so Admin sees it in /admin/volunteers
+      try {
+        await fetch(`${API_URL}/volunteer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            mobile: formData.mobile.trim(),
+            email: formData.email.trim() || undefined,
+            city: formData.city.trim() || undefined,
+            skills: formData.skills.trim() || undefined,
+            interests: selectedInterests || undefined
+          })
+        });
+      } catch (dbErr) {
+        console.warn('Backend volunteer save error:', dbErr);
       }
+
+      // 2. Also send notification via Web3Forms (if key present)
+      const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      if (accessKey) {
+        try {
+          await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              access_key: accessKey,
+              subject: 'New Volunteer Application — Siksha Sankalp Foundation',
+              botcheck,
+              name: formData.name,
+              email: formData.email,
+              mobile: formData.mobile,
+              city: formData.city,
+              help: selectedInterests,
+              skills: formData.skills,
+            })
+          });
+        } catch (wErr) {
+          console.warn('Web3Forms notification error:', wErr);
+        }
+      }
+
+      setIsSuccess(true);
+      setFormData({ name: '', mobile: '', email: '', city: '', skills: '', interests: [] });
     } catch (err: any) {
       console.error('Form submission error:', err);
       setError(err?.message || 'Something went wrong. Please try again later.');

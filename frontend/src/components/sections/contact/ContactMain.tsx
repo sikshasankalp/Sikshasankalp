@@ -3,6 +3,7 @@ import { Button } from '../../buttons/Button';
 import { SmoothInput } from '../../common/SmoothInput';
 import { MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useLanguage } from "../../../context/LanguageContext";
+import { API_URL } from '../../../config/env';
 
 const ENQUIRY_TYPES = [
   'General Enquiry',
@@ -60,37 +61,51 @@ export function ContactMain() {
     setIsSubmitting(true);
     
     try {
+      // 1. Save directly to Database so Admin sees it in /admin/messages
+      try {
+        await fetch(`${API_URL}/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            mobile: formData.mobile.trim(),
+            email: formData.email.trim() || undefined,
+            subject: formData.enquiryType,
+            message: formData.message.trim()
+          })
+        });
+      } catch (dbErr) {
+        console.warn('Backend contact save error:', dbErr);
+      }
+
+      // 2. Also send notification via Web3Forms (if key present)
       const accessKey = import.meta.env.VITE_WEB3FORMS_CONTACT_ACCESS_KEY;
-      if (!accessKey) {
-        throw new Error('Form configuration is missing. Please contact support.');
+      if (accessKey) {
+        try {
+          await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              access_key: accessKey,
+              subject: 'New Contact Inquiry — Siksha Sankalp Foundation',
+              botcheck,
+              name: formData.name,
+              mobile: formData.mobile,
+              email: formData.email,
+              enquiryType: formData.enquiryType,
+              message: formData.message,
+            })
+          });
+        } catch (wErr) {
+          console.warn('Web3Forms notification error:', wErr);
+        }
       }
 
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: 'New Contact Inquiry — Siksha Sankalp Foundation',
-          botcheck,
-          name: formData.name,
-          mobile: formData.mobile,
-          email: formData.email,
-          enquiryType: formData.enquiryType,
-          message: formData.message,
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        setIsSuccess(true);
-        setFormData({ name: '', mobile: '', email: '', enquiryType: '', message: '' });
-      } else {
-        throw new Error(result.message || 'Submission failed');
-      }
+      setIsSuccess(true);
+      setFormData({ name: '', mobile: '', email: '', enquiryType: '', message: '' });
     } catch (err: any) {
       console.error('Form submission error:', err);
       setError(err?.message || 'Something went wrong. Please try again later.');
