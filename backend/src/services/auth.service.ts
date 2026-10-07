@@ -13,12 +13,15 @@ import { AppError } from '../errors/AppError';
 import {
   loginSchema,
   resetPasswordSchema,
-  signupSchema
+  signupSchema,
+  verifyAdminOtpSchema
 } from '../validators/auth.validator';
+import { Role } from '@prisma/client';
 
 import {
   sendResetPasswordEmail,
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendAdminLoginOtpEmail
 } from '../utils/email';
 
 import { googleAuthService } from './google-auth.service';
@@ -349,6 +352,45 @@ export const authService = {
       );
     }
 
+    const isAdmin = user.role !== Role.PUBLIC_USER;
+
+    if (isAdmin) {
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const otpHash = hashToken(otp);
+      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          twoFactorOtpHash: otpHash,
+          twoFactorOtpExpiry: otpExpiry
+        }
+      });
+
+      try {
+        await sendAdminLoginOtpEmail(user.email, otp);
+      } catch (err) {
+        console.error('[2FA] Failed to send admin OTP email:', err);
+        throw new AppError('Failed to send verification code to admin email. Please try again.', 500);
+      }
+
+      const tempToken = jwt.sign(
+        { userId: user.id, email: user.email, purpose: 'admin_2fa' },
+        config.jwt.access,
+        { expiresIn: '10m' }
+      );
+
+      const [local, domain] = user.email.split('@');
+      const maskedEmail = domain ? `${local.slice(0, 3)}***@${domain}` : user.email;
+
+      return {
+        requireOtp: true as const,
+        tempToken,
+        email: maskedEmail,
+        message: 'A 6-digit verification code has been sent to your email.'
+      };
+    }
+
     const accessToken =
       generateAccessToken(
         user.id,
@@ -372,9 +414,118 @@ export const authService = {
     });
 
     return {
+      requireOtp: false as const,
       accessToken,
       refreshToken,
       user: getSafeUser(user)
+    };
+  },
+
+  async verifyAdminOtp(
+    payload: z.infer<typeof verifyAdminOtpSchema>
+  ) {
+    let decoded: any;
+    try {
+      decoded = jwt.verify(payload.tempToken, config.jwt.access);
+    } catch {
+      throw new AppError('2FA verification session has expired. Please sign in again.', 401);
+    }
+
+    if (!decoded || decoded.purpose !== 'admin_2fa' || !decoded.userId) {
+      throw new AppError('Invalid 2FA session token.', 401);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId }
+    });
+
+    if (!user || !user.isActive) {
+      throw new AppError('Account not found or inactive.', 401);
+    }
+
+    if (!user.twoFactorOtpHash || !user.twoFactorOtpExpiry) {
+      throw new AppError('No pending 2FA code found. Please sign in again.', 400);
+    }
+
+    if (user.twoFactorOtpExpiry < new Date()) {
+      throw new AppError('Verification code has expired. Please request a new code.', 400);
+    }
+
+    const incomingHash = hashToken(payload.otp.trim());
+    if (user.twoFactorOtpHash !== incomingHash) {
+      throw new AppError('Incorrect verification code. Please check and try again.', 400);
+    }
+
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id);
+    const refreshTokenHash = hashToken(refreshToken);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        lastLoginAt: new Date(),
+        refreshTokenHash,
+        twoFactorOtpHash: null,
+        twoFactorOtpExpiry: null
+      }
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      user: getSafeUser(user)
+    };
+  },
+
+  async resendAdminOtp(rawTempToken: string) {
+    let decoded: any;
+    try {
+      decoded = jwt.verify(rawTempToken, config.jwt.access);
+    } catch {
+      throw new AppError('2FA session has expired. Please sign in again.', 401);
+    }
+
+    if (!decoded || decoded.purpose !== 'admin_2fa' || !decoded.userId) {
+      throw new AppError('Invalid 2FA session token.', 401);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId }
+    });
+
+    if (!user || !user.isActive) {
+      throw new AppError('Account not found or inactive.', 401);
+    }
+
+    if (user.twoFactorOtpExpiry) {
+      const remainingMs = user.twoFactorOtpExpiry.getTime() - Date.now();
+      if (remainingMs > 9 * 60 * 1000 + 15 * 1000) {
+        throw new AppError('Please wait at least 45 seconds before requesting a new code.', 429);
+      }
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpHash = hashToken(otp);
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        twoFactorOtpHash: otpHash,
+        twoFactorOtpExpiry: otpExpiry
+      }
+    });
+
+    try {
+      await sendAdminLoginOtpEmail(user.email, otp);
+    } catch (err) {
+      console.error('[2FA] Failed to resend admin OTP email:', err);
+      throw new AppError('Failed to send verification code email. Please try again.', 500);
+    }
+
+    return {
+      success: true,
+      message: 'A fresh 6-digit verification code has been sent to your email.'
     };
   },
 

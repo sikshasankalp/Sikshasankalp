@@ -23,6 +23,20 @@ export interface User {
   hasPassword?: boolean;
 }
 
+export interface LoginOtpData {
+  requireOtp: true;
+  tempToken: string;
+  email: string;
+  message: string;
+}
+
+export interface LoginUserData {
+  requireOtp: false;
+  user: User;
+}
+
+export type LoginResult = LoginUserData | LoginOtpData;
+
 const parseResponse = async (response: Response) => {
   let result;
   try {
@@ -41,7 +55,7 @@ const parseResponse = async (response: Response) => {
   return result;
 };
 
-export const login = async (data: LoginRequest): Promise<User> => {
+export const login = async (data: LoginRequest): Promise<LoginResult> => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
@@ -52,7 +66,44 @@ export const login = async (data: LoginRequest): Promise<User> => {
   });
   
   const result = await parseResponse(response);
+  if (result.requireOtp) {
+    return {
+      requireOtp: true,
+      tempToken: result.data.tempToken,
+      email: result.data.email,
+      message: result.data.message
+    };
+  }
+  return {
+    requireOtp: false,
+    user: result.data.user
+  };
+};
+
+export const verifyAdminOtp = async (data: { tempToken: string; otp: string }): Promise<User> => {
+  const response = await fetch(`${API_URL}/auth/verify-admin-otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+
+  const result = await parseResponse(response);
   return result.data.user;
+};
+
+export const resendAdminOtp = async (data: { tempToken: string }): Promise<{ success: boolean; message: string }> => {
+  const response = await fetch(`${API_URL}/auth/resend-admin-otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  return await parseResponse(response);
 };
 
 export const logout = async (): Promise<void> => {

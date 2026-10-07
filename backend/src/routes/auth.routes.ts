@@ -12,7 +12,9 @@ import {
     resendVerificationEmail,
     googleLogin,
     googleCallback,
-    setPassword
+    setPassword,
+    verifyAdminOtp,
+    resendAdminOtp
 } from '../controllers/auth.controller';
 
 import { requireAuth } from '../middleware/auth.middleware';
@@ -39,6 +41,18 @@ router.post(
 );
 
 router.post('/login', authLimiter, login);
+
+router.post(
+    '/verify-admin-otp',
+    strictAuthLimiter,
+    verifyAdminOtp
+);
+
+router.post(
+    '/resend-admin-otp',
+    strictAuthLimiter,
+    resendAdminOtp
+);
 
 router.get('/google', authLimiter, googleLogin);
 

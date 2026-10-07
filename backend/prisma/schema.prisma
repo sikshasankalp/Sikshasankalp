@@ -27,6 +27,8 @@ model User {
   emailVerifyTokenHash   String?   @map("emailVerifyToken")
   isVerified             Boolean   @default(false)
   photoUrl               String?   @default("")
+  twoFactorOtpHash       String?   @map("twoFactorOtp")
+  twoFactorOtpExpiry     DateTime?
   donations              Donation[]
 }
 

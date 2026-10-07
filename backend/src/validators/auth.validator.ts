@@ -88,3 +88,25 @@ export const setPasswordSchema = z
     message: 'Passwords do not match',
     path: ['confirmPassword']
   });
+
+export const verifyAdminOtpSchema = z
+  .object({
+    tempToken: z
+      .string()
+      .trim()
+      .min(1, 'Temporary session token is required'),
+    otp: z
+      .string()
+      .trim()
+      .regex(/^\d{6}$/, 'OTP must be a 6-digit numeric code')
+  })
+  .strict();
+
+export const resendAdminOtpSchema = z
+  .object({
+    tempToken: z
+      .string()
+      .trim()
+      .min(1, 'Temporary session token is required')
+  })
+  .strict();

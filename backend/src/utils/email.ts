@@ -247,3 +247,66 @@ export const sendDonationReceiptEmail = async (
     throw error;
   }
 };
+
+export const sendAdminLoginOtpEmail = async (to: string, otp: string) => {
+  const maskedTo = maskEmailForLogs(to);
+  const subject = `Siksha Sankalp Admin Verification Code: ${otp}`;
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 32px 24px; background: #ffffff; border: 1px solid #E8E2D7; border-radius: 16px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="color: #1A1A1A; margin: 0; font-size: 22px; font-weight: 700;">Siksha Sankalp Foundation</h2>
+        <p style="color: #8C867E; font-size: 14px; margin-top: 4px;">Admin Portal Two-Factor Authentication</p>
+      </div>
+
+      <div style="background: #FBF8F3; border: 1px solid #EADBCE; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
+        <p style="color: #4A453E; font-size: 14px; margin: 0 0 12px 0;">Use the verification code below to sign in:</p>
+        <div style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #C85A27; font-family: monospace; padding: 8px 0;">
+          ${otp}
+        </div>
+        <p style="color: #8C867E; font-size: 12px; margin: 12px 0 0 0;">This code will expire in <strong>10 minutes</strong>.</p>
+      </div>
+
+      <p style="color: #8C867E; font-size: 13px; line-height: 1.5; margin: 0 0 16px 0;">
+        If you did not attempt to sign in to the Siksha Sankalp Admin Portal, please secure your account immediately or notify the administrator.
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #F0EAE0; margin: 20px 0;" />
+      <p style="color: #A89B8E; font-size: 12px; text-align: center; margin: 0;">
+        &copy; ${new Date().getFullYear()} Siksha Sankalp Foundation. All rights reserved.
+      </p>
+    </div>
+  `;
+
+  if (config.brevoApiKey) {
+    return await sendViaBrevo({
+      to,
+      subject,
+      htmlContent: html
+    });
+  }
+
+  console.log(`[EmailService] Sending admin 2FA OTP email to ${maskedTo}...`);
+
+  const mailOptions = {
+    from: `"Siksha Sankalp Foundation" <${config.email.user}>`,
+    to,
+    subject,
+    html
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] Admin 2FA OTP email delivered to ${maskedTo}. MessageId: ${info.messageId}`);
+    return {
+      messageId: info.messageId,
+      response: info.response
+    };
+  } catch (error: any) {
+    console.error(`[EmailService] Failed to send admin OTP email to ${maskedTo}:`, {
+      message: error?.message,
+      code: error?.code
+    });
+    throw error;
+  }
+};
+

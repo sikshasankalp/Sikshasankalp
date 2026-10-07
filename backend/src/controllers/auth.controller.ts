@@ -11,7 +11,9 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signupSchema,
-  setPasswordSchema
+  setPasswordSchema,
+  verifyAdminOtpSchema,
+  resendAdminOtpSchema
 } from '../validators/auth.validator';
 
 import { AuthRequest } from '../types/auth.types';
@@ -204,11 +206,27 @@ export const login = async (
       );
     }
 
+    const result = await authService.login(parsed.data);
+
+    if ('requireOtp' in result && result.requireOtp) {
+      res.set('Cache-Control', 'no-store');
+      res.json({
+        success: true,
+        requireOtp: true,
+        data: {
+          tempToken: result.tempToken,
+          email: result.email,
+          message: result.message
+        }
+      });
+      return;
+    }
+
     const {
       accessToken,
       refreshToken,
       user
-    } = await authService.login(parsed.data);
+    } = result;
 
     res.cookie(
       'accessToken',
@@ -229,6 +247,63 @@ export const login = async (
       data: {
         user
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyAdminOtp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const parsed = verifyAdminOtpSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues[0]?.message || 'Invalid verification request';
+      throw new AppError(firstIssue, 400);
+    }
+
+    const { accessToken, refreshToken, user } =
+      await authService.verifyAdminOtp(parsed.data);
+
+    res.cookie('accessToken', accessToken, accessTokenOptions);
+    res.cookie('refreshToken', refreshToken, refreshTokenOptions);
+    res.set('Cache-Control', 'no-store');
+
+    res.json({
+      success: true,
+      message: 'Admin verification successful',
+      data: {
+        user
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendAdminOtp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const parsed = resendAdminOtpSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues[0]?.message || 'Invalid resend request';
+      throw new AppError(firstIssue, 400);
+    }
+
+    const result = await authService.resendAdminOtp(parsed.data.tempToken);
+
+    res.set('Cache-Control', 'no-store');
+    res.json({
+      success: true,
+      message: result.message
     });
   } catch (error) {
     next(error);

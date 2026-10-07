@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { checkAuth, login as apiLogin, logout as apiLogout, type LoginRequest } from '../services/auth';
+import { checkAuth, login as apiLogin, logout as apiLogout, type LoginRequest, type LoginResult } from '../services/auth';
 
 export interface User {
   id: string;
@@ -15,7 +15,8 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<LoginResult>;
+  setUser: (user: User | null) => void;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   isAdmin: boolean;
@@ -50,9 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
   }, []);
 
-  const login = async (data: LoginRequest) => {
-    const userData = await apiLogin(data);
-    setUser(userData);
+  const login = async (data: LoginRequest): Promise<LoginResult> => {
+    const res = await apiLogin(data);
+    if (!res.requireOtp) {
+      setUser(res.user);
+    }
+    return res;
   };
 
   const logout = async () => {
@@ -66,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'CONTENT_ADMIN' || user?.role === 'FINANCE_ADMIN';
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, refreshUser, isAdmin }}>
+    <AuthContext.Provider value={{ user, setUser, isLoading, login, logout, refreshUser, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
