@@ -59,14 +59,16 @@ export function Button({
 
   const renderContent = () => (
     <>
-      {isInteractive && (
-        <span className="w-2 h-2 rounded-full bg-brand-primary group-hover/btn:hidden transition-all shrink-0"></span>
-      )}
       <span>{children}</span>
       {isInteractive ? (
-        <span className="hidden group-hover/btn:inline-block ml-[-2px] font-mono text-[1.15em] leading-none transition-all">
-          ↗
-        </span>
+        <>
+          <span className="inline-block text-brand-primary group-hover/btn:hidden transition-all duration-200 ml-1.5 font-mono text-[1.15em] leading-none shrink-0">
+            ↗
+          </span>
+          <span className="hidden group-hover/btn:inline-block transition-transform duration-200 group-hover/btn:translate-x-1 ml-1.5 font-mono text-[1.15em] leading-none shrink-0 text-white">
+            →
+          </span>
+        </>
       ) : arrow ? (
         <span className="inline-block transition-transform duration-200 group-hover/btn:translate-x-1.5 ml-2 font-mono text-[1.15em] leading-none">
           →
