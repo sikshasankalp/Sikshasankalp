@@ -68,4 +68,21 @@
   .card {
     @apply bg-surface rounded-xl shadow-soft border border-border overflow-hidden transition-shadow hover:shadow-elevated;
   }
+
+  /* Continuously moving marquee ticker */
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }
+

@@ -19,6 +19,7 @@ import PartnerWithUs from './pages/PartnerWithUs';
 import Contact from './pages/Contact';
 import Donate from './pages/Donate';
 import MyDonations from './pages/MyDonations';
+import NeedsPage from './pages/Needs';
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsOfService from './pages/Legal/TermsOfService';
 
@@ -41,6 +42,7 @@ import TransparencyManagement from './admin/pages/TransparencyManagement';
 import VolunteersManagement from './admin/pages/VolunteersManagement';
 import PartnersManagement from './admin/pages/PartnersManagement';
 import MessagesManagement from './admin/pages/MessagesManagement';
+import NeedsManagement from './admin/pages/NeedsManagement';
 import Settings from './admin/pages/Settings';
 
 function App() {
@@ -65,6 +67,7 @@ function App() {
           <Route path="/partner-with-us" element={<PartnerWithUs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/needs" element={<NeedsPage />} />
           <Route path="/account/donations" element={<MyDonations />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
@@ -85,6 +88,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="gallery" element={<MediaManagement />} />
             <Route path="donations" element={<DonationsManagement />} />
+            <Route path="needs" element={<NeedsManagement />} />
             <Route path="programs" element={<ProgramsManagement />} />
             <Route path="impact" element={<ImpactManagement />} />
             <Route path="team" element={<TeamManagement />} />

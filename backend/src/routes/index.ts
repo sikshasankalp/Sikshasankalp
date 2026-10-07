@@ -14,6 +14,7 @@ import partnerRoutes from './partner.routes';
 import contactRoutes from './contact.routes';
 import donationRoutes from './donation.routes';
 import impactRoutes from './impact.routes';
+import needRoutes from './need.routes';
 
 const router = Router();
 
@@ -44,5 +45,7 @@ router.use('/contact', contactRoutes);
 router.use('/donations', donationRoutes);
 
 router.use('/impact', impactRoutes);
+
+router.use('/needs', needRoutes);
 
 export default router;
