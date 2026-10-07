@@ -5,7 +5,7 @@ import { fetchGallery } from '../../../services/api/gallery';
 import { useLanguage } from "../../../context/LanguageContext";
 
 export function LibraryHero() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,17 +25,17 @@ export function LibraryHero() {
           <div className="flex flex-col max-w-[580px] lg:ml-6 xl:ml-10">
             <h1 className="text-[32px] md:text-[40px] lg:text-[46px] xl:text-[48px] leading-[1.15] lg:leading-[1.12] font-semibold tracking-tight text-content-primary mb-[16px] lg:mb-[20px]">
               {t('library.libraryHero.text1')}
-                                      </h1>
+            </h1>
             <p className="text-[18px] lg:text-[20px] leading-[1.45] font-medium text-content-secondary mb-[32px]">
               {t('library.libraryHero.text2')}
-                                      </p>
+            </p>
             <div className="flex flex-wrap items-center gap-4">
-              <Button to="#categories" variant="primary" size="lg">
+              <Button to="#categories" variant="interactive">
                 {t('library.libraryHero.text3')}
-                                            </Button>
-              <Button to="/donate" variant="outline" size="lg">
+              </Button>
+              <Button to="/donate" variant="accent" size="lg" arrow>
                 {t('library.libraryHero.text4')}
-                                            </Button>
+              </Button>
             </div>
           </div>
           

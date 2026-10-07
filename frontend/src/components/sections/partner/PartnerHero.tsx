@@ -33,11 +33,12 @@ export function PartnerHero() {
             <p className="text-[18px] lg:text-[20px] leading-[1.45] font-medium text-content-secondary mb-[32px]">
               {t('partner.partnerHero.text2')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button to="#partner-form" variant="primary" size="lg" className="w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button to="#partner-form" variant="interactive">
                 {t('partner.partnerHero.text3')}
               </Button>
-              <Button to="/programs" variant="outline" size="lg" className="w-full sm:w-auto">
+              <span className="hidden sm:inline text-border text-lg font-light select-none">|</span>
+              <Button to="/programs" variant="interactive">
                 {t('partner.partnerHero.text4')}
               </Button>
             </div>
