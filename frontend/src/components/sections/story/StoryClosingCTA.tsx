@@ -12,10 +12,10 @@ export function StoryClosingCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
-          <Button to="/programs" variant="accent" size="lg" arrow>
+          <Button to="/programs" variant="interactive">
             {t('story.storyClosingCTA.text3')}
           </Button>
-          <Button to="/impact" variant="outline" size="lg" arrow>
+          <Button to="/impact" variant="interactive">
             {t('story.storyClosingCTA.text4')}
           </Button>
           <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">

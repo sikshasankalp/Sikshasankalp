@@ -30,7 +30,7 @@ export function LibraryHero() {
               {t('library.libraryHero.text2')}
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <Button to="#categories" variant="outline" size="lg" arrow>
+              <Button to="#categories" variant="interactive">
                 {t('library.libraryHero.text3')}
               </Button>
               <Button to="/donate" variant="accent" size="lg" arrow>

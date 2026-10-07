@@ -12,13 +12,15 @@ export function ImpactTransparency() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
-          <Button to="/gallery" variant="accent" size="lg" arrow>
+          <Button to="/gallery" variant="interactive">
             {t('impact.impactTransparency.text3')}
           </Button>
-          <Button to="/media" variant="outline" size="lg" arrow>
+          <span className="hidden sm:inline text-border text-lg font-light select-none">|</span>
+          <Button to="/media" variant="interactive">
             {t('impact.impactTransparency.text4')}
           </Button>
-          <Button to="/transparency" variant="outline" size="lg" arrow>
+          <span className="hidden sm:inline text-border text-lg font-light select-none">|</span>
+          <Button to="/transparency" variant="interactive">
             {t('impact.impactTransparency.text5')}
           </Button>
         </div>

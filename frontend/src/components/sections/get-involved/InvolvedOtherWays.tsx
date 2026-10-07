@@ -14,7 +14,7 @@ export function InvolvedOtherWays() {
             <p className="text-sm text-content-secondary mb-6 flex-grow">
               {t('get-Involved.involvedOtherWays.text3')}
             </p>
-            <Button to="/partner-with-us" variant="accent" size="sm" arrow className="w-full">
+            <Button to="/partner-with-us" variant="interactive" size="sm" className="w-full">
               {t('get-Involved.involvedOtherWays.text4')}
             </Button>
           </div>
@@ -34,7 +34,7 @@ export function InvolvedOtherWays() {
             <p className="text-sm text-content-secondary mb-6 flex-grow">
               {t('get-Involved.involvedOtherWays.text9')}
             </p>
-            <Button to="/contact" variant="outline" size="sm" arrow className="w-full">
+            <Button to="/contact" variant="interactive" size="sm" className="w-full">
               {t('get-Involved.involvedOtherWays.text10')}
             </Button>
           </div>

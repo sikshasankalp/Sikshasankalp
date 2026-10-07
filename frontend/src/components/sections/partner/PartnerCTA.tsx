@@ -12,7 +12,7 @@ export function PartnerCTA() {
         <p className="text-xl md:text-2xl text-content-secondary leading-relaxed font-light mb-10">
           {t('partner.partnerCTA.text2')}
         </p>
-        <Button to="#partner-form" variant="accent" size="lg" arrow>
+        <Button to="#partner-form" variant="interactive">
           {t('partner.partnerCTA.text3')}
         </Button>
       </div>

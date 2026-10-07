@@ -84,7 +84,7 @@ export function StoryTeaser() {
               </p>
             </div>
             
-            <Button to="/our-story" variant="accent" size="lg" arrow>
+            <Button to="/our-story" variant="interactive">
               {t('home.storyTeaser.btn1')}
             </Button>
           </div>
