@@ -273,20 +273,39 @@ export function ContactMain() {
             {/* Visit / Location */}
             <div>
               <h2 className="text-xl font-bold text-content-primary mb-4">{t('contact.contactMain.text16')}</h2>
-              <div className="flex gap-4 p-6 border border-border/60 rounded-lg bg-surface-muted/30">
-                <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-content-primary font-medium leading-relaxed">
-                    {t('contact.contactMain.text17')}
-                  </p>
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=KH-103,+Alawardi+Pur,+Near+Durga+Mandir,+Gautam+Buddha+Nagar,+Uttar+Pradesh+201308"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:underline mt-2"
-                  >
-                    View on Google Maps →
-                  </a>
+              <div className="flex flex-col gap-4 p-6 border border-border/60 rounded-xl bg-surface-muted/30 shadow-sm">
+                <div className="flex gap-4">
+                  <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-semibold mb-2">
+                      Open Learning Center (Ground Classes)
+                    </div>
+                    <p className="text-content-primary font-medium leading-relaxed">
+                      {t('contact.contactMain.text17')}
+                    </p>
+                    <a
+                      href="https://maps.app.goo.gl/VpdPkZ4Rb9J5AZqQ6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary hover:underline mt-3"
+                    >
+                      View on Google Maps →
+                    </a>
+                  </div>
+                </div>
+
+                {/* Embedded Map */}
+                <div className="w-full h-48 rounded-lg overflow-hidden border border-border/70 mt-1 shadow-inner">
+                  <iframe
+                    title="Siksha Sankalp Open Learning Center Location"
+                    src="https://maps.google.com/maps?q=28.548793,77.248806&hl=en&z=16&output=embed"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={false}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </div>
             </div>
