@@ -70,10 +70,15 @@ export function Navbar() {
       >
         {/* Top Compliance & 80G Tax Exemption Announcement Bar (like Bal Raksha Bharat) */}
         <div className="bg-[#B84E1F] text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4 text-center font-medium tracking-wide flex items-center justify-center gap-1.5 sm:gap-2 shadow-inner">
-          <span className="truncate sm:overflow-visible">
+          <span className="hidden sm:inline">
             {currentLanguage === 'Hindi'
               ? 'शिक्षा संकल्प फाउंडेशन आयकर अधिनियम 1961 की धारा 12A एवं 80G के तहत पंजीकृत है। सभी दान 50% कर-मुक्त हैं।'
               : 'Siksha Sankalp Foundation is registered under Sections 12A & 80G of the Income Tax Act, 1961. All donations are 50% tax exempt.'}
+          </span>
+          <span className="inline sm:hidden">
+            {currentLanguage === 'Hindi'
+              ? '12A एवं 80G प्रमाणित NGO • 50% कर छूट'
+              : '12A & 80G Registered NGO • 50% Tax Exempt'}
           </span>
           <Link
             to="/transparency"
