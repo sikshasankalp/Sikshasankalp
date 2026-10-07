@@ -69,10 +69,10 @@ export const NeedsTicker: React.FC = () => {
     <div
       role="region"
       aria-label="Current NGO Needs Announcement Ticker"
-      className="relative w-full bg-[#1c1917] border-y border-[#38332d] text-stone-200 overflow-hidden select-none z-30 shadow-inner flex items-center h-10 md:h-11"
+      className="relative w-full bg-[#1c1917] border-b border-[#38332d] text-stone-200 overflow-hidden select-none z-30 shadow-sm flex items-center h-9 md:h-10"
     >
       {/* Pinned Left Badge */}
-      <div className="relative z-20 flex items-center gap-2 pl-3 sm:pl-5 pr-3 py-1.5 bg-[#1c1917] shrink-0 border-r border-[#38332d]/80 shadow-[4px_0_12px_rgba(0,0,0,0.35)]">
+      <div className="relative z-20 flex items-center gap-1.5 pl-3 sm:pl-5 pr-3 py-1 bg-[#1c1917] shrink-0 border-r border-[#38332d]/80 shadow-[4px_0_12px_rgba(0,0,0,0.35)]">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -141,7 +141,7 @@ export const NeedsTicker: React.FC = () => {
       </div>
 
       {/* Pinned Right "See All" Pastel Yellow Hyperlink */}
-      <div className="relative z-20 flex items-center pl-3 pr-3 sm:pr-5 py-1.5 bg-[#1c1917] shrink-0 border-l border-[#38332d]/80 shadow-[-4px_0_12px_rgba(0,0,0,0.35)]">
+      <div className="relative z-20 flex items-center pl-3 pr-3 sm:pr-5 py-1 bg-[#1c1917] shrink-0 border-l border-[#38332d]/80 shadow-[-4px_0_12px_rgba(0,0,0,0.35)]">
         <Link
           to="/needs"
           className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold tracking-wide text-[#FDE047] hover:text-[#FEF08A] transition-colors underline underline-offset-4 decoration-[#FDE047]/50 hover:decoration-[#FDE047]"

@@ -88,9 +88,9 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Full width container with minimal padding to push items to the edges like Spotify */}
+        {/* Full width container with compact padding for modern crisp look */}
         <div className={`w-full px-4 md:px-6 flex items-center justify-between transition-all duration-300 ${
-          isScrolled ? 'py-2 md:py-2.5' : 'py-3 md:py-3.5'
+          isScrolled ? 'py-1 md:py-1.5' : 'py-1.5 md:py-2'
         }`}>
           {/* Left: Logo */}
           <div className="flex-shrink-0">

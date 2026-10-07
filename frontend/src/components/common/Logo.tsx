@@ -19,7 +19,7 @@ export function Logo({ className = '' }: LogoProps) {
       <img 
         src="/logo/logo.jpeg" 
         alt="Siksha Sankalp Foundation Logo" 
-        className="h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 rounded-md"
+        className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105 rounded-md"
       />
     </Link>
   );
