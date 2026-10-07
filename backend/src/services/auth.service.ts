@@ -139,6 +139,8 @@ const getRefreshTokenPayload = (
 const getSafeUser = (user: {
   id: string;
   name: string;
+  firstName?: string | null;
+  lastName?: string | null;
   email: string;
   role: string;
   photoUrl: string | null;
@@ -147,6 +149,8 @@ const getSafeUser = (user: {
   return {
     id: user.id,
     name: user.name,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     role: user.role,
     photoUrl: user.photoUrl,

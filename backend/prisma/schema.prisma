@@ -10,6 +10,8 @@ datasource db {
 model User {
   id                     String    @id @default(uuid())
   name                   String
+  firstName              String?
+  lastName               String?
   email                  String    @unique
   passwordHash           String?
   googleId               String?   @unique
@@ -163,6 +165,8 @@ model ContactMessage {
 model Donation {
   id                String         @id @default(uuid())
   donorName         String
+  firstName         String?
+  lastName          String?
   email             String?
   mobile            String
   pan               String?

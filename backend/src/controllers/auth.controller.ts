@@ -407,6 +407,8 @@ export const me = async (
       user: {
         id: req.user.id,
         name: req.user.name,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
         email: req.user.email,
         role: req.user.role,
         photoUrl: req.user.photoUrl,

@@ -15,6 +15,8 @@ export interface SignupRequest {
 export interface User {
   id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   role: string;
   photoUrl?: string;

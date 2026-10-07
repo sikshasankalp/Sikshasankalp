@@ -3,14 +3,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../buttons/Button';
 import { createDonationOrder, verifyDonationPayment } from '../../../services/api/donation';
-import { Lock, AlertCircle } from 'lucide-react';
+import { Lock, AlertCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { useLanguage } from "../../../context/LanguageContext";
 
 const PRESET_AMOUNTS = [500, 1000, 2500];
 
 export function DonateMain() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -18,9 +18,11 @@ export function DonateMain() {
   const [customAmount, setCustomAmount] = useState<string>('');
   
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     mobile: '',
     email: '',
+    want80G: true,
     pan: '',
     address: ''
   });
@@ -33,13 +35,19 @@ export function DonateMain() {
   } | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  
-
   useEffect(() => {
-    if (user && formData.name === '' && formData.email === '') {
+    if (user && formData.firstName === '' && formData.email === '') {
+      let fName = user.firstName || '';
+      let lName = user.lastName || '';
+      if (!fName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || '';
+        lName = parts.slice(1).join(' ') || '';
+      }
       setFormData(prev => ({
         ...prev,
-        name: user.name || '',
+        firstName: fName,
+        lastName: lName,
         email: user.email || ''
       }));
     }
@@ -66,16 +74,40 @@ export function DonateMain() {
     
     setErrorMsg(null);
     setIsProcessing(true);
+
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim() || formData.firstName.trim();
+    if (!formData.firstName.trim()) {
+      setErrorMsg('Please enter your first name.');
+      setIsProcessing(false);
+      return;
+    }
+
+    if (formData.want80G) {
+      const cleanPan = formData.pan.trim().toUpperCase();
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!cleanPan) {
+        setErrorMsg('Please enter your 10-digit PAN card number to claim 80G tax benefit, or uncheck the 80G tax exemption option.');
+        setIsProcessing(false);
+        return;
+      }
+      if (!panRegex.test(cleanPan)) {
+        setErrorMsg('Invalid PAN format. PAN must be exactly 10 characters (e.g., ABCDE1234F).');
+        setIsProcessing(false);
+        return;
+      }
+    }
     
     try {
       // 1. Create order
       const order = await createDonationOrder({
         amount: activeAmount,
-        donorName: formData.name,
-        email: formData.email,
-        mobile: formData.mobile,
-        pan: formData.pan,
-        address: formData.address
+        donorName: fullName,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        mobile: formData.mobile.trim(),
+        pan: formData.want80G ? formData.pan.trim().toUpperCase() : undefined,
+        address: formData.address.trim() || undefined
       });
       
       // 2. Setup Razorpay options
@@ -107,12 +139,12 @@ export function DonateMain() {
           }
         },
         prefill: {
-          name: formData.name,
+          name: fullName,
           email: formData.email,
           contact: formData.mobile,
         },
         theme: {
-          color: '#16a34a', // Using brand-primary color
+          color: '#C85A27', // Brand terracotta
         },
         modal: {
           ondismiss: function() {
@@ -145,14 +177,14 @@ export function DonateMain() {
           <h2 className="text-2xl font-bold mb-4 text-content-primary">{t('donate.donateMain.text1')}</h2>
           <p className="text-content-secondary mb-8">
             {t('donate.donateMain.text2')}
-                              </p>
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={() => navigate('/login?redirect=/donate')} variant="primary">
               {t('donate.donateMain.text3')}
-                                    </Button>
+            </Button>
             <Button onClick={() => navigate('/register?redirect=/donate')} variant="outline">
               {t('donate.donateMain.text4')}
-                                    </Button>
+            </Button>
           </div>
         </div>
       </section>
@@ -168,7 +200,7 @@ export function DonateMain() {
           <p className="text-body-large text-content-secondary mb-8">
             {t('donate.donateMain.text6')}<br/>
             {t('donate.donateMain.text7')}
-                              </p>
+          </p>
           
           <div className="bg-surface border border-border/60 rounded-xl p-6 max-w-sm mx-auto mb-8 text-left">
             <div className="flex justify-between items-center mb-4">
@@ -186,13 +218,13 @@ export function DonateMain() {
               href={`${API_URL}/donations/receipt/${successData.receiptToken}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-brand-primary-dark transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-brand-primary-dark transition-colors shadow-sm"
             >
               {t('donate.donateMain.text10')}
-                                    </a>
+            </a>
             <Button onClick={() => navigate('/account/donations')} variant="outline">
               {t('donate.donateMain.text11')}
-                                    </Button>
+            </Button>
           </div>
         </div>
       </section>
@@ -219,7 +251,7 @@ export function DonateMain() {
                       onClick={() => setAmountSelection(amt)}
                       className={`py-3 px-4 rounded-lg font-bold border transition-all ${
                         amountSelection === amt 
-                        ? 'border-brand-primary bg-brand-primary/5 text-brand-primary' 
+                        ? 'border-brand-primary bg-brand-primary/10 text-brand-primary ring-1 ring-brand-primary' 
                         : 'border-border bg-surface text-content-secondary hover:border-brand-primary/40'
                       }`}
                     >
@@ -231,12 +263,12 @@ export function DonateMain() {
                     onClick={() => setAmountSelection('custom')}
                     className={`py-3 px-4 rounded-lg font-bold border transition-all ${
                       amountSelection === 'custom' 
-                      ? 'border-brand-primary bg-brand-primary/5 text-brand-primary' 
+                      ? 'border-brand-primary bg-brand-primary/10 text-brand-primary ring-1 ring-brand-primary' 
                       : 'border-border bg-surface text-content-secondary hover:border-brand-primary/40'
                     }`}
                   >
                     {t('donate.donateMain.text13')}
-                                                        </button>
+                  </button>
                 </div>
                 
                 {amountSelection === 'custom' && (
@@ -259,19 +291,40 @@ export function DonateMain() {
               <div>
                 <h3 className="text-xl font-bold text-content-primary mb-6">{t('donate.donateMain.text14')}</h3>
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  
+                  {/* First Name */}
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="name" className="text-sm font-bold text-content-primary">
-                      {t('donate.donateMain.text15')} <span className="text-brand-primary">*</span>
+                    <label htmlFor="firstName" className="text-sm font-bold text-content-primary">
+                      First Name <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="text" 
-                      id="name" 
+                      id="firstName" 
                       required 
+                      placeholder="e.g. Rahul"
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
-                      value={formData.name}
-                      onChange={e => setFormData(prev => ({...prev, name: e.target.value}))}
+                      value={formData.firstName}
+                      onChange={e => setFormData(prev => ({...prev, firstName: e.target.value}))}
                     />
                   </div>
+
+                  {/* Last Name */}
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="lastName" className="text-sm font-bold text-content-primary">
+                      Last Name <span className="text-brand-primary">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="lastName" 
+                      required 
+                      placeholder="e.g. Sharma"
+                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
+                      value={formData.lastName}
+                      onChange={e => setFormData(prev => ({...prev, lastName: e.target.value}))}
+                    />
+                  </div>
+
+                  {/* Mobile */}
                   <div className="flex flex-col gap-2">
                     <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
                       {t('donate.donateMain.text16')} <span className="text-brand-primary">*</span>
@@ -280,41 +333,84 @@ export function DonateMain() {
                       type="tel" 
                       id="mobile" 
                       required 
+                      placeholder="10-digit mobile number"
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.mobile}
                       onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
                     />
                   </div>
-                  <div className="flex flex-col gap-2 md:col-span-2">
+
+                  {/* Email */}
+                  <div className="flex flex-col gap-2">
                     <label htmlFor="email" className="text-sm font-bold text-content-primary">
                       {t('donate.donateMain.text17')} <span className="text-brand-primary">*</span>
                     </label>
                     <input 
                       type="email" 
                       id="email" 
-                      required
+                      required 
+                      placeholder="your.email@example.com"
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({...prev, email: e.target.value}))}
                     />
                   </div>
-                  <div className="flex flex-col gap-2 md:col-span-2">
-                    <label htmlFor="pan" className="text-sm font-bold text-content-primary">
-                      {t('donate.donateMain.text18')} <span className="text-brand-primary">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      id="pan"
-                      required
-                      maxLength={10}
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary uppercase"
-                      value={formData.pan}
-                      onChange={e => setFormData(prev => ({...prev, pan: e.target.value.replace(/\s+/g, '').toUpperCase()}))}
-                    />
-                    <p className="text-xs text-content-muted mt-1">
-                      {t('donate.donateMain.text19')}
-                                                              </p>
+
+                  {/* Section 80G Tax Exemption Card */}
+                  <div className="md:col-span-2 rounded-xl border border-brand-primary/25 bg-brand-primary/[0.04] p-5">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        id="want80G"
+                        checked={formData.want80G}
+                        onChange={e => setFormData(prev => ({ ...prev, want80G: e.target.checked }))}
+                        className="mt-1 w-4 h-4 rounded border-border text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#C85A27]"
+                      />
+                      <div className="flex-1">
+                        <label htmlFor="want80G" className="cursor-pointer">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-content-primary text-base">
+                              Claim 50% Tax Exemption u/s 80G
+                            </span>
+                            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-brand-primary/15 text-brand-primary border border-brand-primary/30 flex items-center gap-1">
+                              <ShieldCheck className="w-3.5 h-3.5" />
+                              50% Tax Exemption
+                            </span>
+                          </div>
+                          <p className="text-xs text-content-secondary mt-1 leading-relaxed">
+                            Donations to Siksha Sankalp Foundation are eligible for 50% tax deduction under Section 80G (Reg. No: ABOTS8425NE20261). As per Govt. Income Tax guidelines, a valid PAN card is required to issue your 80G certificate.
+                          </p>
+                        </label>
+
+                        {formData.want80G ? (
+                          <div className="mt-4 pt-4 border-t border-brand-primary/15">
+                            <label htmlFor="pan" className="block text-sm font-bold text-content-primary mb-1.5">
+                              PAN Card Number <span className="text-brand-primary">*</span>
+                            </label>
+                            <input 
+                              type="text" 
+                              id="pan"
+                              required={formData.want80G}
+                              maxLength={10}
+                              placeholder="ABCDE1234F"
+                              className="w-full px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary uppercase tracking-wider font-semibold"
+                              value={formData.pan}
+                              onChange={e => setFormData(prev => ({...prev, pan: e.target.value.replace(/\s+/g, '').toUpperCase()}))}
+                            />
+                            <p className="text-xs text-content-muted mt-1.5">
+                              Enter 10-digit PAN to claim 50% tax benefit. An official 80G stamped receipt will be issued immediately upon payment.
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-content-muted mt-2">
+                            PAN card is not required if you do not wish to claim Section 80G tax exemption.
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Address */}
                   <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="address" className="text-sm font-bold text-content-primary">
                       {t('donate.donateMain.text20')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
@@ -322,6 +418,7 @@ export function DonateMain() {
                     <textarea 
                       id="address" 
                       rows={2}
+                      placeholder="Street address, City, State, PIN"
                       className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary resize-y"
                       value={formData.address}
                       onChange={e => setFormData(prev => ({...prev, address: e.target.value}))}
@@ -334,7 +431,7 @@ export function DonateMain() {
 
           {/* Right: Summary Panel */}
           <div>
-            <div className="bg-surface-muted/50 border border-border/80 rounded-xl p-8 sticky top-24">
+            <div className="bg-surface-muted/50 border border-border/80 rounded-xl p-8 sticky top-24 shadow-sm">
               <h3 className="text-xl font-bold text-content-primary mb-6 border-b border-border/60 pb-4">{t('donate.donateMain.text21')}</h3>
               
               <div className="space-y-4 mb-8">
@@ -342,10 +439,10 @@ export function DonateMain() {
                   <span className="text-content-secondary">{t('donate.donateMain.text22')}</span>
                   <span className="font-bold text-content-primary">₹{activeAmount.toLocaleString()}</span>
                 </div>
-                {formData.name && (
+                {(formData.firstName || formData.lastName) && (
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-content-secondary">{t('donate.donateMain.text23')}</span>
-                    <span className="font-medium text-content-primary">{formData.name}</span>
+                    <span className="font-medium text-content-primary">{`${formData.firstName} ${formData.lastName}`.trim()}</span>
                   </div>
                 )}
                 {formData.email && (
@@ -355,6 +452,12 @@ export function DonateMain() {
                   </div>
                 )}
                 <div className="flex justify-between items-center text-sm border-t border-border/60 pt-4 mt-4">
+                  <span className="text-content-secondary">80G Tax Exemption</span>
+                  <span className={`font-semibold text-xs px-2.5 py-1 rounded-full ${formData.want80G ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20' : 'bg-surface-muted text-content-muted border border-border'}`}>
+                    {formData.want80G ? '50% u/s 80G Claimed' : 'Not Claimed'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
                   <span className="text-content-secondary">{t('donate.donateMain.text25')}</span>
                   <span className="font-medium text-content-primary">{t('donate.donateMain.text26')}</span>
                 </div>
@@ -385,7 +488,7 @@ export function DonateMain() {
               
               <p className="text-xs text-center text-content-muted mt-4">
                 {t('donate.donateMain.text28')}
-                                            </p>
+              </p>
             </div>
           </div>
           

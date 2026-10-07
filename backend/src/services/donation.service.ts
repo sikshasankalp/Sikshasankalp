@@ -390,6 +390,8 @@ export const donationService = {
       await prisma.donation.create({
         data: {
           donorName: data.donorName,
+          firstName: data.firstName || null,
+          lastName: data.lastName || null,
           email: data.email || null,
           mobile: data.mobile,
           pan: data.pan || null,
@@ -401,6 +403,18 @@ export const donationService = {
         }
       });
     console.log('[DonationService] Donation DB record created successfully');
+
+    if (userId && (data.firstName || data.lastName)) {
+      prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...(data.firstName ? { firstName: data.firstName } : {}),
+          ...(data.lastName ? { lastName: data.lastName } : {})
+        }
+      }).catch((err) =>
+        console.error('[DonationService] Non-blocking user name update failed:', err)
+      );
+    }
 
     try {
       const amountInPaise =

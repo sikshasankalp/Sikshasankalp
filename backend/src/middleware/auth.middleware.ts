@@ -111,6 +111,8 @@ export const requireAuth = async (
         select: {
           id: true,
           name: true,
+          firstName: true,
+          lastName: true,
           email: true,
           role: true,
           photoUrl: true,
@@ -141,6 +143,8 @@ export const requireAuth = async (
     req.user = {
       id: user.id,
       name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       role: user.role,
       photoUrl: user.photoUrl,

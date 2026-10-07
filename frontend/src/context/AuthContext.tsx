@@ -4,6 +4,8 @@ import { checkAuth, login as apiLogin, logout as apiLogout, type LoginRequest } 
 export interface User {
   id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   role: string;
   photoUrl?: string;

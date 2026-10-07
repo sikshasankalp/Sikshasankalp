@@ -5,6 +5,8 @@ import { fetchWithAuth } from '../apiClient';
 export interface DonationOrderRequest {
   amount: number;
   donorName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   mobile: string;
   pan?: string;

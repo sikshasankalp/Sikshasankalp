@@ -98,21 +98,28 @@ export const receiptService = {
 
         // Split Donor Mobile and PAN on the same line
         doc.font('Helvetica-Bold').text('Donor Mobile:', 50, startY, { width: 100 });
-        doc.font('Helvetica').text(donation.mobile || 'N/A', 150, startY, { width: 150 });
+        doc.font('Helvetica').text(donation.mobile || 'N/A', 150, startY, { width: 140 });
         
-        doc.font('Helvetica-Bold').text('PAN (for 80G):', 300, startY, { width: 100 });
-        doc.font('Helvetica').text(donation.pan || 'N/A', 400, startY, { width: 150 });
+        doc.font('Helvetica-Bold').text('Donor PAN:', 300, startY, { width: 80 });
+        doc.font('Helvetica').text(donation.pan || 'N/A (No 80G Claim)', 385, startY, { width: 170 });
+
+        startY += 22;
+        doc.font('Helvetica-Bold').text('80G Reg. Number:', 50, startY, { width: 120 });
+        doc.font('Helvetica').text('ABOTS8425NE20261', 170, startY, { width: 120 });
+
+        doc.font('Helvetica-Bold').text('12A Reg. Number:', 300, startY, { width: 120 });
+        doc.font('Helvetica').text('AAACT1234F', 420, startY, { width: 120 });
         
-        doc.moveDown(2);
+        doc.moveDown(2.5);
 
         // Declaration Box
         const declarationY = doc.y;
-        doc.rect(50, declarationY, width - 100, 60).fillAndStroke('#f0f4f8', '#d0d0d0');
+        doc.rect(50, declarationY, width - 100, 65).fillAndStroke('#f0f4f8', '#d0d0d0');
         doc.fillColor('#333333');
         doc.font('Helvetica');
-        doc.fontSize(10);
-        const declarationText = 'Declaration: The above donation is towards charitable activities and is eligible for deduction u/s 80G (Provisional Reg. ABOTS8425NE20261 valid from TY 2026-27 to 2028-29) and 12A registered.';
-        doc.text(declarationText, 60, declarationY + 15, { width: width - 120, align: 'justify' });
+        doc.fontSize(9.5);
+        const declarationText = 'Tax Exemption Declaration: The above donation is towards charitable and educational activities and is eligible for 50% tax deduction under Section 80G of the Income Tax Act, 1961 (Provisional Reg. No. ABOTS8425NE20261). Siksha Sankalp Foundation is also registered under Section 12A.';
+        doc.text(declarationText, 60, declarationY + 12, { width: width - 120, align: 'justify' });
 
         doc.moveDown(4);
 

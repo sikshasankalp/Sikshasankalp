@@ -9,15 +9,16 @@ const optionalEmail = z
   .optional()
   .or(z.literal(''));
 
-const requiredPan = z
+const panSchema = z
   .string()
-  .min(10, 'PAN is required')
   .trim()
   .toUpperCase()
   .regex(
     /^[A-Z]{5}[0-9]{4}[A-Z]$/,
     'Invalid PAN format',
-  );
+  )
+  .optional()
+  .or(z.literal(''));
 
 const mobileSchema = z
   .string()
@@ -60,6 +61,18 @@ const donationAmountSchema = z
 
 export const createDonationOrderSchema = z
   .object({
+    firstName: z
+      .string()
+      .trim()
+      .max(50, 'First name is too long')
+      .optional(),
+
+    lastName: z
+      .string()
+      .trim()
+      .max(50, 'Last name is too long')
+      .optional(),
+
     donorName: z
       .string()
       .trim()
@@ -70,7 +83,7 @@ export const createDonationOrderSchema = z
 
     mobile: mobileSchema,
 
-    pan: requiredPan,
+    pan: panSchema,
 
     address: z
       .string()

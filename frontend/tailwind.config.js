@@ -8,28 +8,32 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#ffffff',
-          muted: '#f8fafc',
+          DEFAULT: '#FBF8F3', // Warm Ivory / Paper Cream
+          muted: '#F4EFE6',   // Soft Warm Linen
         },
         surface: {
           DEFAULT: '#ffffff',
           elevated: '#ffffff',
-          muted: '#f1f5f9',
+          muted: '#F5EFE6',
         },
         content: {
-          primary: '#0f172a',
-          secondary: '#334155',
-          muted: '#64748b',
+          primary: '#1A1A1A',   // Deep Charcoal
+          secondary: '#4A453E', // Warm Slate
+          muted: '#8C867E',     // Warm Stone
         },
         border: {
-          DEFAULT: '#e2e8f0',
-          muted: '#f1f5f9',
+          DEFAULT: '#E8E2D7',
+          muted: '#F0EAE0',
         },
         brand: {
-          primary: '#0369a1', // Trustworthy, calm blue for NGO
-          'primary-hover': '#075985',
-          secondary: '#0f172a', // Deep slate for high contrast neutral elements
-          accent: '#ea580c', // Warm orange/terracotta accent for CTA like Donate
+          primary: '#C85A27',       // Burnt Orange / Terracotta Accent
+          'primary-hover': '#B04E1F',
+          secondary: '#1A1A1A',     // Deep Charcoal
+          accent: '#C85A27',
+          'accent-hover': '#B04E1F',
+          cream: '#FBF8F3',
+          terracotta: '#C85A27',
+          charcoal: '#1A1A1A',
           success: '#059669',
           error: '#dc2626',
         }

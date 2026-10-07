@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   photoUrl: string | null;
   isActive: boolean;
   isVerified: boolean;
+  firstName?: string | null;
+  lastName?: string | null;
   hasPassword?: boolean;
 }
 
