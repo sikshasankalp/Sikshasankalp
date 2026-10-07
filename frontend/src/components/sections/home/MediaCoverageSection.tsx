@@ -198,6 +198,8 @@ export function MediaCoverageSection() {
               slideShadows: true,
             }}
             pagination={{ clickable: true }}
+            preventClicks={true}
+            preventClicksPropagation={true}
             navigation={{
               nextEl: '.media-swiper-next',
               prevEl: '.media-swiper-prev'
@@ -208,66 +210,73 @@ export function MediaCoverageSection() {
             {loopedArticles.map((article, index) => (
               <SwiperSlide 
                 key={`${article.id}-${index}`}
-                className="shadow-elevated bg-[#1A1A1A] group relative rounded-2xl overflow-hidden border border-border/50 text-left"
+                className="shadow-elevated bg-[#1A1A1A] group relative rounded-2xl overflow-hidden border border-border/50 text-left cursor-pointer"
               >
-                {/* Article Screenshot / Image */}
-                <img
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src={article.image}
-                  alt={article.title}
-                  loading="lazy"
-                />
-                
-                {/* Dark Gradient Overlay for readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/25 transition-opacity duration-300"></div>
-                
-                {/* Top Badges & External Link */}
-                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 z-10">
-                  <span className="text-xs font-bold px-3 py-1 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white tracking-wider uppercase shadow-sm">
-                    {article.publication}
-                  </span>
-                  {article.date && (
-                    <span className="text-[11px] px-2.5 py-0.5 bg-white/10 backdrop-blur-md border border-white/15 rounded-full text-white/80 font-medium hidden sm:inline-block">
-                      {article.date}
-                    </span>
-                  )}
-                </div>
-
-                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
-                  <a 
-                    href={article.externalUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="p-3 bg-black/60 border border-white/20 rounded-full hover:bg-brand-primary text-white transition-all backdrop-blur-md inline-flex items-center justify-center hover:scale-110 shadow-lg"
-                    title="Read Original Article"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </div>
-
-                {/* Bottom Article Details */}
-                <div className="absolute bottom-0 left-0 w-full p-5 sm:p-8 flex flex-col gap-2.5 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300 z-10">
-                  <h3 className="text-lg sm:text-2xl md:text-3xl font-bold font-display text-white drop-shadow-md leading-tight line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-white/85 line-clamp-2 leading-relaxed drop-shadow-sm max-w-2xl font-sans">
-                    {article.description}
-                  </p>
+                <a
+                  href={article.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full h-full relative inset-0"
+                  aria-label={`Read article: ${article.title}`}
+                >
+                  {/* Article Screenshot / Image */}
+                  <img
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    src={article.image}
+                    alt={article.title}
+                    loading="lazy"
+                  />
                   
-                  {article.tags && article.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {article.tags.map((tag, i) => (
-                        <span 
-                          key={i} 
-                          className="text-[10px] sm:text-xs px-2.5 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-white/90 font-medium"
-                        >
-                          {tag}
+                  {/* Dark Gradient Overlay for readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/25 transition-opacity duration-300"></div>
+                  
+                  {/* Top Badges & External Link Icon */}
+                  <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 z-10">
+                    <span className="text-xs font-bold px-3 py-1 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white tracking-wider uppercase shadow-sm">
+                      {article.publication}
+                    </span>
+                    {article.date && (
+                      <span className="text-[11px] px-2.5 py-0.5 bg-white/10 backdrop-blur-md border border-white/15 rounded-full text-white/80 font-medium hidden sm:inline-block">
+                        {article.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
+                    <span 
+                      className="p-2.5 sm:p-3 bg-brand-primary border border-white/20 rounded-full text-white transition-all backdrop-blur-md inline-flex items-center justify-center group-hover:scale-110 shadow-lg"
+                      title="Read Original Article"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </span>
+                  </div>
+
+                  {/* Bottom Article Details */}
+                  <div className="absolute bottom-0 left-0 w-full p-5 sm:p-8 flex flex-col gap-2.5 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300 z-10">
+                    <h3 className="text-lg sm:text-2xl md:text-3xl font-bold font-display text-white drop-shadow-md leading-tight line-clamp-2">
+                      {article.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-white/85 line-clamp-2 leading-relaxed drop-shadow-sm max-w-2xl font-sans">
+                      {article.description}
+                    </p>
+                    
+                    {article.tags && article.tags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        {article.tags.map((tag, i) => (
+                          <span 
+                            key={i} 
+                            className="text-[10px] sm:text-xs px-2.5 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-white/90 font-medium"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                        <span className="text-[10px] sm:text-xs text-brand-sand/90 font-medium ml-auto flex items-center gap-1 sm:hidden">
+                          Read article →
                         </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      </div>
+                    )}
+                  </div>
+                </a>
               </SwiperSlide>
             ))}
 
