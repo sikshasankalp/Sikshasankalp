@@ -73,6 +73,15 @@ async function main() {
       description: 'Official Permanent Account Number (PAN) Card of Siksha Sankalp Foundation issued by the Income Tax Department.',
       issuedDate: new Date('2026-06-03'),
       isPublished: true
+    },
+    {
+      title: 'Registered Trust Deed',
+      documentType: 'TRUST_DEED',
+      documentNumber: 'IN-UP97748090951454Y',
+      documentUrl: '/documents/Trust_Deed.pdf',
+      description: 'Official registered Trust Deed of Siksha Sankalp Foundation registered under the Indian Trusts Act with the Sub-Registrar.',
+      issuedDate: new Date('2026-06-03'),
+      isPublished: true
     }
   ];
 

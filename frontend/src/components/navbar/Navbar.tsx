@@ -64,12 +64,29 @@ export function Navbar() {
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-border/40 ${
           isScrolled 
-            ? 'bg-background/95 backdrop-blur-md shadow-sm py-2.5' 
-            : 'bg-background py-3 md:py-4'
+            ? 'bg-background/95 backdrop-blur-md shadow-sm' 
+            : 'bg-background'
         }`}
       >
+        {/* Top Compliance & 80G Tax Exemption Announcement Bar (like Bal Raksha Bharat) */}
+        <div className="bg-[#B84E1F] text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4 text-center font-medium tracking-wide flex items-center justify-center gap-1.5 sm:gap-2 shadow-inner">
+          <span className="truncate sm:overflow-visible">
+            {currentLanguage === 'Hindi'
+              ? 'शिक्षा संकल्प फाउंडेशन आयकर अधिनियम 1961 की धारा 12A एवं 80G के तहत पंजीकृत है। सभी दान 50% कर-मुक्त हैं।'
+              : 'Siksha Sankalp Foundation is registered under Sections 12A & 80G of the Income Tax Act, 1961. All donations are 50% tax exempt.'}
+          </span>
+          <Link
+            to="/transparency"
+            className="underline font-bold text-amber-200 hover:text-white transition-colors inline-flex items-center gap-0.5 shrink-0 ml-1"
+          >
+            {currentLanguage === 'Hindi' ? 'प्रमाणपत्र देखें →' : 'View Certificates →'}
+          </Link>
+        </div>
+
         {/* Full width container with minimal padding to push items to the edges like Spotify */}
-        <div className="w-full px-4 md:px-6 flex items-center justify-between">
+        <div className={`w-full px-4 md:px-6 flex items-center justify-between transition-all duration-300 ${
+          isScrolled ? 'py-2 md:py-2.5' : 'py-3 md:py-3.5'
+        }`}>
           {/* Left: Logo */}
           <div className="flex-shrink-0">
             <Logo />

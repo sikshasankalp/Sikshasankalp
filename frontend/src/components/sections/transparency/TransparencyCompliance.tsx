@@ -57,6 +57,18 @@ const DEFAULT_DOCUMENTS: TransparencyDocument[] = [
     isPublished: true,
     createdAt: '2026-06-03',
     updatedAt: '2026-06-03'
+  },
+  {
+    id: 'doc-trust-deed',
+    title: 'Registered Trust Deed',
+    documentType: 'TRUST_DEED',
+    documentNumber: 'IN-UP97748090951454Y',
+    documentUrl: '/documents/Trust_Deed.pdf',
+    description: 'Official registered Trust Deed of Siksha Sankalp Foundation registered under the Indian Trusts Act with the Sub-Registrar.',
+    issuedDate: '2026-06-03',
+    isPublished: true,
+    createdAt: '2026-06-03',
+    updatedAt: '2026-06-03'
   }
 ];
 
@@ -65,6 +77,7 @@ const DRIVE_LINKS: Record<string, string> = {
   '12A / 12AB Registration Certificate': 'https://drive.google.com/file/d/1AHY1F0fIUxdMf_ao3JwJEyY6T8aUEe3T/view?usp=sharing',
   'GST Registration Certificate': 'https://drive.google.com/file/d/11EQzteYCUENTMA4eFlefhNf7mdBYbHhh/view?usp=sharing',
   'Trust Permanent Account Number (PAN Card)': 'https://drive.google.com/file/d/1VFxbzodAFJ0AdV3ETFcpPAVCq78fM1zZ/view?usp=sharing',
+  'Registered Trust Deed': 'https://drive.google.com/file/d/12U0FGfDpGQwr3-3cD7gMGjNc1rFp7Feg/view?usp=sharing',
 };
 
 export function TransparencyCompliance({ documents, loading, error }: Props) {

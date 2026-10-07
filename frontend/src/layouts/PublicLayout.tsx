@@ -20,7 +20,7 @@ export default function PublicLayout() {
         Add top padding to main content to account for fixed navbar.
         The exact padding matches the expected navbar height (e.g., pt-20 to pt-24).
       */}
-      <main className="flex-grow pt-[72px] md:pt-[84px] flex flex-col">
+      <main className="flex-grow pt-[100px] md:pt-[116px] flex flex-col">
         <Outlet />
       </main>
 
