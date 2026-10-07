@@ -325,7 +325,7 @@ export const en = {
       "btn1": "Our Story",
       "btn2": "See Our Work",
       "text1": "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future.",
-      "text2": "Free Digital Siksha & Library &rarr;"
+      "text2": "Free Digital Siksha & Library →"
     },
     "digitalLibrarySection": {
       "desc1": "Education should not be limited to the four walls of a school. We are working towards providing useful educational material to children and students free of cost in digital form.",

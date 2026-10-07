@@ -5,7 +5,12 @@ export function MissionSection() {
   return (
     <section className="py-16 md:py-20 bg-brand-primary text-white">
       <div className="container-default max-w-3xl mx-auto text-center">
-        <h2 className="text-caption text-brand-sand/80 mb-3">{t('home.missionSection.text1')}</h2>
+        <div className="inline-flex flex-col items-center mb-5">
+          <span className="text-sm tracking-[0.2em] font-bold uppercase text-brand-sand">
+            {t('home.missionSection.text1')}
+          </span>
+          <div className="w-12 sm:w-14 h-[2px] bg-brand-sand/60 rounded-full mt-2.5"></div>
+        </div>
         <h3 className="text-h2 mb-5">{t('home.missionSection.title1')}</h3>
         
         <p className="text-lg md:text-xl text-brand-sand font-normal leading-relaxed mb-10 max-w-2xl mx-auto">

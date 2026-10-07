@@ -61,10 +61,10 @@ export function Navbar() {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-border/40 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2.5' 
-          : 'bg-white py-3 md:py-4'
+          ? 'bg-background/95 backdrop-blur-md shadow-sm py-2.5' 
+          : 'bg-background py-3 md:py-4'
       }`}
     >
       {/* Full width container with minimal padding to push items to the edges like Spotify */}
@@ -97,7 +97,7 @@ export function Navbar() {
               
               {/* Dropdown Menu */}
               <div 
-                className={`absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-elevated border border-border overflow-hidden transition-all duration-200 origin-top-right ${
+                className={`absolute top-full right-0 mt-1 w-48 bg-surface rounded-lg shadow-elevated border border-border overflow-hidden transition-all duration-200 origin-top-right ${
                   isMoreDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
                 }`}
               >
@@ -142,7 +142,7 @@ export function Navbar() {
               </button>
               
               <div 
-                className={`absolute top-full right-0 mt-1 w-36 bg-white rounded-lg shadow-elevated border border-border overflow-hidden transition-all duration-200 origin-top-right ${
+                className={`absolute top-full right-0 mt-1 w-36 bg-surface rounded-lg shadow-elevated border border-border overflow-hidden transition-all duration-200 origin-top-right ${
                   isLanguageDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
                 }`}
               >
@@ -228,7 +228,7 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       <div 
-        className={`fixed inset-0 top-[60px] md:top-[72px] bg-white z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col ${
+        className={`fixed inset-0 top-[60px] md:top-[72px] bg-background z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

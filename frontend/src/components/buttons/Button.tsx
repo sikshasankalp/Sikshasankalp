@@ -1,7 +1,7 @@
 import React, { type ButtonHTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent' | 'interactive';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface BaseButtonProps {
@@ -35,11 +35,12 @@ const variantStyles: Record<ButtonVariant, string> = {
   accent: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent hover:shadow-md',
   outline: 'bg-transparent text-brand-primary border-brand-primary hover:bg-brand-primary hover:text-white hover:border-transparent hover:shadow-md',
   ghost: 'bg-transparent text-content-secondary border-transparent hover:bg-surface-muted hover:text-content-primary',
+  interactive: 'bg-surface text-content-primary border-border hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:shadow-md font-mono text-sm font-bold min-w-[140px] sm:min-w-[160px] gap-2',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: 'px-5 py-2 text-sm',
-  md: 'px-7 py-2.5 text-base',
+  md: 'px-6 py-2.5 sm:px-7 sm:py-3 text-sm sm:text-base',
   lg: 'px-8 py-3.5 text-base md:text-lg',
 };
 
@@ -51,17 +52,25 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-full shadow-sm transition-all duration-200 group hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer';
+  const isInteractive = variant === 'interactive';
+  const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-full shadow-sm transition-all duration-200 group/btn focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer';
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
   const renderContent = () => (
     <>
+      {isInteractive && (
+        <span className="w-2 h-2 rounded-full bg-brand-primary group-hover/btn:hidden transition-all shrink-0"></span>
+      )}
       <span>{children}</span>
-      {arrow && (
-        <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5 ml-2 font-mono text-[1.15em] leading-none">
+      {isInteractive ? (
+        <span className="hidden group-hover/btn:inline-block ml-[-2px] transition-all">
           →
         </span>
-      )}
+      ) : arrow ? (
+        <span className="inline-block transition-transform duration-200 group-hover/btn:translate-x-1.5 ml-2 font-mono text-[1.15em] leading-none">
+          →
+        </span>
+      ) : null}
     </>
   );
 
