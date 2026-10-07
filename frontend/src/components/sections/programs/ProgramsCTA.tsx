@@ -12,10 +12,10 @@ export function ProgramsCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
-          <Button to="/impact" variant="interactive">
+          <Button to="/impact" variant="accent" size="lg" arrow>
             {t('programs.programsCTA.text3')}
           </Button>
-          <Button to="/get-involved" variant="interactive">
+          <Button to="/get-involved" variant="outline" size="lg" arrow>
             {t('programs.programsCTA.text4')}
           </Button>
           <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">

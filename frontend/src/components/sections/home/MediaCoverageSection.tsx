@@ -300,7 +300,7 @@ export function MediaCoverageSection() {
 
         {/* View All Button */}
         <div className="mt-8">
-          <Button to="/media" variant="interactive">
+          <Button to="/media" variant="accent" size="lg" arrow>
             {t('home.mediaCoverageSection.btn1')}
           </Button>
         </div>

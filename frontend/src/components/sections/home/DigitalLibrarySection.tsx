@@ -60,7 +60,7 @@ export function DigitalLibrarySection() {
               ))}
             </ul>
             
-            <Button to="/digital-library" variant="interactive">
+            <Button to="/digital-library" variant="accent" size="lg" arrow>
               {t('home.digitalLibrarySection.text3')}
             </Button>
           </div>

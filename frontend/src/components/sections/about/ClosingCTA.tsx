@@ -12,7 +12,7 @@ export function ClosingCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
-          <Button to="/programs" variant="interactive">
+          <Button to="/programs" variant="accent" size="lg" arrow>
             {t('about.closingCTA.text3')}
           </Button>
           <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">
@@ -20,7 +20,7 @@ export function ClosingCTA() {
           </Button>
         </div>
         <div className="mt-8">
-          <Button to="/impact" variant="interactive">
+          <Button to="/impact" variant="outline" size="lg" arrow>
             {t('about.closingCTA.text5')}
           </Button>
         </div>

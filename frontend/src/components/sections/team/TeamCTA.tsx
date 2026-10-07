@@ -12,11 +12,10 @@ export function TeamCTA() {
         </p>
         
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button to="/get-involved" variant="interactive">
+          <Button to="/get-involved" variant="accent" size="lg" arrow>
             {t('team.teamCTA.text3')}
           </Button>
-          <span className="hidden sm:inline text-border text-lg font-light select-none">|</span>
-          <Button to="/contact" variant="interactive">
+          <Button to="/contact" variant="outline" size="lg" arrow>
             {t('team.teamCTA.text4')}
           </Button>
         </div>

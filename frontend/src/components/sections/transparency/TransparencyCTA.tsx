@@ -12,7 +12,7 @@ export function TransparencyCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
-          <Button to="/contact" variant="interactive">
+          <Button to="/contact" variant="outline" size="lg" arrow>
             {t('transparency.transparencyCTA.text3')}
           </Button>
           <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">

@@ -12,10 +12,10 @@ export function ImpactCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
-          <Button to="/programs" variant="interactive">
+          <Button to="/programs" variant="accent" size="lg" arrow>
             {t('impact.impactCTA.text3')}
           </Button>
-          <Button to="/get-involved" variant="interactive">
+          <Button to="/get-involved" variant="outline" size="lg" arrow>
             {t('impact.impactCTA.text4')}
           </Button>
           <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">

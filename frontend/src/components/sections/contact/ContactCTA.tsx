@@ -13,11 +13,10 @@ export function ContactCTA() {
           {t('contact.contactCTA.text2')}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button to="/programs" variant="interactive">
+          <Button to="/programs" variant="accent" size="lg" arrow>
             {t('contact.contactCTA.text3')}
           </Button>
-          <span className="hidden sm:inline text-border text-lg font-light select-none">|</span>
-          <Button to="/get-involved" variant="interactive">
+          <Button to="/get-involved" variant="outline" size="lg" arrow>
             {t('contact.contactCTA.text4')}
           </Button>
         </div>
