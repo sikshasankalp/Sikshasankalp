@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useLanguage } from "../../../context/LanguageContext";
+import { fetchBenefits } from "../../../services/api/benefit";
 
-const IMPACT_AREAS = [
+const DEFAULT_BENEFITS = [
   'Foundational Education & Learning',
   'School Admission & Transition Support',
   'Essential Educational Materials',
@@ -11,6 +13,24 @@ const IMPACT_AREAS = [
 
 export function DonateImpact() {
   const { t } = useLanguage();
+  const [benefits, setBenefits] = useState<string[]>(DEFAULT_BENEFITS);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchBenefits()
+      .then((data) => {
+        if (mounted && data && data.length > 0) {
+          setBenefits(data.map((b) => b.title));
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not load live benefits, using defaults:', err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <section className="section-padding bg-background">
@@ -22,7 +42,7 @@ export function DonateImpact() {
         {/* Benefits Card */}
         <div className="max-w-md sm:max-w-lg mx-auto bg-[#FAF6F0] border border-border/80 rounded-[28px] sm:rounded-3xl p-3.5 sm:p-6 md:p-7 shadow-soft">
           <div className="flex flex-col gap-2.5 sm:gap-3.5">
-            {IMPACT_AREAS.map((area, index) => (
+            {benefits.map((area, index) => (
               <div
                 key={index}
                 className="w-full flex items-center gap-3 sm:gap-3.5 px-4 sm:px-5 py-3 sm:py-3.5 rounded-full bg-[#F3EDE3] border border-[#E6DDD0] hover:border-brand-primary/30 hover:bg-[#EFE7DC] transition-all duration-200"

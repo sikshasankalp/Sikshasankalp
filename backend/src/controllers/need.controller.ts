@@ -75,3 +75,17 @@ export const deleteNeed = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const seedNeeds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const data = await needService.seedDefaultNeeds();
+    res.json({
+      success: true,
+      message: 'Needs reset to defaults successfully',
+      data
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

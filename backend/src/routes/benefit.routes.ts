@@ -4,26 +4,24 @@ import { requireAuth } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import {
-  createNeedSchema,
-  updateNeedSchema,
-  needIdSchema,
-  needQuerySchema
-} from '../validators/need.validator';
+  createBenefitSchema,
+  updateBenefitSchema,
+} from '../validators/benefit.validator';
 import {
-  listNeeds,
-  getNeedById,
-  createNeed,
-  updateNeed,
-  deleteNeed,
-  seedNeeds
-} from '../controllers/need.controller';
+  listBenefits,
+  getBenefitById,
+  createBenefit,
+  updateBenefit,
+  deleteBenefit,
+  seedBenefits,
+} from '../controllers/benefit.controller';
 
 const router = Router();
 
-// Public: GET all active needs (used by marquee ticker & /needs page)
-router.get('/', listNeeds);
+// Public: GET active benefits
+router.get('/', listBenefits);
 
-// Admin: GET all needs (including inactive ones)
+// Admin: GET all benefits
 router.get(
   '/admin',
   requireAuth,
@@ -32,40 +30,40 @@ router.get(
     res.locals.isAdmin = true;
     next();
   },
-  listNeeds
+  listBenefits
 );
 
-router.get('/:id', getNeedById);
+router.get('/:id', getBenefitById);
 
 // Admin WRITE
 router.post(
   '/',
   requireAuth,
   requireRole(Role.SUPER_ADMIN, Role.CONTENT_ADMIN),
-  validateBody(createNeedSchema),
-  createNeed
+  validateBody(createBenefitSchema),
+  createBenefit
 );
 
 router.post(
   '/seed',
   requireAuth,
   requireRole(Role.SUPER_ADMIN, Role.CONTENT_ADMIN),
-  seedNeeds
+  seedBenefits
 );
 
 router.patch(
   '/:id',
   requireAuth,
   requireRole(Role.SUPER_ADMIN, Role.CONTENT_ADMIN),
-  validateBody(updateNeedSchema),
-  updateNeed
+  validateBody(updateBenefitSchema),
+  updateBenefit
 );
 
 router.delete(
   '/:id',
   requireAuth,
   requireRole(Role.SUPER_ADMIN, Role.CONTENT_ADMIN),
-  deleteNeed
+  deleteBenefit
 );
 
 export default router;

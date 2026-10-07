@@ -5,9 +5,19 @@ import { Role } from '@prisma/client';
 import app from './app';
 import { config } from './config/env';
 import { prisma } from './config/database';
+import { DEFAULT_NEEDS } from './services/need.service';
 
 let server: http.Server | undefined;
 let isShuttingDown = false;
+
+const DEFAULT_SUPPORT_BENEFITS = [
+  { title: 'Foundational Education & Learning', displayOrder: 1, isActive: true },
+  { title: 'School Admission & Transition Support', displayOrder: 2, isActive: true },
+  { title: 'Essential Educational Materials', displayOrder: 3, isActive: true },
+  { title: 'Free Digital Siksha & Library Access', displayOrder: 4, isActive: true },
+  { title: 'Health Checkups & Hygiene Initiatives', displayOrder: 5, isActive: true },
+  { title: 'Direct Family & Community Support', displayOrder: 6, isActive: true },
+];
 
 const bootstrapAdminUser = async (): Promise<void> => {
   try {
@@ -50,6 +60,34 @@ const bootstrapAdminUser = async (): Promise<void> => {
   }
 };
 
+const bootstrapNgoNeeds = async (): Promise<void> => {
+  try {
+    const count = await prisma.ngoNeed.count();
+    if (count === 0) {
+      for (const item of DEFAULT_NEEDS) {
+        await prisma.ngoNeed.create({ data: item });
+      }
+      console.log(`[BOOTSTRAP] Initialized ${DEFAULT_NEEDS.length} default NGO needs`);
+    }
+  } catch (error) {
+    console.error('[BOOTSTRAP] Warning: Failed to bootstrap NGO needs:', error);
+  }
+};
+
+const bootstrapSupportBenefits = async (): Promise<void> => {
+  try {
+    const count = await prisma.supportBenefit.count();
+    if (count === 0) {
+      for (const item of DEFAULT_SUPPORT_BENEFITS) {
+        await prisma.supportBenefit.create({ data: item });
+      }
+      console.log(`[BOOTSTRAP] Initialized ${DEFAULT_SUPPORT_BENEFITS.length} default support benefits`);
+    }
+  } catch (error) {
+    console.error('[BOOTSTRAP] Warning: Failed to bootstrap support benefits:', error);
+  }
+};
+
 const startServer = async (): Promise<void> => {
   try {
     await prisma.$connect();
@@ -57,6 +95,8 @@ const startServer = async (): Promise<void> => {
     console.log('Database connected successfully');
 
     await bootstrapAdminUser();
+    await bootstrapNgoNeeds();
+    await bootstrapSupportBenefits();
 
     server = app.listen(config.port, () => {
       console.log(

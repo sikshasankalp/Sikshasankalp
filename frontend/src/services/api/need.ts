@@ -85,3 +85,14 @@ export const deleteNeed = async (id: string): Promise<void> => {
   const result = await response.json();
   if (!result.success) throw new Error(result.message || 'Failed to delete need');
 };
+
+export const seedNeeds = async (): Promise<NgoNeed[]> => {
+  const response = await fetch(`${API_URL}/needs/seed`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'Failed to seed needs');
+  return result.data;
+};
+

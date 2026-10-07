@@ -3,13 +3,14 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Image as ImageIcon, Heart, BookOpen, 
   Users, Radio, Library, ShieldCheck, UserPlus, Handshake, 
-  MessageSquare, Settings, LogOut, Menu, X, Package 
+  MessageSquare, Settings, LogOut, Menu, X, Package, TrendingUp 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const ADMIN_LINKS = [
   { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/admin/needs', icon: Package, label: 'NGO Needs' },
+  { to: '/admin/impact', icon: TrendingUp, label: 'Impact & Benefits' },
   { to: '/admin/gallery', icon: ImageIcon, label: 'Gallery' },
   { to: '/admin/donations', icon: Heart, label: 'Donations' },
   { to: '/admin/programs', icon: BookOpen, label: 'Programs' },

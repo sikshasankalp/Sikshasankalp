@@ -3,8 +3,63 @@ import { AppError } from '../errors/AppError';
 import { Prisma } from '@prisma/client';
 import { CreateNeedInput, UpdateNeedInput, NeedQueryInput } from '../validators/need.validator';
 
+export const DEFAULT_NEEDS = [
+  {
+    title: 'Notebook & Stationery Kits',
+    quantity: '150 Kits',
+    category: 'Education',
+    urgency: 'HIGH',
+    description: 'Ruled notebooks, pencil boxes, erasers, sharpeners, and scale sets for foundational literacy batches in open ground classrooms.',
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    title: 'Winter Sweaters & Warm Wear',
+    quantity: '80 Sets',
+    category: 'Winter Relief',
+    urgency: 'CRITICAL',
+    description: 'Warm woollen sweaters and shoes to protect children learning in open-air ground classes during harsh winter months.',
+    displayOrder: 2,
+    isActive: true,
+  },
+  {
+    title: 'Refurbished Laptops for Computer Class',
+    quantity: '3 Laptops',
+    category: 'Digital Literacy',
+    urgency: 'HIGH',
+    description: 'Working laptops or Android tablets for digital library sessions, educational videos, and basic computer literacy.',
+    displayOrder: 3,
+    isActive: true,
+  },
+  {
+    title: 'Healthy Snack & Nutrition Packs',
+    quantity: '200 Packs / Month',
+    category: 'Nutrition',
+    urgency: 'HIGH',
+    description: 'Nutritious biscuits, fruits, and milk packets to ensure children study with energy and nutrition.',
+    displayOrder: 4,
+    isActive: true,
+  },
+  {
+    title: 'School Bags & Water Bottles',
+    quantity: '60 Bags',
+    category: 'Education',
+    urgency: 'MEDIUM',
+    description: 'Durable school bags for children transitioning from footpath classes to mainstream partner schools.',
+    displayOrder: 5,
+    isActive: true,
+  },
+];
+
 export const needService = {
   async listNeeds(query: NeedQueryInput, isPublicRequest: boolean = true) {
+    const totalCount = await prisma.ngoNeed.count();
+    if (totalCount === 0) {
+      for (const item of DEFAULT_NEEDS) {
+        await prisma.ngoNeed.create({ data: item });
+      }
+    }
+
     const where: Prisma.NgoNeedWhereInput = {};
 
     if (isPublicRequest) {
@@ -38,6 +93,19 @@ export const needService = {
     });
 
     return items;
+  },
+
+  async seedDefaultNeeds() {
+    await prisma.ngoNeed.deleteMany({});
+    for (const item of DEFAULT_NEEDS) {
+      await prisma.ngoNeed.create({ data: item });
+    }
+    return prisma.ngoNeed.findMany({
+      orderBy: [
+        { displayOrder: 'asc' },
+        { createdAt: 'desc' }
+      ]
+    });
   },
 
   async getNeedById(id: string) {
