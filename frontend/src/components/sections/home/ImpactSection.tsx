@@ -12,14 +12,16 @@ interface MetricItem {
 
 const FALLBACK_IMPACTS: MetricItem[] = [
   {
-    id: 'fallback-1',
+    id: 'seed-metric-1',
     value: 42,
-    label: 'Children supported in school admission / mainstreaming',
+    label: 'Children Supported',
+    description: 'Guided and supported toward school admission and mainstream education.',
   },
   {
-    id: 'fallback-2',
+    id: 'seed-metric-2',
     value: 35,
-    label: 'Families supported with portable bath tents',
+    label: 'Families Supported',
+    description: 'Provided with portable bath tents, helping improve privacy, hygiene, and dignity.',
   },
 ];
 
@@ -46,6 +48,19 @@ export function ImpactSection() {
 
   const displayList = metrics.length > 0 ? metrics : FALLBACK_IMPACTS;
 
+  const getNumberSizeClass = (count: number) => {
+    if (count <= 2) return 'text-6xl md:text-7xl lg:text-8xl';
+    if (count === 3) return 'text-5xl md:text-6xl lg:text-7xl';
+    return 'text-4xl md:text-5xl lg:text-6xl';
+  };
+
+  const getGridClass = (count: number) => {
+    if (count === 1) return 'grid-cols-1 max-w-md';
+    if (count === 2) return 'grid-cols-1 sm:grid-cols-2 max-w-4xl gap-10 md:gap-16';
+    if (count === 3) return 'grid-cols-1 sm:grid-cols-3 max-w-5xl gap-8 md:gap-10';
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl gap-8';
+  };
+
   return (
     <section className="py-16 md:py-24 bg-brand-secondary text-white relative overflow-hidden">
       <div className="container-default">
@@ -53,20 +68,13 @@ export function ImpactSection() {
           <h2 className="text-h2 font-display">{t('home.impactSection.title1')}</h2>
         </div>
 
-        <div
-          className={`grid gap-10 max-w-4xl mx-auto ${
-            displayList.length === 1
-              ? 'grid-cols-1 place-items-center'
-              : displayList.length === 2
-              ? 'grid-cols-1 sm:grid-cols-2'
-              : displayList.length === 3
-              ? 'grid-cols-1 sm:grid-cols-3'
-              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
-          }`}
-        >
+        <div className={`grid mx-auto ${getGridClass(displayList.length)}`}>
           {displayList.map((impact, index) => (
-            <div key={impact.id || index} className="text-center flex flex-col items-center group">
-              <div className="text-6xl md:text-8xl font-display font-extrabold text-brand-accent mb-2 tracking-tight transition-transform duration-300 group-hover:scale-105">
+            <div 
+              key={impact.id || index} 
+              className="text-center flex flex-col items-center group p-4 sm:p-6 rounded-2xl transition-all duration-300 hover:bg-white/[0.03]"
+            >
+              <div className={`${getNumberSizeClass(displayList.length)} font-display font-extrabold text-brand-accent mb-3 tracking-tight transition-transform duration-300 group-hover:scale-105`}>
                 <AnimatedCounter
                   end={impact.value}
                   duration={2200}
@@ -74,13 +82,13 @@ export function ImpactSection() {
                   suffix="+"
                 />
               </div>
-              <span className="text-base md:text-lg font-medium text-white/90 max-w-[280px] leading-snug">
+              <h3 className="text-lg md:text-xl font-bold text-white mb-2 leading-snug">
                 {impact.label}
-              </span>
+              </h3>
               {impact.description && (
-                <span className="text-xs text-white/60 mt-1 max-w-[240px]">
+                <p className="text-sm text-white/70 leading-relaxed max-w-xs">
                   {impact.description}
-                </span>
+                </p>
               )}
             </div>
           ))}

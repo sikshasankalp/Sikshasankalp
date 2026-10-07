@@ -11,7 +11,7 @@ export const createImpactMetricSchema = z.object({
 export const updateImpactMetricSchema = createImpactMetricSchema.partial().strict();
 
 export const impactMetricIdSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 }).strict();
 
 export type CreateImpactMetricInput = z.infer<typeof createImpactMetricSchema>;

@@ -4,13 +4,43 @@ import { CreateImpactMetricInput, UpdateImpactMetricInput } from '../validators/
 
 export const impactService = {
   async listImpactMetrics(isPublicRequest: boolean) {
-    const metrics = await prisma.impactMetric.findMany({
+    let metrics = await prisma.impactMetric.findMany({
       where: isPublicRequest ? { isPublished: true } : undefined,
       orderBy: [
         { displayOrder: 'asc' },
         { createdAt: 'asc' }
       ]
     });
+
+    if (metrics.length === 0) {
+      await prisma.impactMetric.createMany({
+        data: [
+          {
+            value: 42,
+            label: 'Children Supported',
+            description: 'Guided and supported toward school admission and mainstream education.',
+            displayOrder: 1,
+            isPublished: true,
+          },
+          {
+            value: 35,
+            label: 'Families Supported',
+            description: 'Provided with portable bath tents, helping improve privacy, hygiene, and dignity.',
+            displayOrder: 2,
+            isPublished: true,
+          }
+        ]
+      });
+
+      metrics = await prisma.impactMetric.findMany({
+        where: isPublicRequest ? { isPublished: true } : undefined,
+        orderBy: [
+          { displayOrder: 'asc' },
+          { createdAt: 'asc' }
+        ]
+      });
+    }
+
     return metrics;
   },
 
