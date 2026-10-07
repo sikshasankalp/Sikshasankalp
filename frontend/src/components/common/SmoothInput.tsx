@@ -39,10 +39,16 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
       onChange,
       onFocus,
       onBlur,
+      onSelect,
+      onClick,
+      onKeyUp,
+      onKeyDown,
       type = "text",
       placeholder,
       style,
       disabled,
+      inputMode,
+      autoComplete,
       ...props
     },
     forwardedRef
@@ -60,11 +66,23 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
     const isControlled = value !== undefined;
     const inputValue = isControlled ? String(value ?? "") : String(internalValue);
 
+    // Resolve input type: HTML5 email/number input types block selectionStart in Chromium.
+    // Mapping them to text with appropriate inputMode restores full character tracking and cursor placement.
+    const isEmail = type === "email";
+    const isNumber = type === "number";
+    const resolvedType = isEmail || isNumber ? "text" : type;
+    const resolvedInputMode = isEmail
+      ? "email"
+      : isNumber
+      ? "numeric"
+      : inputMode;
+    const resolvedAutoComplete = isEmail && !autoComplete ? "email" : autoComplete;
+
     const springCaretX = useSpring(
       caretX,
       prefersReducedMotion
         ? { stiffness: 10000, damping: 100, mass: 0.1 }
-        : { stiffness: 500, damping: 30, mass: 0.5 }
+        : { stiffness: 600, damping: 35, mass: 0.3 }
     );
 
     const syncMeasureSpan = () => {
@@ -93,6 +111,7 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
       measureSpan.style.fontFeatureSettings = styles.fontFeatureSettings;
       measureSpan.style.fontVariationSettings = styles.fontVariationSettings;
       measureSpan.style.textTransform = styles.textTransform;
+      measureSpan.style.whiteSpace = "pre";
     };
 
     const measurePrefixWidth = (text: string) => {
@@ -106,9 +125,10 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
       const paddingLeft =
         parseFloat(window.getComputedStyle(input).paddingLeft) || 0;
 
-      return text.length > 0
-        ? measureSpan.offsetWidth + paddingLeft
-        : paddingLeft;
+      const textWidth =
+        measureSpan.getBoundingClientRect().width || measureSpan.offsetWidth;
+
+      return text.length > 0 ? textWidth + paddingLeft : paddingLeft;
     };
 
     const scrollCaretIntoView = (
@@ -137,29 +157,27 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
 
     const getCaretIndex = (target: HTMLInputElement) => {
       try {
-        const selectionStart = target.selectionStart ?? 0;
-        const selectionEnd = target.selectionEnd ?? 0;
-
-        if (selectionStart === selectionEnd) {
-          return selectionStart;
+        const start = target.selectionStart;
+        if (start !== null && start !== undefined) {
+          const end = target.selectionEnd ?? start;
+          return target.selectionDirection === "backward" ? start : end;
         }
-
-        return target.selectionDirection === "backward"
-          ? selectionStart
-          : selectionEnd;
-      } catch {
-        return (target.value || "").length;
-      }
+      } catch {}
+      return (target.value || "").length;
     };
 
     const updateCaretFromInput = (target: HTMLInputElement) => {
       let hasSelection = false;
       let caretIndex = 0;
       try {
-        const selectionStart = target.selectionStart ?? 0;
-        const selectionEnd = target.selectionEnd ?? 0;
-        hasSelection = selectionStart !== selectionEnd;
-        caretIndex = getCaretIndex(target);
+        const start = target.selectionStart;
+        const end = target.selectionEnd;
+        if (start !== null && start !== undefined) {
+          hasSelection = start !== end;
+          caretIndex = getCaretIndex(target);
+        } else {
+          caretIndex = (target.value || "").length;
+        }
       } catch {
         caretIndex = (target.value || "").length;
       }
@@ -182,7 +200,7 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
       const minX = paddingLeft;
       const maxX = target.clientWidth - paddingRight;
       const isCaretVisible =
-        caretPosition >= minX - 1 && caretPosition <= maxX + 1;
+        caretPosition >= minX - 2 && caretPosition <= maxX + 2;
 
       caretX.set(Math.min(Math.max(caretPosition, minX), maxX));
 
@@ -270,14 +288,15 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
           <input
             {...props}
             ref={inputRef}
-            type={type}
+            type={resolvedType}
+            inputMode={resolvedInputMode}
+            autoComplete={resolvedAutoComplete}
             disabled={disabled}
             placeholder={placeholder}
             className={cn(
-              "w-full bg-transparent outline-none px-4 py-2.5 sm:py-3 text-content-primary placeholder:text-content-muted/60 text-sm md:text-base",
+              "w-full bg-transparent outline-none py-2.5 sm:py-3 text-content-primary placeholder:text-content-muted/60 text-sm md:text-base",
               "col-start-1 col-end-2 row-start-1 row-end-2",
-              leftElement && "pl-2",
-              rightElement && "pr-2",
+              leftElement ? "pl-2 pr-4" : rightElement ? "pl-4 pr-2" : "px-4",
               className
             )}
             style={style}
@@ -285,12 +304,16 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
             onChange={(e) => {
               if (!isControlled) setInternalValue(e.target.value);
               onChange?.(e);
+              const target = e.currentTarget;
               requestAnimationFrame(() => {
-                updateCaretRef.current(e.target);
+                updateCaretRef.current(target);
               });
             }}
             onFocus={(e) => {
-              updateCaretRef.current(e.target);
+              const target = e.currentTarget;
+              requestAnimationFrame(() => {
+                updateCaretRef.current(target);
+              });
               onFocus?.(e);
             }}
             onBlur={(e) => {
@@ -299,12 +322,22 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
             }}
             onSelect={(e) => {
               updateCaretRef.current(e.currentTarget);
+              onSelect?.(e);
             }}
             onClick={(e) => {
               updateCaretRef.current(e.currentTarget);
+              onClick?.(e);
             }}
             onKeyUp={(e) => {
               updateCaretRef.current(e.currentTarget);
+              onKeyUp?.(e);
+            }}
+            onKeyDown={(e) => {
+              const target = e.currentTarget;
+              requestAnimationFrame(() => {
+                updateCaretRef.current(target);
+              });
+              onKeyDown?.(e);
             }}
           />
 
@@ -316,7 +349,7 @@ export const SmoothInput = forwardRef<HTMLInputElement, SmoothInputProps>(
 
           <motion.div
             aria-hidden="true"
-            className="bg-brand-primary pointer-events-none col-start-1 col-end-2 row-start-1 row-end-2 h-[1.15em] w-[2px] rounded-full self-center"
+            className="bg-brand-primary pointer-events-none col-start-1 col-end-2 row-start-1 row-end-2 h-[1.15em] w-[2px] rounded-full self-center justify-self-start"
             style={{ x: springCaretX, opacity: caretOpacity }}
           />
         </div>
