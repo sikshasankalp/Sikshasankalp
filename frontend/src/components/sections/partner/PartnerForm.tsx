@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../buttons/Button';
+import { SmoothInput } from '../../common/SmoothInput';
 import { useLanguage } from "../../../context/LanguageContext";
 
 const ORG_TYPES = [
@@ -145,11 +146,10 @@ export function PartnerForm() {
               <label htmlFor="orgName" className="text-sm font-bold text-content-primary">
                 {t('partner.partnerForm.text6')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="text" 
                 id="orgName" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="Company, School, or Foundation Name"
                 value={formData.orgName}
                 onChange={e => setFormData(prev => ({...prev, orgName: e.target.value}))}
@@ -160,11 +160,10 @@ export function PartnerForm() {
               <label htmlFor="contactPerson" className="text-sm font-bold text-content-primary">
                 {t('partner.partnerForm.text7')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="text" 
                 id="contactPerson" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="Full Name"
                 value={formData.contactPerson}
                 onChange={e => setFormData(prev => ({...prev, contactPerson: e.target.value}))}
@@ -175,11 +174,10 @@ export function PartnerForm() {
               <label htmlFor="email" className="text-sm font-bold text-content-primary">
                 {t('partner.partnerForm.text8')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="email" 
                 id="email" 
                 required
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="name@organization.com"
                 value={formData.email}
                 onChange={e => setFormData(prev => ({...prev, email: e.target.value}))}
@@ -190,11 +188,10 @@ export function PartnerForm() {
               <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
                 {t('partner.partnerForm.text9')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="tel" 
                 id="mobile" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="+91 89207 65376"
                 value={formData.mobile}
                 onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
@@ -208,7 +205,7 @@ export function PartnerForm() {
               <select
                 id="orgType"
                 required
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary appearance-none"
+                className="px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all text-content-primary appearance-none shadow-sm"
                 value={formData.orgType}
                 onChange={e => setFormData(prev => ({...prev, orgType: e.target.value}))}
               >
@@ -223,11 +220,10 @@ export function PartnerForm() {
               <label htmlFor="city" className="text-sm font-bold text-content-primary">
                 {t('partner.partnerForm.text12')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="text" 
                 id="city" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="Delhi, Mumbai, etc."
                 value={formData.city}
                 onChange={e => setFormData(prev => ({...prev, city: e.target.value}))}
@@ -239,11 +235,10 @@ export function PartnerForm() {
             <label htmlFor="interest" className="text-sm font-bold text-content-primary">
               {t('partner.partnerForm.text13')} <span className="text-brand-primary">*</span>
             </label>
-            <input 
+            <SmoothInput 
               type="text" 
               id="interest" 
               required
-              className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
               placeholder="e.g., CSR Funding, Volunteer Drive, Material Donation"
               value={formData.interest}
               onChange={e => setFormData(prev => ({...prev, interest: e.target.value}))}

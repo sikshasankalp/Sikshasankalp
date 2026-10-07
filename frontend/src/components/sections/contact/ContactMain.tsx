@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../buttons/Button';
+import { SmoothInput } from '../../common/SmoothInput';
 import { MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useLanguage } from "../../../context/LanguageContext";
 
@@ -136,11 +137,10 @@ export function ContactMain() {
                   <label htmlFor="name" className="text-sm font-bold text-content-primary">
                     {t('contact.contactMain.text5')} <span className="text-brand-primary">*</span>
                   </label>
-                  <input 
+                  <SmoothInput 
                     type="text" 
                     id="name" 
                     required 
-                    className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                     placeholder="Your Name"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({...prev, name: e.target.value}))}
@@ -152,11 +152,10 @@ export function ContactMain() {
                     <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
                       {t('contact.contactMain.text6')} <span className="text-brand-primary">*</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="tel" 
                       id="mobile" 
                       required 
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                       placeholder="+91 89207 65376"
                       value={formData.mobile}
                       onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
@@ -167,10 +166,9 @@ export function ContactMain() {
                     <label htmlFor="email" className="text-sm font-bold text-content-primary">
                       {t('contact.contactMain.text7')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="email" 
                       id="email" 
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                       placeholder="name@example.com"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({...prev, email: e.target.value}))}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Download, ExternalLink, PlayCircle, BookOpen, Search } from 'lucide-react';
 import { PlaceholderImage } from '../../common/PlaceholderImage';
+import { SmoothInput } from '../../common/SmoothInput';
 import { fetchLibrary } from '../../../services/api/library';
 import type { LibraryResource } from '../../../services/api/library';
 import { useLanguage } from "../../../context/LanguageContext";
@@ -71,14 +72,14 @@ export function LibraryFeatured() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-content-secondary" />
-              <input 
-                type="text" 
+            <div className="w-full sm:w-64">
+              <SmoothInput
+                type="text"
                 placeholder="Search resources..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary"
+                leftElement={<Search className="w-4 h-4 text-content-secondary" />}
+                className="py-2 text-sm"
               />
             </div>
             <select

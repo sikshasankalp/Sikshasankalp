@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/buttons/Button';
+import { SmoothInput } from '../../components/common/SmoothInput';
 import { forgotPassword } from '../../services/auth';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 
@@ -82,11 +83,10 @@ export default function ForgotPassword() {
               <label htmlFor="email" className="text-sm font-bold text-content-primary">
                 Email Address
               </label>
-              <input
+              <SmoothInput
                 type="email"
                 id="email"
                 required
-                className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

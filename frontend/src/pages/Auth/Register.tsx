@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../components/buttons/Button';
+import { SmoothInput } from '../../components/common/SmoothInput';
 import { signup } from '../../services/auth';
 import { useLanguage } from "../../context/LanguageContext";
 import { API_URL } from '../../config/env';
@@ -110,12 +111,11 @@ export default function Register() {
           <div className="flex flex-col gap-1.5">
             <label htmlFor="name" className="text-sm font-bold text-content-primary">
               {t('auth.register.text6')}
-                                      </label>
-            <input 
+            </label>
+            <SmoothInput 
               type="text" 
               id="name" 
               required 
-              className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
               placeholder="John Doe"
               value={name}
               onChange={e => setName(e.target.value)}
@@ -125,12 +125,11 @@ export default function Register() {
           <div className="flex flex-col gap-1.5">
             <label htmlFor="email" className="text-sm font-bold text-content-primary">
               {t('auth.register.text7')}
-                                      </label>
-            <input 
+            </label>
+            <SmoothInput 
               type="email" 
               id="email" 
               required 
-              className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
               placeholder="name@example.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -140,51 +139,49 @@ export default function Register() {
           <div className="flex flex-col gap-1.5 relative">
             <label htmlFor="password" className="text-sm font-bold text-content-primary">
               {t('auth.register.text8')}
-                                      </label>
-            <div className="relative">
-              <input 
-                type={showPassword ? 'text' : 'password'}
-                id="password" 
-                required 
-                minLength={8}
-                className="w-full pl-4 pr-10 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-              <button 
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-content-muted hover:text-content-primary transition-colors"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+            </label>
+            <SmoothInput 
+              type={showPassword ? 'text' : 'password'}
+              id="password" 
+              required 
+              minLength={8}
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              rightElement={
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-content-muted hover:text-content-primary transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
+            />
           </div>
 
           <div className="flex flex-col gap-1.5 relative">
             <label htmlFor="confirmPassword" className="text-sm font-bold text-content-primary">
               {t('auth.register.text9')}
-                                      </label>
-            <div className="relative">
-              <input 
-                type={showConfirmPassword ? 'text' : 'password'}
-                id="confirmPassword" 
-                required 
-                minLength={8}
-                className="w-full pl-4 pr-10 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-              />
-              <button 
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-content-muted hover:text-content-primary transition-colors"
-              >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+            </label>
+            <SmoothInput 
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword" 
+              required 
+              minLength={8}
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              rightElement={
+                <button 
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-content-muted hover:text-content-primary transition-colors focus:outline-none"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
+            />
           </div>
 
           <Button type="submit" variant="primary" className="w-full mt-2" disabled={isSubmitting}>

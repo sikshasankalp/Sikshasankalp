@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../buttons/Button';
+import { SmoothInput } from '../../common/SmoothInput';
 import { useLanguage } from "../../../context/LanguageContext";
 
 const FORM_OPTIONS = [
@@ -156,11 +157,10 @@ export function InvolvedForm() {
               <label htmlFor="name" className="text-sm font-bold text-content-primary">
                 {t('get-Involved.involvedForm.text6')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="text" 
                 id="name" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="Jane Doe"
                 value={formData.name}
                 onChange={e => setFormData(prev => ({...prev, name: e.target.value}))}
@@ -171,11 +171,10 @@ export function InvolvedForm() {
               <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
                 {t('get-Involved.involvedForm.text7')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="tel" 
                 id="mobile" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="+91 89207 65376"
                 value={formData.mobile}
                 onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
@@ -186,10 +185,9 @@ export function InvolvedForm() {
               <label htmlFor="email" className="text-sm font-bold text-content-primary">
                 {t('get-Involved.involvedForm.text8')} <span className="text-content-muted font-normal ml-1">(Optional)</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="email" 
                 id="email" 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="jane@example.com"
                 value={formData.email}
                 onChange={e => setFormData(prev => ({...prev, email: e.target.value}))}
@@ -200,11 +198,10 @@ export function InvolvedForm() {
               <label htmlFor="city" className="text-sm font-bold text-content-primary">
                 {t('get-Involved.involvedForm.text9')} <span className="text-brand-primary">*</span>
               </label>
-              <input 
+              <SmoothInput 
                 type="text" 
                 id="city" 
                 required 
-                className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary"
                 placeholder="Delhi, Mumbai, etc."
                 value={formData.city}
                 onChange={e => setFormData(prev => ({...prev, city: e.target.value}))}

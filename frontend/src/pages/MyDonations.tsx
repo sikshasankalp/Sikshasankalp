@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Download, Loader2, KeyRound, CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/buttons/Button';
+import { SmoothInput } from '../components/common/SmoothInput';
 import { fetchWithAuth } from '../services/apiClient';
 import { setPassword as apiSetPassword } from '../services/auth';
 import { useLanguage } from "../context/LanguageContext";
@@ -176,12 +177,12 @@ export default function MyDonations() {
                 <label className="text-xs font-bold text-content-primary">
                   {user.hasPassword ? 'New Password' : 'Password'}
                 </label>
-                <input
+                <SmoothInput
                   type="password"
                   required
                   minLength={8}
                   placeholder="At least 8 characters"
-                  className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-content-primary focus:outline-none focus:border-brand-primary"
+                  className="py-2 text-sm"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
@@ -191,12 +192,12 @@ export default function MyDonations() {
                 <label className="text-xs font-bold text-content-primary">
                   Confirm Password
                 </label>
-                <input
+                <SmoothInput
                   type="password"
                   required
                   minLength={8}
                   placeholder="Re-enter password"
-                  className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-content-primary focus:outline-none focus:border-brand-primary"
+                  className="py-2 text-sm"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />

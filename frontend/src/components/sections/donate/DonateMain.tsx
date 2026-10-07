@@ -2,6 +2,7 @@ import { API_URL } from '../../../config/env';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../buttons/Button';
+import { SmoothInput } from '../../common/SmoothInput';
 import { createDonationOrder, verifyDonationPayment } from '../../../services/api/donation';
 import { Lock, AlertCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
@@ -272,14 +273,14 @@ export function DonateMain() {
                 </div>
                 
                 {amountSelection === 'custom' && (
-                  <div className="relative max-w-[200px] mt-4">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-content-secondary font-bold">₹</span>
-                    <input 
+                  <div className="max-w-[200px] mt-4">
+                    <SmoothInput 
                       type="number" 
                       min="1"
                       required
-                      className="w-full pl-8 pr-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary font-bold text-content-primary"
                       placeholder="Amount"
+                      leftElement={<span className="font-bold text-content-secondary">₹</span>}
+                      className="font-bold"
                       value={customAmount}
                       onChange={e => setCustomAmount(e.target.value)}
                     />
@@ -297,12 +298,11 @@ export function DonateMain() {
                     <label htmlFor="firstName" className="text-sm font-bold text-content-primary">
                       First Name <span className="text-brand-primary">*</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="text" 
                       id="firstName" 
                       required 
                       placeholder="e.g. Rahul"
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.firstName}
                       onChange={e => setFormData(prev => ({...prev, firstName: e.target.value}))}
                     />
@@ -313,12 +313,11 @@ export function DonateMain() {
                     <label htmlFor="lastName" className="text-sm font-bold text-content-primary">
                       Last Name <span className="text-brand-primary">*</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="text" 
                       id="lastName" 
                       required 
                       placeholder="e.g. Sharma"
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.lastName}
                       onChange={e => setFormData(prev => ({...prev, lastName: e.target.value}))}
                     />
@@ -329,12 +328,11 @@ export function DonateMain() {
                     <label htmlFor="mobile" className="text-sm font-bold text-content-primary">
                       {t('donate.donateMain.text16')} <span className="text-brand-primary">*</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="tel" 
                       id="mobile" 
                       required 
                       placeholder="10-digit mobile number"
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.mobile}
                       onChange={e => setFormData(prev => ({...prev, mobile: e.target.value}))}
                     />
@@ -345,12 +343,11 @@ export function DonateMain() {
                     <label htmlFor="email" className="text-sm font-bold text-content-primary">
                       {t('donate.donateMain.text17')} <span className="text-brand-primary">*</span>
                     </label>
-                    <input 
+                    <SmoothInput 
                       type="email" 
                       id="email" 
                       required 
                       placeholder="your.email@example.com"
-                      className="px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({...prev, email: e.target.value}))}
                     />
@@ -387,13 +384,13 @@ export function DonateMain() {
                             <label htmlFor="pan" className="block text-sm font-bold text-content-primary mb-1.5">
                               PAN Card Number <span className="text-brand-primary">*</span>
                             </label>
-                            <input 
+                            <SmoothInput 
                               type="text" 
                               id="pan"
                               required={formData.want80G}
                               maxLength={10}
                               placeholder="ABCDE1234F"
-                              className="w-full px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary transition-all text-content-primary uppercase tracking-wider font-semibold"
+                              className="uppercase tracking-wider font-semibold"
                               value={formData.pan}
                               onChange={e => setFormData(prev => ({...prev, pan: e.target.value.replace(/\s+/g, '').toUpperCase()}))}
                             />

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../../components/buttons/Button';
+import { SmoothInput } from '../../components/common/SmoothInput';
 import { resetPassword } from '../../services/auth';
 import { CheckCircle2, Eye, EyeOff, Lock } from 'lucide-react';
 
@@ -92,37 +93,35 @@ export default function ResetPassword() {
               <label htmlFor="password" className="text-sm font-bold text-content-primary">
                 New Password
               </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  required
-                  minLength={8}
-                  className="w-full pl-4 pr-10 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
-                  placeholder="At least 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-content-muted hover:text-content-primary transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+              <SmoothInput
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                required
+                minLength={8}
+                placeholder="At least 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-content-muted hover:text-content-primary transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="confirmPassword" className="text-sm font-bold text-content-primary">
                 Confirm New Password
               </label>
-              <input
+              <SmoothInput
                 type={showPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 required
                 minLength={8}
-                className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-content-primary text-sm"
                 placeholder="Re-enter new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
