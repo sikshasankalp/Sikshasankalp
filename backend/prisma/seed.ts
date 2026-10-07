@@ -35,9 +35,56 @@ async function main() {
       role: Role.SUPER_ADMIN,
       isVerified: true,
     }
-  });
   console.log(`Admin user seeded/updated with email: ${adminEmail}`);
-}
+
+  const transparencyDocs = [
+    {
+      title: '80G Tax Exemption Certificate',
+      documentType: 'TAX_EXEMPTION_80G',
+      documentNumber: 'ABOTS8425NE20261',
+      documentUrl: '/documents/80G_Certificate.pdf',
+      description: 'Income Tax 80G Approval Certificate. Donations made to Siksha Sankalp Foundation are eligible for 50% tax deduction under Section 80G of the Income Tax Act, 1961.',
+      issuedDate: new Date('2026-06-03'),
+      isPublished: true
+    },
+    {
+      title: '12A / 12AB Registration Certificate',
+      documentType: 'REGISTRATION_12A',
+      documentNumber: 'ABOTS8425NE20261',
+      documentUrl: '/documents/12A_Certificate.pdf',
+      description: 'Income Tax Department registration under Section 12A / 12AB recognizing Siksha Sankalp Foundation as a non-profit charitable trust.',
+      issuedDate: new Date('2026-06-03'),
+      isPublished: true
+    },
+    {
+      title: 'GST Registration Certificate',
+      documentType: 'GST_CERTIFICATE',
+      documentNumber: '09AAETS8425N1Z8',
+      documentUrl: '/documents/GST_Registration.pdf',
+      description: 'Official Goods and Services Tax (GST) Registration Certificate issued by the Government of India.',
+      issuedDate: new Date('2026-06-03'),
+      isPublished: true
+    },
+    {
+      title: 'Trust Permanent Account Number (PAN Card)',
+      documentType: 'PAN_CARD',
+      documentNumber: 'AAETS8425N',
+      documentUrl: '/documents/PAN_Card.pdf',
+      description: 'Official Permanent Account Number (PAN) Card of Siksha Sankalp Foundation issued by the Income Tax Department.',
+      issuedDate: new Date('2026-06-03'),
+      isPublished: true
+    }
+  ];
+
+  for (const doc of transparencyDocs) {
+    const existing = await prisma.transparencyDocument.findFirst({
+      where: { title: doc.title }
+    });
+    if (!existing) {
+      await prisma.transparencyDocument.create({ data: doc });
+    }
+  }
+  console.log('Transparency documents verified in database.');
 
 main()
   .catch(e => {

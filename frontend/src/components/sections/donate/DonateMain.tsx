@@ -375,7 +375,16 @@ export function DonateMain() {
                             </span>
                           </div>
                           <p className="text-xs text-content-secondary mt-1 leading-relaxed">
-                            Donations to Siksha Sankalp Foundation are eligible for 50% tax deduction under Section 80G (Reg. No: ABOTS8425NE20261). As per Govt. Income Tax guidelines, a valid PAN card is required to issue your 80G certificate.
+                            Donations to Siksha Sankalp Foundation are eligible for 50% tax deduction under Section 80G (Reg. No: ABOTS8425NE20261). As per Govt. Income Tax guidelines, a valid PAN card is required to issue your 80G certificate.{' '}
+                            <a
+                              href="/documents/80G_Certificate.pdf"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-bold text-brand-primary underline hover:text-brand-primary-dark inline-flex items-center gap-0.5 ml-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              View 80G Certificate ↗
+                            </a>
                           </p>
                         </label>
 
