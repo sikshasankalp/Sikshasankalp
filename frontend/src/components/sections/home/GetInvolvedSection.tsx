@@ -15,7 +15,7 @@ export function GetInvolvedSection() {
           <Button to="/get-involved" variant="secondary" size="lg" arrow className="w-full sm:w-auto">
             {t('home.getInvolvedSection.text2')}
           </Button>
-          <Button to="/partner-with-us" variant="outline" size="lg" arrow className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-brand-primary">
+          <Button to="/partner-with-us" variant="outline-inverse" size="lg" arrow className="w-full sm:w-auto font-medium">
             {t('home.getInvolvedSection.text3')}
           </Button>
         </div>

@@ -1,7 +1,7 @@
 import React, { type ButtonHTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent' | 'interactive';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'outline-inverse' | 'ghost' | 'accent' | 'interactive';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface BaseButtonProps {
@@ -34,6 +34,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   secondary: 'bg-brand-secondary text-white hover:bg-slate-800 border-transparent hover:shadow-md',
   accent: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent hover:shadow-md',
   outline: 'bg-transparent text-brand-primary border-brand-primary hover:bg-brand-primary hover:text-white hover:border-transparent hover:shadow-md',
+  'outline-inverse': 'bg-transparent text-white border-white/80 hover:bg-white hover:text-brand-primary hover:border-white hover:shadow-md',
   ghost: 'bg-transparent text-content-secondary border-transparent hover:bg-surface-muted hover:text-content-primary',
   interactive: 'bg-surface text-content-primary border-border hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:shadow-md font-mono text-sm font-bold min-w-[140px] sm:min-w-[160px] gap-2',
 };
