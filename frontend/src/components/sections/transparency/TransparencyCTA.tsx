@@ -15,7 +15,7 @@ export function TransparencyCTA() {
           <Button to="/contact" variant="interactive">
             {t('transparency.transparencyCTA.text3')}
           </Button>
-          <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">
+          <Button to="/donate" variant="accent" size="md" arrow className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px]">
             {t('transparency.transparencyCTA.text4')}
           </Button>
         </div>

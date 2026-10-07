@@ -114,7 +114,7 @@ export const en = {
       "text2": "Together, we can create a world where every child has the opportunity to learn, grow, and build a life of dignity.",
       "text3": "Explore Our Programs",
       "text4": "Support Our Mission",
-      "text5": "Learn About Our Work &rarr;"
+      "text5": "Learn About Our Work"
     },
     "ourApproach": {
       "text1": "Our Approach",

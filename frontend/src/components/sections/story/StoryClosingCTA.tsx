@@ -18,7 +18,7 @@ export function StoryClosingCTA() {
           <Button to="/impact" variant="interactive">
             {t('story.storyClosingCTA.text4')}
           </Button>
-          <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">
+          <Button to="/donate" variant="accent" size="md" arrow className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px]">
             {t('story.storyClosingCTA.text5')}
           </Button>
         </div>

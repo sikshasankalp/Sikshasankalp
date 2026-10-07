@@ -15,7 +15,7 @@ export function ClosingCTA() {
           <Button to="/programs" variant="interactive">
             {t('about.closingCTA.text3')}
           </Button>
-          <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">
+          <Button to="/donate" variant="accent" size="md" arrow className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px]">
             {t('about.closingCTA.text4')}
           </Button>
         </div>

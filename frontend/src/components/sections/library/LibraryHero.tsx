@@ -33,7 +33,7 @@ export function LibraryHero() {
               <Button to="#categories" variant="interactive">
                 {t('library.libraryHero.text3')}
               </Button>
-              <Button to="/donate" variant="accent" size="lg" arrow>
+              <Button to="/donate" variant="accent" size="md" arrow className="min-w-[140px] sm:min-w-[160px]">
                 {t('library.libraryHero.text4')}
               </Button>
             </div>

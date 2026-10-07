@@ -18,7 +18,7 @@ export function MediaCTA() {
           <Button to="/impact" variant="interactive">
             {t('media.mediaCTA.text4')}
           </Button>
-          <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[180px]">
+          <Button to="/donate" variant="accent" size="md" arrow className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px]">
             {t('media.mediaCTA.text5')}
           </Button>
         </div>
