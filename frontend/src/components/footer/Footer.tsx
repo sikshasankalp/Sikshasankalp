@@ -49,9 +49,41 @@ export function Footer() {
           {/* Brand & Mission Column (Spans 2 columns on lg) */}
           <div className="lg:col-span-2 flex flex-col items-start">
             <Logo className="mb-6" />
-            <p className="text-white/80 text-sm leading-relaxed mb-8 max-w-sm">
+            <p className="text-white/80 text-sm leading-relaxed mb-5 max-w-sm">
               {t('footer.footer.text1')}
             </p>
+
+            {/* UPI QR Donation Scanner Card */}
+            <div className="mb-6 flex items-center gap-3.5 bg-white/5 border border-white/10 p-3 rounded-2xl max-w-sm w-full">
+              <a 
+                href="/scanner.png" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                title="Click to view full UPI QR Scanner"
+                className="bg-white p-1.5 rounded-xl shadow-md shrink-0 block hover:scale-105 transition-transform"
+              >
+                <img 
+                  src="/scanner.png" 
+                  alt="UPI QR Scanner - Siksha Sankalp Foundation" 
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded"
+                />
+              </a>
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 mb-1 flex items-center gap-1">
+                  <span>📱 Scan & Donate (UPI)</span>
+                </span>
+                <p className="text-xs text-white/90 font-medium leading-relaxed">
+                  Support directly via GPay, PhonePe, Paytm or any UPI App.
+                </p>
+                <Link 
+                  to="/donate"
+                  className="text-xs font-semibold text-amber-300/90 hover:text-amber-200 underline underline-offset-2 mt-1.5 inline-flex items-center gap-1"
+                >
+                  Cards & 80G Receipts &rarr;
+                </Link>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3">
               <a href="https://www.facebook.com/share/1d1BBukLKV/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary" aria-label="Facebook">
                 <FacebookIcon className="w-5 h-5" />
