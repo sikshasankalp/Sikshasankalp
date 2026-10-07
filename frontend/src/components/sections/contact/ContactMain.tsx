@@ -282,16 +282,19 @@ export function ContactMain() {
             <div>
               <h2 className="text-xl font-bold text-content-primary mb-4">{t('contact.contactMain.text18')}</h2>
               <div className="flex flex-wrap gap-4">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Instagram">
-                  IG
-                </a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Facebook">
+                <a href="https://www.facebook.com/share/1d1BBukLKV/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Facebook">
                   FB
                 </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="X (Twitter)">
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="X">
                   X
                 </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="LinkedIn">
+                <a href="https://www.instagram.com/siksha_sankalp_foundation" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="Instagram">
+                  IG
+                </a>
+                <a href="https://youtube.com/@kksirkrishankumar?si=g_334Lrxlb0e0Khs" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="YouTube">
+                  YT
+                </a>
+                <a href="https://www.linkedin.com/in/krishan-kumar-94303b130?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-content-secondary hover:text-brand-primary hover:border-brand-primary transition-colors text-xs font-bold" aria-label="LinkedIn">
                   IN
                 </a>
               </div>
