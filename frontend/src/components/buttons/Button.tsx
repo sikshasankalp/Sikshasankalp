@@ -8,6 +8,8 @@ interface BaseButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   arrow?: boolean;
+  arrowPosition?: 'start' | 'end';
+  arrowIcon?: string;
   className?: string;
   children: React.ReactNode;
 }
@@ -36,7 +38,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   outline: 'bg-transparent text-brand-primary border-brand-primary hover:bg-brand-primary hover:text-white hover:border-transparent hover:shadow-md',
   'outline-inverse': 'bg-transparent text-white border-white/80 hover:bg-white hover:text-brand-primary hover:border-white hover:shadow-md',
   ghost: 'bg-transparent text-content-secondary border-transparent hover:bg-surface-muted hover:text-content-primary',
-  interactive: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent hover:shadow-md',
+  interactive: 'bg-surface text-content-primary border-border hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:shadow-md font-mono text-sm sm:text-base font-bold min-w-[140px] sm:min-w-[160px] gap-2',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -49,25 +51,39 @@ export function Button({
   variant = 'primary',
   size = 'md',
   arrow = false,
+  arrowPosition,
+  arrowIcon = '→',
   className = '',
   children,
   ...props
 }: ButtonProps) {
   const isInteractive = variant === 'interactive';
   const showArrow = arrow || isInteractive;
+  const isUpfront = arrowPosition === 'start' || (isInteractive && arrowPosition !== 'end');
   const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-full shadow-sm transition-all duration-200 group/btn focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer';
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
-  const renderContent = () => (
-    <>
-      <span>{children}</span>
-      {showArrow && (
-        <span className="inline-block transition-transform duration-200 group-hover/btn:translate-x-1.5 ml-2 font-mono text-[1.15em] leading-none">
-          →
-        </span>
-      )}
-    </>
-  );
+  const renderContent = () => {
+    const arrowElem = showArrow && (
+      <span
+        className={`inline-block font-mono text-[1.15em] leading-none transition-all duration-200 ${
+          isInteractive
+            ? 'text-brand-primary group-hover/btn:text-white group-hover/btn:translate-x-1 shrink-0'
+            : 'group-hover/btn:translate-x-1.5'
+        } ${isUpfront ? 'mr-2' : 'ml-2'}`}
+      >
+        {arrowIcon}
+      </span>
+    );
+
+    return (
+      <>
+        {isUpfront && arrowElem}
+        <span>{children}</span>
+        {!isUpfront && arrowElem}
+      </>
+    );
+  };
 
   const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
     e.preventDefault();
