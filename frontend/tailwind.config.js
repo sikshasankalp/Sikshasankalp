@@ -20,6 +20,8 @@ export default {
           primary: '#1A1A1A',   // Deep Charcoal
           secondary: '#4A453E', // Warm Slate
           muted: '#8C867E',     // Warm Stone
+          sand: '#E6DCD1',      // Soft Sand Stone (too big for one GPU tone)
+          stone: '#A89B8E',     // Warm Taupe
         },
         border: {
           DEFAULT: '#E8E2D7',
@@ -31,6 +33,8 @@ export default {
           secondary: '#1A1A1A',     // Deep Charcoal
           accent: '#C85A27',
           'accent-hover': '#B04E1F',
+          sand: '#EADBCE',          // Sand Paper tint (too big for one GPU inspiration)
+          stone: '#A89B8E',         // Warm Taupe Stone
           cream: '#FBF8F3',
           terracotta: '#C85A27',
           charcoal: '#1A1A1A',
