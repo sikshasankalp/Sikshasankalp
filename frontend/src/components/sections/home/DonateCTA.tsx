@@ -10,7 +10,7 @@ export function DonateCTA() {
         <p className="text-body-large mb-8">
           {t('home.donateCTA.text1')}
                           </p>
-        <Button to="/donate" variant="accent" size="lg" className="w-full sm:w-auto min-w-[200px]">
+        <Button to="/donate" variant="accent" size="lg" arrow className="w-full sm:w-auto min-w-[200px]">
           {t('home.donateCTA.text2')}
                           </Button>
       </div>

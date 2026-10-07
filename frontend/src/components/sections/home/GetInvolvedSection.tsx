@@ -7,17 +7,17 @@ export function GetInvolvedSection() {
     <section className="py-14 md:py-20 bg-brand-primary text-white">
       <div className="container-default text-center max-w-2xl mx-auto">
         <h2 className="text-h2 mb-4">{t('home.getInvolvedSection.title1')}</h2>
-        <p className="text-base md:text-lg text-white/90 mb-8 leading-relaxed">
+        <p className="text-base md:text-lg text-brand-sand mb-8 leading-relaxed">
           {t('home.getInvolvedSection.text1')}
-                          </p>
+        </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button to="/get-involved" variant="accent" size="lg" className="w-full sm:w-auto">
+          <Button to="/get-involved" variant="secondary" size="lg" arrow className="w-full sm:w-auto">
             {t('home.getInvolvedSection.text2')}
-                                </Button>
-          <Button to="/partner-with-us" className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10" size="lg">
+          </Button>
+          <Button to="/partner-with-us" variant="outline" size="lg" arrow className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-brand-primary">
             {t('home.getInvolvedSection.text3')}
-                                </Button>
+          </Button>
         </div>
       </div>
     </section>

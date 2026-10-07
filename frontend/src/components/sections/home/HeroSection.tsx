@@ -39,10 +39,10 @@ export function HeroSection() {
                                       </p>
             
             <div className="flex flex-wrap items-center gap-4">
-              <Button to="/our-story" variant="primary" size="lg">
+              <Button to="/our-story" variant="primary" size="lg" arrow>
                 {t('home.heroSection.btn1')}
               </Button>
-              <Button to="/programs" variant="outline" size="lg">
+              <Button to="/programs" variant="outline" size="lg" arrow>
                 {t('home.heroSection.btn2')}
               </Button>
             </div>

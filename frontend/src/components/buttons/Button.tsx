@@ -7,6 +7,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
 interface BaseButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  arrow?: boolean;
   className?: string;
   children: React.ReactNode;
 }
@@ -29,10 +30,10 @@ type ButtonAsRouterLinkProps = BaseButtonProps & {
 type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps | ButtonAsRouterLinkProps;
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent',
-  secondary: 'bg-brand-secondary text-white hover:bg-slate-800 border-transparent',
-  accent: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent',
-  outline: 'bg-transparent text-brand-primary border-brand-primary hover:bg-brand-primary hover:text-white',
+  primary: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent hover:shadow-md',
+  secondary: 'bg-brand-secondary text-white hover:bg-slate-800 border-transparent hover:shadow-md',
+  accent: 'bg-brand-primary text-white hover:bg-brand-primary-hover border-transparent hover:shadow-md',
+  outline: 'bg-transparent text-brand-primary border-brand-primary hover:bg-brand-primary hover:text-white hover:border-transparent hover:shadow-md',
   ghost: 'bg-transparent text-content-secondary border-transparent hover:bg-surface-muted hover:text-content-primary',
 };
 
@@ -45,12 +46,24 @@ const sizeStyles: Record<ButtonSize, string> = {
 export function Button({
   variant = 'primary',
   size = 'md',
+  arrow = false,
   className = '',
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-full shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
+  const baseStyles = 'inline-flex items-center justify-center border font-medium rounded-full shadow-sm transition-all duration-200 group hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer';
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+
+  const renderContent = () => (
+    <>
+      <span>{children}</span>
+      {arrow && (
+        <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5 ml-2 font-mono text-[1.15em] leading-none">
+          →
+        </span>
+      )}
+    </>
+  );
 
   const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
     e.preventDefault();
@@ -77,13 +90,13 @@ export function Button({
           }}
           {...(rest as any)}
         >
-          {children}
+          {renderContent()}
         </a>
       );
     }
     return (
       <Link to={to} className={combinedClassName} onClick={onClick} {...rest}>
-        {children}
+        {renderContent()}
       </Link>
     );
   }
@@ -103,20 +116,20 @@ export function Button({
           }}
           {...rest}
         >
-          {children}
+          {renderContent()}
         </a>
       );
     }
     return (
       <a href={href} className={combinedClassName} onClick={onClick} {...rest}>
-        {children}
+        {renderContent()}
       </a>
     );
   }
 
   return (
     <button className={combinedClassName} {...(props as ButtonAsButtonProps)}>
-      {children}
+      {renderContent()}
     </button>
   );
 }
