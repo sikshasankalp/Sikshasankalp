@@ -6,14 +6,12 @@ import type { MediaCoverageItem } from '../../../services/api/media';
 import { useLanguage } from "../../../context/LanguageContext";
 
 export function MediaGrid() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const [items, setItems] = useState<MediaCoverageItem[]>([]);
 
   useEffect(() => {
     const loadMedia = async () => {
       try {
-        await fetchMedia({ displayLocation: 'MEDIA_COVERAGE' });
-        // Also fetch default empty location if no specific one? For now just fetch all.
         const allData = await fetchMedia();
         setItems(allData);
       } catch (error) {
@@ -75,7 +73,7 @@ export function MediaGrid() {
             <h3 className="text-xl font-bold text-content-primary mb-2">{t('media.mediaGrid.text3')}</h3>
             <p className="text-body text-content-secondary max-w-md mx-auto">
               {t('media.mediaGrid.text4')}
-                                          </p>
+            </p>
           </div>
         )}
       </div>

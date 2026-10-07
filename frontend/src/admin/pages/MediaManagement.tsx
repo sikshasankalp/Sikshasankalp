@@ -38,6 +38,9 @@ export const DISPLAY_LOCATIONS = [
   { value: 'PARTNER', label: 'Partner With Us – Main Hero' },
   { value: 'VOLUNTEER', label: 'Get Involved / Volunteers – Main Hero' },
   { value: 'TRANSPARENCY', label: 'Transparency – Main Hero' },
+  { value: 'TEAM', label: 'Team Page – Main Hero Photo' },
+  { value: 'CONTACT', label: 'Contact Us – Main Hero Photo' },
+  { value: 'DONATE', label: 'Donate Page – Hero Photo' },
   { value: 'MEDIA_HERO', label: 'Media Page – Main Hero Photo' },
   { value: 'MEDIA_COVERAGE', label: 'Media Page – Press Coverage' }
 ];

@@ -86,7 +86,9 @@ export function MediaCoverageSection() {
       try {
         const items = await fetchMedia();
         if (items && items.length > 0) {
-          const mapped: ArticleItem[] = items.map((m: MediaCoverageItem) => ({
+          const homeSpecific = items.filter(m => m.displayLocation === 'HOME_MEDIA');
+          const targetItems = homeSpecific.length > 0 ? homeSpecific : items;
+          const mapped: ArticleItem[] = targetItems.map((m: MediaCoverageItem) => ({
             id: m.id,
             title: m.title,
             publication: m.publication || 'Media Coverage',
