@@ -215,24 +215,26 @@ export function Navbar() {
                                                   </Button>
               </div>
             ) : (
-              <Button variant="accent" size="sm" to="/login" className="text-[14px] px-4 py-1.5">
-                {t('navbar.navbar.text7')}
-                                                </Button>
+              <div className="flex items-center gap-3">
+                <Link 
+                  to="/login" 
+                  className="text-[14px] font-medium text-content-secondary hover:text-brand-primary transition-colors px-2 py-1.5"
+                >
+                  {t('navbar.navbar.text7')}
+                </Link>
+                <Button variant="accent" size="sm" to="/donate" className="text-[14px] px-4 py-1.5 font-semibold shadow-sm">
+                  {t('navbar.navbar.text6')}
+                </Button>
+              </div>
             )}
           </div>
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="flex flex-1 items-center justify-end gap-4 lg:hidden">
-          {user ? (
-            <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
-              {t('navbar.navbar.text8')}
-                                      </Button>
-          ) : (
-            <Button variant="accent" size="sm" to="/login" className="text-xs px-3 py-1.5 md:px-4 md:py-2">
-              {t('navbar.navbar.text9')}
-                                          </Button>
-          )}
+          <Button variant="accent" size="sm" to="/donate" className="text-xs px-3.5 py-1.5 md:px-4 md:py-2 font-semibold shadow-sm">
+            {t('navbar.navbar.text8')}
+          </Button>
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -327,6 +329,18 @@ export function Navbar() {
                 {t('navbar.navbar.text15')}
               </button>
             </>
+          )}
+
+          {!user && (
+            <div className="pt-2 px-3">
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center w-full py-2.5 px-4 rounded-lg text-sm font-semibold border border-border text-content-primary hover:bg-surface-muted transition-colors"
+              >
+                {t('navbar.navbar.text7')}
+              </Link>
+            </div>
           )}
         </nav>
       </div>

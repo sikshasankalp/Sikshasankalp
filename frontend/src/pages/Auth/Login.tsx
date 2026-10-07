@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff, CheckCircle2, ShieldCheck, ArrowLeft, RefreshCw } from 'lucide-react';
 import { Button } from '../../components/buttons/Button';
@@ -11,8 +11,10 @@ import { verifyAdminOtp, resendAdminOtp } from '../../services/auth';
 export default function Login() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const isVerifiedParam = searchParams.get('verified') === 'true';
+  const fromTarget = (location.state as any)?.from || searchParams.get('redirect') || '/';
 
   const { login, setUser } = useAuth();
   const [step, setStep] = useState<'credentials' | 'otp'>('credentials');
@@ -94,7 +96,7 @@ export default function Login() {
         if (res.user.role !== 'PUBLIC_USER') {
           navigate('/admin');
         } else {
-          navigate('/');
+          navigate(fromTarget);
         }
       }
     } catch (err: any) {
@@ -162,7 +164,7 @@ export default function Login() {
       if (verifiedUser.role !== 'PUBLIC_USER') {
         navigate('/admin');
       } else {
-        navigate('/');
+        navigate(fromTarget);
       }
     } catch (err: any) {
       setOtpError(err?.message || 'Verification failed. Please check the code and try again.');
