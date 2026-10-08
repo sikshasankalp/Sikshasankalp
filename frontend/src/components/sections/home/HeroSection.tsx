@@ -43,7 +43,7 @@ export function HeroSection() {
               </h1>
 
               {/* Subheading: ~26px (16px * 1.618) */}
-              <p className="text-[19px] sm:text-[22px] lg:text-[26px] leading-[1.38] font-medium text-brand-primary mb-[18px] lg:mb-[20px]">
+              <p className="text-[19px] sm:text-[22px] lg:text-[26px] leading-[1.38] font-medium text-content-secondary mb-[18px] lg:mb-[20px]">
                 {t('home.heroSection.desc1') || "Taking underprivileged children from the world of pavements to the world of schools."}
               </p>
 
