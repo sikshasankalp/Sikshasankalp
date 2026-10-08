@@ -92,7 +92,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full max-w-[720px] lg:max-w-none aspect-[16/12] sm:aspect-[16/11.5] lg:aspect-[16/11.5] xl:aspect-[16/11] min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] xl:min-h-[520px] max-h-[570px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-elevated border border-border/60 select-none"
+      className="relative w-full max-w-[720px] lg:max-w-none aspect-[16/11.5] sm:aspect-[16/11.5] lg:aspect-[16/11.5] xl:aspect-[16/11] min-h-[300px] sm:min-h-[420px] lg:min-h-[500px] xl:min-h-[520px] max-h-[570px] rounded-[22px] sm:rounded-[28px] overflow-hidden shadow-elevated border border-border/60 select-none"
     >
       <style>{css}</style>
 
@@ -142,7 +142,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
                 />
 
                 {/* Soft bottom readability gradient: leaves top 60% completely bright and clear */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-5 sm:p-7 md:p-8 text-white z-10 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-4 sm:p-7 md:p-8 text-white z-10 pointer-events-none">
                   <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl leading-snug mb-2 drop-shadow-md">
                     {slide.title}
                   </h3>
