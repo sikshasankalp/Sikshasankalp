@@ -34,7 +34,7 @@ export function HeroSection() {
       <div className="w-full px-4 md:px-8 lg:px-12">
         <div className="grid lg:grid-cols-[1.05fr_1fr] lg:gap-8 xl:gap-12 items-stretch pt-1 lg:pt-2">
           {/* Left Column: Main hero content and primary actions */}
-          <div className="flex flex-col justify-between max-w-[580px] lg:ml-4 xl:ml-8 pb-6 sm:pb-8 lg:pb-8">
+          <div className="flex flex-col justify-between max-w-[580px] lg:ml-4 xl:ml-8 pb-5 lg:pb-6">
             <div>
               <h1 className="text-[32px] md:text-[40px] lg:text-[46px] xl:text-[48px] leading-[1.15] lg:leading-[1.12] font-semibold tracking-tight text-content-primary mb-[16px] lg:mb-[20px]">
                 {t('home.heroSection.title1')}
@@ -42,7 +42,7 @@ export function HeroSection() {
               <p className="text-[18px] lg:text-[20px] leading-[1.45] font-medium text-content-secondary mb-[24px] lg:mb-[32px]">
                 {t('home.heroSection.desc1')}
               </p>
-              <p className="text-[16px] lg:text-[17px] leading-[1.618] text-content-primary/80 mb-[32px] lg:mb-[48px]">
+              <p className="text-[16px] lg:text-[17px] leading-[1.618] text-content-primary/80 mb-[32px] lg:mb-[40px]">
                 {t('home.heroSection.text1')}
               </p>
             </div>
@@ -62,13 +62,13 @@ export function HeroSection() {
           <div className="w-full h-full flex flex-col">
             <HeroCarousel items={heroItems} />
           </div>
+        </div>
 
-          {/* Row 2 (Column 1): Line and Free Digital Siksha link at the exact same horizontal level as the image component bottom */}
-          <div className="max-w-[580px] lg:ml-4 xl:ml-8 pt-5 border-t border-border lg:col-start-1 mt-6 lg:mt-0">
-            <Button to="/digital-library" variant="ghost" className="text-[15px] font-medium px-0 hover:bg-transparent hover:text-brand-primary">
-              {t('home.heroSection.text2')}
-            </Button>
-          </div>
+        {/* Divider line placed directly at the bottom level of the carousel card */}
+        <div className="max-w-[580px] lg:ml-4 xl:ml-8 pt-4 border-t border-border mt-0">
+          <Button to="/digital-library" variant="ghost" className="text-[15px] font-medium px-0 hover:bg-transparent hover:text-brand-primary">
+            {t('home.heroSection.text2')}
+          </Button>
         </div>
       </div>
     </section>
