@@ -19,7 +19,7 @@ export default function PublicLayout() {
       {/* 
         Top padding matches the compact navbar height perfectly, keeping ticker flush.
       */}
-      <main className="flex-grow pt-[92px] sm:pt-[94px] md:pt-[98px] flex flex-col">
+      <main className="flex-grow pt-[96px] sm:pt-[94px] md:pt-[98px] flex flex-col">
         <Outlet />
       </main>
 
