@@ -88,6 +88,30 @@ const bootstrapSupportBenefits = async (): Promise<void> => {
   }
 };
 
+const bootstrapHeroSlide = async (): Promise<void> => {
+  try {
+    const heroCount = await prisma.galleryItem.count({
+      where: { displayLocation: 'HOME_HERO' }
+    });
+    if (heroCount === 0) {
+      await prisma.galleryItem.create({
+        data: {
+          title: 'Footpath Se School Tak: Siksha Sankalp Badal Raha Hai Bachho Ka Bhavishya',
+          description: 'Siksha Sankalp Foundation brings free foundational education and formal school admissions to underprivileged children living on streets.',
+          category: 'FOOTPATH_EDUCATION',
+          displayLocation: 'HOME_HERO',
+          imageUrl: '/logo/logo.jpeg',
+          isFeatured: true,
+          isPublished: true,
+        }
+      });
+      console.log('[BOOTSTRAP] Initialized default Homepage Hero gallery slide');
+    }
+  } catch (error) {
+    console.error('[BOOTSTRAP] Warning: Failed to bootstrap hero gallery slide:', error);
+  }
+};
+
 const startServer = async (): Promise<void> => {
   try {
     await prisma.$connect();
@@ -97,6 +121,7 @@ const startServer = async (): Promise<void> => {
     await bootstrapAdminUser();
     await bootstrapNgoNeeds();
     await bootstrapSupportBenefits();
+    await bootstrapHeroSlide();
 
     server = app.listen(config.port, () => {
       console.log(

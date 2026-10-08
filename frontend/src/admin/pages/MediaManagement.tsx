@@ -3,12 +3,13 @@ import { fetchGallery, createGalleryItem, updateGalleryItem, deleteGalleryItem }
 import type { GalleryItem } from '../../services/api/gallery';
 import { fetchMedia, createMediaItem, updateMediaItem, deleteMediaItem } from '../../services/api/media';
 import type { MediaCoverageItem } from '../../services/api/media';
-import { Plus, Edit2, Trash2, Link as LinkIcon, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Link as LinkIcon, Image as ImageIcon, Loader2, Sparkles } from 'lucide-react';
 
 type UnifiedMedia = {
   id: string;
   type: 'IMAGE' | 'EXTERNAL_ARTICLE';
   title: string;
+  description?: string;
   thumbnailUrl: string;
   category: string;
   displayLocation: string;
@@ -47,6 +48,7 @@ export const DISPLAY_LOCATIONS = [
 
 export default function MediaManagement() {
   const [mediaList, setMediaList] = useState<UnifiedMedia[]>([]);
+  const [filterTab, setFilterTab] = useState<'ALL' | 'HERO' | 'IMAGE' | 'ARTICLE'>('ALL');
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<UnifiedMedia | null>(null);
@@ -77,6 +79,7 @@ export default function MediaManagement() {
           id: g.id,
           type: 'IMAGE' as const,
           title: g.title || 'Untitled Image',
+          description: g.description || '',
           thumbnailUrl: g.imageUrl,
           category: g.category || '',
           displayLocation: g.displayLocation || '',
@@ -89,6 +92,7 @@ export default function MediaManagement() {
           id: m.id,
           type: 'EXTERNAL_ARTICLE' as const,
           title: m.title,
+          description: m.description || '',
           thumbnailUrl: m.thumbnailUrl || m.externalUrl,
           category: m.category || '',
           displayLocation: m.displayLocation || '',
@@ -114,11 +118,12 @@ export default function MediaManagement() {
     loadMedia();
   }, []);
 
-  const openModal = (item?: UnifiedMedia) => {
+  const openModal = (item?: UnifiedMedia, defaultLocation?: string) => {
     setEditingItem(item || null);
     if (item) {
       setType(item.type);
       setTitle(item.title);
+      setDescription(item.description || '');
       setCategory(item.category);
       setDisplayLocation(item.displayLocation);
       setIsPublished(item.isPublished);
@@ -127,10 +132,6 @@ export default function MediaManagement() {
         const orig = item.original as MediaCoverageItem;
         setExternalUrl(orig.externalUrl);
         setPublication(orig.publication);
-        setDescription(orig.description || '');
-      } else {
-        const orig = item.original as GalleryItem;
-        setDescription(orig.description || '');
       }
     } else {
       setType('IMAGE');
@@ -138,10 +139,10 @@ export default function MediaManagement() {
       setDescription('');
       setExternalUrl('');
       setPublication('');
-      setCategory('');
-      setDisplayLocation('');
+      setCategory(defaultLocation === 'HOME_HERO' ? 'FOOTPATH_EDUCATION' : '');
+      setDisplayLocation(defaultLocation || '');
       setIsPublished(true);
-      setIsFeatured(false);
+      setIsFeatured(defaultLocation === 'HOME_HERO');
     }
     setFile(null);
     setIsModalOpen(true);
@@ -201,18 +202,64 @@ export default function MediaManagement() {
     }
   };
 
+  const heroCount = mediaList.filter(m => m.displayLocation === 'HOME_HERO').length;
+  const imageCount = mediaList.filter(m => m.type === 'IMAGE').length;
+  const articleCount = mediaList.filter(m => m.type === 'EXTERNAL_ARTICLE').length;
+
+  const filteredList = mediaList.filter(item => {
+    if (filterTab === 'HERO') return item.displayLocation === 'HOME_HERO';
+    if (filterTab === 'IMAGE') return item.type === 'IMAGE';
+    if (filterTab === 'ARTICLE') return item.type === 'EXTERNAL_ARTICLE';
+    return true;
+  });
+
   if (isLoading) return <div className="p-8 text-center">Loading media...</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-content-primary">Media Management</h2>
-        <button
-          onClick={() => openModal()}
-          className="bg-brand-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-brand-primary/90"
-        >
-          <Plus className="w-4 h-4" /> Add Media
-        </button>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-content-primary">Media & Hero Management</h2>
+          <p className="text-sm text-content-secondary mt-0.5">
+            Manage Homepage 3D Carousel slides, gallery photos, and press articles
+          </p>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => openModal(undefined, 'HOME_HERO')}
+            className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 border border-amber-500/30 px-3.5 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold transition-colors"
+          >
+            <Sparkles className="w-4 h-4 text-amber-600" /> + Add Hero Slide
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="bg-brand-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-brand-primary/90 text-sm font-semibold shadow-xs"
+          >
+            <Plus className="w-4 h-4" /> Add Media
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {[
+          { key: 'ALL', label: `All Media (${mediaList.length})` },
+          { key: 'HERO', label: `🌟 Homepage Hero Slides (${heroCount})` },
+          { key: 'IMAGE', label: `📸 Images (${imageCount})` },
+          { key: 'ARTICLE', label: `📰 Articles (${articleCount})` },
+        ].map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setFilterTab(tab.key as any)}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              filterTab === tab.key
+                ? 'bg-brand-primary text-white shadow-xs'
+                : 'bg-surface-muted/40 text-content-secondary hover:text-content-primary hover:bg-surface-muted/70'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div className="bg-background border border-border/50 rounded-xl overflow-hidden">
@@ -220,28 +267,35 @@ export default function MediaManagement() {
           <table className="w-full text-left text-sm">
             <thead className="bg-surface-muted/30 border-b border-border/50">
               <tr>
-                <th className="px-6 py-4 font-semibold text-content-secondary">Media</th>
+                <th className="px-6 py-4 font-semibold text-content-secondary">Title & Description</th>
                 <th className="px-6 py-4 font-semibold text-content-secondary">Type</th>
-                <th className="px-6 py-4 font-semibold text-content-secondary">Location</th>
+                <th className="px-6 py-4 font-semibold text-content-secondary">Display Location</th>
                 <th className="px-6 py-4 font-semibold text-content-secondary">Status</th>
                 <th className="px-6 py-4 font-semibold text-content-secondary text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {mediaList.map((item) => (
+              {filteredList.map((item) => (
                 <tr key={item.id} className="hover:bg-surface-muted/10 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
+                  <td className="px-6 py-4 max-w-md">
+                    <div className="flex items-start gap-4">
                       {item.type === 'IMAGE' ? (
-                         <img src={item.thumbnailUrl} className="w-16 h-12 object-cover rounded" alt="thumb" />
+                        <img src={item.thumbnailUrl} className="w-16 h-14 object-cover rounded-md flex-shrink-0 border border-border/40" alt="thumb" />
                       ) : (
-                         <div className="w-16 h-12 bg-gray-100 flex items-center justify-center rounded">
-                           {item.thumbnailUrl && item.thumbnailUrl.startsWith('http') ? <img src={item.thumbnailUrl} className="w-full h-full object-cover rounded" /> : <LinkIcon className="w-6 h-6 text-gray-400" />}
-                         </div>
+                        <div className="w-16 h-14 bg-gray-100 flex items-center justify-center rounded-md flex-shrink-0 border border-border/40">
+                          {item.thumbnailUrl && item.thumbnailUrl.startsWith('http') ? <img src={item.thumbnailUrl} className="w-full h-full object-cover rounded-md" /> : <LinkIcon className="w-6 h-6 text-gray-400" />}
+                        </div>
                       )}
-                      <div>
-                        <p className="font-medium text-content-primary line-clamp-1">{item.title}</p>
-                        <p className="text-xs text-content-secondary mt-0.5">{item.category || '-'}</p>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-content-primary line-clamp-1">{item.title}</p>
+                        {item.description && (
+                          <p className="text-xs text-content-secondary mt-0.5 line-clamp-2">
+                            {item.description}
+                          </p>
+                        )}
+                        <p className="text-[11px] text-content-secondary/70 mt-1">
+                          Category: <span className="font-medium text-brand-primary">{item.category || 'General'}</span>
+                        </p>
                       </div>
                     </div>
                   </td>
@@ -251,7 +305,17 @@ export default function MediaManagement() {
                       {item.type === 'IMAGE' ? 'Image' : 'Article'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-content-secondary">{item.displayLocation || 'Unassigned'}</td>
+                  <td className="px-6 py-4">
+                    {item.displayLocation === 'HOME_HERO' ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-700 border border-amber-500/30">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Homepage Hero
+                      </span>
+                    ) : (
+                      <span className="text-content-secondary text-xs font-medium">
+                        {DISPLAY_LOCATIONS.find(l => l.value === item.displayLocation)?.label || item.displayLocation || 'General Gallery'}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
                       {item.isPublished ? (
@@ -266,20 +330,20 @@ export default function MediaManagement() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <button onClick={() => openModal(item)} className="p-2 text-content-secondary hover:text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors">
+                      <button onClick={() => openModal(item)} title="Edit" className="p-2 text-content-secondary hover:text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(item.id, item.type)} className="p-2 text-content-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                      <button onClick={() => handleDelete(item.id, item.type)} title="Delete" className="p-2 text-content-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {mediaList.length === 0 && (
+              {filteredList.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-content-secondary">
-                    No media items found.
+                    No media items found in this section.
                   </td>
                 </tr>
               )}
@@ -377,13 +441,34 @@ export default function MediaManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-content-primary mb-1">Category</label>
-                  <input
-                    type="text"
-                    value={category}
-                    onChange={e => setCategory(e.target.value)}
-                    className="w-full px-4 py-2 bg-surface-muted/30 border border-border/50 rounded-lg focus:outline-none focus:border-brand-primary text-content-primary"
-                    placeholder="e.g. EDUCATION"
-                  />
+                  {type === 'IMAGE' ? (
+                    <select
+                      value={category}
+                      onChange={e => setCategory(e.target.value)}
+                      className="w-full px-4 py-2 bg-surface-muted/30 border border-border/50 rounded-lg focus:outline-none focus:border-brand-primary text-content-primary"
+                    >
+                      <option value="">-- Select Category --</option>
+                      <option value="FOOTPATH_EDUCATION">Footpath Education (Ground Reality)</option>
+                      <option value="SCHOOL_ADMISSION">School Admission</option>
+                      <option value="CHILDREN_IN_SCHOOL">Children In School</option>
+                      <option value="EDUCATIONAL_SUPPORT">Educational Support</option>
+                      <option value="LEARNING_ACTIVITIES">Learning Activities</option>
+                      <option value="FOOD_COMMUNITY_SUPPORT">Food & Community Support</option>
+                      <option value="FAMILY_SUPPORT">Family Support</option>
+                      <option value="BATH_TENT">Bath Tent</option>
+                      <option value="ENVIRONMENT">Environment</option>
+                      <option value="SCHOOL_ACTIVITIES">School Activities</option>
+                      <option value="SPECIAL_MOMENTS">Special Moments</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={category}
+                      onChange={e => setCategory(e.target.value)}
+                      className="w-full px-4 py-2 bg-surface-muted/30 border border-border/50 rounded-lg focus:outline-none focus:border-brand-primary text-content-primary"
+                      placeholder="e.g. Press Coverage"
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-content-primary mb-1">Display Location</label>
