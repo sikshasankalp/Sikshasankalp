@@ -43,8 +43,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Montserrat', 'Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
-        display: ['Montserrat', 'Outfit', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'],
+        display: ['Montserrat', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif'],
       },
       boxShadow: {
