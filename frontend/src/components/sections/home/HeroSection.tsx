@@ -12,15 +12,16 @@ export function HeroSection() {
   useEffect(() => {
     const loadHeroImages = async () => {
       try {
-        let items = await fetchGallery({ displayLocation: 'HOME_HERO' });
-        if (!items || items.length === 0) {
-          items = await fetchGallery({ isFeatured: 'true' });
-        }
-        if (!items || items.length === 0) {
-          items = await fetchGallery();
-        }
-        if (items && items.length > 0) {
-          setHeroItems(items);
+        // Strictly fetch only slides intended for HOME_HERO
+        const items = await fetchGallery({ displayLocation: 'HOME_HERO' });
+        // Ensure no MEDIA_COVERAGE items ever leak into the Hero Carousel
+        const validHeroItems = (items || []).filter(
+          (item) => item.displayLocation === 'HOME_HERO' && item.category !== 'MEDIA_COVERAGE'
+        );
+        if (validHeroItems.length > 0) {
+          setHeroItems(validHeroItems);
+        } else {
+          setHeroItems([]);
         }
       } catch (err) {
         console.error('Failed to load hero images:', err);
@@ -30,45 +31,45 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative pt-3 sm:pt-4 md:pt-6 pb-12 md:pb-[72px] overflow-hidden">
+    <section className="relative pt-2 sm:pt-4 pb-8 sm:pb-12 md:pb-16 overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12">
-        <div className="grid lg:grid-cols-[1.05fr_1fr] lg:gap-8 xl:gap-12 items-stretch pt-1 lg:pt-2">
-          {/* Left Column: Main hero content and primary actions */}
-          <div className="flex flex-col justify-between max-w-[580px] lg:ml-4 xl:ml-8 pb-5 lg:pb-6">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] lg:gap-10 xl:gap-14 items-center">
+          {/* Left Column: Main hero content and primary actions - tightly grouped without excessive empty space */}
+          <div className="flex flex-col max-w-[580px] lg:ml-2 xl:ml-6 gap-4 sm:gap-5">
             <div>
-              <h1 className="text-[32px] md:text-[40px] lg:text-[46px] xl:text-[48px] leading-[1.15] lg:leading-[1.12] font-semibold tracking-tight text-content-primary mb-[16px] lg:mb-[20px]">
-                {t('home.heroSection.title1')}
+              <h1 className="text-[28px] sm:text-[34px] md:text-[40px] lg:text-[44px] leading-[1.18] font-bold tracking-tight text-content-primary mb-3">
+                {t('home.heroSection.title1') || "Every child has the right to education, dignity and a better future"}
               </h1>
-              <p className="text-[18px] lg:text-[20px] leading-[1.45] font-medium text-content-secondary mb-[24px] lg:mb-[32px]">
-                {t('home.heroSection.desc1')}
+              <p className="text-[16px] sm:text-[18px] lg:text-[19px] leading-[1.4] font-medium text-brand-primary mb-3">
+                {t('home.heroSection.desc1') || "Taking underprivileged children from the world of pavements to the world of schools."}
               </p>
-              <p className="text-[16px] lg:text-[17px] leading-[1.618] text-content-primary/80 mb-[32px] lg:mb-[40px]">
-                {t('home.heroSection.text1')}
+              <p className="text-[14px] sm:text-[15px] lg:text-[16px] leading-[1.65] text-content-secondary">
+                {t('home.heroSection.text1') || "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future."}
               </p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
               <Button to="/our-story" variant="interactive">
-                {t('home.heroSection.btn1')}
+                {t('home.heroSection.btn1') || "Our Story"}
               </Button>
               <span className="hidden sm:inline-block text-border text-2xl font-light select-none">|</span>
               <Button to="/programs" variant="interactive">
-                {t('home.heroSection.btn2')}
+                {t('home.heroSection.btn2') || "See Our Work"}
+              </Button>
+            </div>
+
+            {/* Divider link placed neatly below the action buttons */}
+            <div className="pt-3 border-t border-border mt-1">
+              <Button to="/digital-library" variant="ghost" className="text-[14px] sm:text-[15px] font-medium px-0 hover:bg-transparent hover:text-brand-primary">
+                {t('home.heroSection.text2') || "Free Digital Siksha & Library →"}
               </Button>
             </div>
           </div>
           
-          {/* Right Column: Image carousel ending flush at the row's bottom edge */}
-          <div className="w-full h-full flex flex-col">
+          {/* Right Column: Image carousel with clean proportional height and no dark shadow */}
+          <div className="w-full flex justify-center mt-6 lg:mt-0">
             <HeroCarousel items={heroItems} />
           </div>
-        </div>
-
-        {/* Divider line placed directly at the bottom level of the carousel card */}
-        <div className="max-w-[580px] lg:ml-4 xl:ml-8 pt-4 border-t border-border mt-0">
-          <Button to="/digital-library" variant="ghost" className="text-[15px] font-medium px-0 hover:bg-transparent hover:text-brand-primary">
-            {t('home.heroSection.text2')}
-          </Button>
         </div>
       </div>
     </section>

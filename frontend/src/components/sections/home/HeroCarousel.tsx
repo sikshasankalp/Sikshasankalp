@@ -13,12 +13,30 @@ interface HeroCarouselProps {
   items: GalleryItem[];
 }
 
-const DEFAULT_HERO_SLIDE = {
-  id: 'default-hero-1',
-  title: 'Footpath Se School Tak: Siksha Sankalp Badal Raha Hai Bachho Ka Bhavishya',
-  description: 'Siksha Sankalp Foundation brings free foundational education and formal school admissions to underprivileged children living on streets.',
-  tags: ['Ground Reality', 'School Admission', 'Street to School'],
-};
+// Grassroots groundwork fallback slides (authentic field activity, NOT media/newspaper articles)
+const FALLBACK_GROUNDWORK_SLIDES = [
+  {
+    id: 'hero-fall-1',
+    title: 'Footpath Se School Tak: Har Bachhe Ke Haath Mein Kitaab',
+    description: 'Siksha Sankalp Foundation connects street and pavement children directly with foundational education and school admissions.',
+    imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
+    tags: ['Ground Reality', 'Street to School', 'Dignity'],
+  },
+  {
+    id: 'hero-fall-2',
+    title: 'Nishulk Shiksha & Regular Admission Drive',
+    description: 'Enrolling underprivileged children into formal government and private schools with free books and uniforms.',
+    imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80',
+    tags: ['School Admission', 'Free Study Kits', 'Education'],
+  },
+  {
+    id: 'hero-fall-3',
+    title: 'Khuli Digital Library & Community Learning Sessions',
+    description: 'Open-air interactive learning, digital literacy workshops and regular health & hygiene drives.',
+    imageUrl: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
+    tags: ['Digital Siksha', 'Learning Center', 'Empowerment'],
+  },
+];
 
 export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
   const css = `
@@ -32,142 +50,125 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       background-position: center;
       background-size: cover;
       width: 100% !important;
-      height: 100%;
-      border-radius: 28px;
+      height: 100% !important;
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.28);
       position: relative;
     }
 
+    @media (min-width: 640px) {
+      .HeroCreativeSwiper .swiper-slide {
+        border-radius: 28px;
+      }
+    }
+
     .HeroCreativeSwiper .swiper-pagination {
-      bottom: 14px !important;
+      bottom: 12px !important;
       z-index: 20 !important;
     }
 
     .HeroCreativeSwiper .swiper-pagination-bullet {
-      background: #C85A27 !important;
-      opacity: 0.35;
+      background: #ffffff !important;
+      opacity: 0.5;
       transition: all 0.3s ease;
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
     }
 
     .HeroCreativeSwiper .swiper-pagination-bullet-active {
       opacity: 1 !important;
-      width: 24px !important;
+      background: #C85A27 !important;
+      width: 22px !important;
       border-radius: 9999px !important;
     }
   `;
 
-  const hasImages = items && items.length > 0;
-  const loopMode = items && items.length > 1;
+  // Use admin-uploaded HOME_HERO slides if present, otherwise use groundwork fallback slides
+  const activeSlides = items && items.length > 0 ? items : FALLBACK_GROUNDWORK_SLIDES;
+  const loopMode = activeSlides.length > 1;
 
   return (
     <motion.div
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full h-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] select-none flex flex-col"
+      className="relative w-full max-w-[580px] aspect-[16/11] sm:aspect-[16/10] lg:aspect-[4/3] max-h-[430px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-elevated border border-border/60 select-none"
     >
       <style>{css}</style>
 
-      {hasImages ? (
-        <Swiper
-          spaceBetween={0}
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: false,
-          }}
-          effect="creative"
-          grabCursor={true}
-          slidesPerView="auto"
-          centeredSlides={true}
-          loop={loopMode}
-          pagination={{ clickable: true }}
-          className="HeroCreativeSwiper"
-          creativeEffect={{
-            prev: {
-              shadow: true,
-              origin: 'left center',
-              translate: ['-5%', 0, -200],
-              rotate: [0, 80, 0],
-            },
-            next: {
-              origin: 'right center',
-              translate: ['5%', 0, -200],
-              rotate: [0, -80, 0],
-            },
-          }}
-          modules={[EffectCreative, Pagination, Autoplay]}
-        >
-          {items.map((item, index) => {
-            const tags = item.category
-              ? [item.category.replace(/_/g, ' ')]
-              : ['Ground Reality', 'School Admission', 'Street to School'];
+      <Swiper
+        spaceBetween={0}
+        autoplay={{
+          delay: 4500,
+          disableOnInteraction: false,
+        }}
+        effect="creative"
+        grabCursor={true}
+        slidesPerView="auto"
+        centeredSlides={true}
+        loop={loopMode}
+        pagination={{ clickable: true }}
+        className="HeroCreativeSwiper"
+        creativeEffect={{
+          prev: {
+            shadow: true,
+            origin: 'left center',
+            translate: ['-5%', 0, -200],
+            rotate: [0, 80, 0],
+          },
+          next: {
+            origin: 'right center',
+            translate: ['5%', 0, -200],
+            rotate: [0, -80, 0],
+          },
+        }}
+        modules={[EffectCreative, Pagination, Autoplay]}
+      >
+        {activeSlides.map((slide, index) => {
+          const itemSlide = slide as (GalleryItem & { tags?: string[] });
+          const tags = itemSlide.tags || (itemSlide.category
+            ? [itemSlide.category.replace(/_/g, ' ')]
+            : ['Ground Reality', 'Footpath Education']);
 
-            return (
-              <SwiperSlide key={item.id || index}>
-                <div className="relative w-full h-full bg-[#141210] overflow-hidden rounded-[28px]">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title || 'Siksha Sankalp Hero Image'}
-                    className="w-full h-full object-cover opacity-50 filter brightness-75 contrast-125"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                  />
+          return (
+            <SwiperSlide key={slide.id || index}>
+              <div className="relative w-full h-full bg-stone-900 overflow-hidden">
+                {/* 100% Bright, natural, clear image without heavy dark filters */}
+                <img
+                  src={slide.imageUrl}
+                  alt={slide.title || 'Siksha Sankalp Foundation'}
+                  className="w-full h-full object-cover transition-transform duration-700"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
 
-                  {/* Clean deep overlay: ensures no background words clash with the title */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/30 flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white z-10">
-                    <h3 className="font-display font-bold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-3 drop-shadow-sm">
-                      {item.title || DEFAULT_HERO_SLIDE.title}
-                    </h3>
+                {/* Soft bottom readability gradient: leaves top 60% completely bright and clear */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-5 sm:p-7 md:p-8 text-white z-10 pointer-events-none">
+                  <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl leading-snug mb-2 drop-shadow-md">
+                    {slide.title}
+                  </h3>
 
-                    {item.description && (
-                      <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-4 line-clamp-3">
-                        {item.description}
-                      </p>
-                    )}
+                  {slide.description && (
+                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2 drop-shadow-sm max-w-xl">
+                      {slide.description}
+                    </p>
+                  )}
 
-                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                      {tags.map((tag, tIdx) => (
-                        <span
-                          key={tIdx}
-                          className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-0.5">
+                    {tags.map((tag: string, tIdx: number) => (
+                      <span
+                        key={tIdx}
+                        className="px-2.5 sm:px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      ) : (
-        /* Clean landscape rectangle card filling the available space */
-        <div className="w-full h-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white">
-          <div className="relative z-10 flex flex-col justify-end">
-            <h3 className="font-display font-bold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-3 drop-shadow-sm">
-              {DEFAULT_HERO_SLIDE.title}
-            </h3>
-
-            <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-4 line-clamp-3">
-              {DEFAULT_HERO_SLIDE.description}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-0.5">
-              {DEFAULT_HERO_SLIDE.tags.map((tag, tIdx) => (
-                <span
-                  key={tIdx}
-                  className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+              </div>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
     </motion.div>
   );
 };
