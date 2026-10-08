@@ -2,6 +2,7 @@ import { HeroSection } from '../../components/sections/home/HeroSection';
 import { NeedsTicker } from '../../components/common/NeedsTicker';
 import { MissionSection } from '../../components/sections/home/MissionSection';
 import { StoryTeaser } from '../../components/sections/home/StoryTeaser';
+import { EducationRoadmapSection } from '../../components/sections/home/EducationRoadmapSection';
 import { ProgramsOverview } from '../../components/sections/home/ProgramsOverview';
 import { ImpactSection } from '../../components/sections/home/ImpactSection';
 import { DigitalLibrarySection } from '../../components/sections/home/DigitalLibrarySection';
@@ -17,6 +18,7 @@ export default function Home() {
       <HeroSection />
       <MissionSection />
       <StoryTeaser />
+      <EducationRoadmapSection />
       <ProgramsOverview />
       <ImpactSection />
       <DigitalLibrarySection />
