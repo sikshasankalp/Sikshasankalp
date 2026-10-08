@@ -378,14 +378,17 @@ export function EducationRoadmapSection() {
 
           {/* 3 Vision Pillars from Poster */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-            <span className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
-              ✨ {isHi ? 'हर बच्चा सीखेगा' : 'Every Child Learns'}
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E07A48]" />
+              {isHi ? 'हर बच्चा सीखेगा' : 'Every Child Learns'}
             </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
-              🤝 {isHi ? 'हर बच्चे का सम्मान' : 'Every Child Belongs'}
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E07A48]" />
+              {isHi ? 'हर बच्चे का सम्मान' : 'Every Child Belongs'}
             </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
-              🚀 {isHi ? 'हर बच्चे का सुनहरा भविष्य' : 'Every Child Has a Future'}
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-stone-200 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E07A48]" />
+              {isHi ? 'हर बच्चे का सुनहरा भविष्य' : 'Every Child Has a Future'}
             </span>
           </div>
         </div>
@@ -614,7 +617,7 @@ export function EducationRoadmapSection() {
                       {isHi ? current.phaseHi : current.phaseEn}
                     </span>
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#2a241f] text-[#E07A48] border border-[#C85A27]/30">
-                      🏛️ {isHi ? current.nepHi : current.nepEn}
+                      {isHi ? current.nepHi : current.nepEn}
                     </span>
                   </div>
 
