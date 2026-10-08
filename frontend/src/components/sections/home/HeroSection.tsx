@@ -33,7 +33,7 @@ export function HeroSection() {
   return (
     <section className="relative pt-8 sm:pt-10 md:pt-12 lg:pt-14 pb-10 sm:pb-14 md:pb-16 overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12">
-        <div className="grid lg:grid-cols-[1fr_1.15fr] lg:gap-8 xl:gap-12 items-center">
+        <div className="grid lg:grid-cols-[1fr_1.22fr] lg:gap-8 xl:gap-10 items-center">
           {/* Left Column: Golden ratio 1.618 typography hierarchy and spacing */}
           <div className="flex flex-col max-w-[540px] lg:ml-2 xl:ml-4">
             <div>
