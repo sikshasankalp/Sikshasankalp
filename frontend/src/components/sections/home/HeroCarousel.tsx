@@ -23,8 +23,9 @@ const DEFAULT_HERO_SLIDE = {
 export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
   const css = `
     .HeroCreativeSwiper {
-      width: 100%;
-      height: 370px;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 460px;
       padding-bottom: 25px !important;
     }
     
@@ -33,21 +34,21 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       background-size: cover;
       width: 100% !important;
       height: 100%;
-      border-radius: 24px;
+      border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.28);
       position: relative;
     }
 
     @media (min-width: 640px) {
       .HeroCreativeSwiper {
-        height: 410px;
+        min-height: 500px;
       }
     }
 
     @media (min-width: 1024px) {
       .HeroCreativeSwiper {
-        height: 440px;
+        min-height: 540px;
       }
     }
 
@@ -74,7 +75,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full mx-auto lg:mx-0 select-none"
+      className="relative w-full h-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] select-none flex flex-col"
     >
       <style>{css}</style>
 
@@ -114,7 +115,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
 
             return (
               <SwiperSlide key={item.id || index}>
-                <div className="relative w-full h-full bg-[#141210] overflow-hidden rounded-[24px]">
+                <div className="relative w-full h-full bg-[#141210] overflow-hidden rounded-[28px]">
                   <img
                     src={item.imageUrl}
                     alt={item.title || 'Siksha Sankalp Hero Image'}
@@ -123,13 +124,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
                   />
 
                   {/* Clean deep overlay: ensures no background words clash with the title */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/30 flex flex-col justify-end p-6 sm:p-8 md:p-9 text-white z-10">
-                    <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl xl:text-3xl leading-snug mb-2.5 drop-shadow-sm">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/30 flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white z-10">
+                    <h3 className="font-display font-bold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-3 drop-shadow-sm">
                       {item.title || DEFAULT_HERO_SLIDE.title}
                     </h3>
 
                     {item.description && (
-                      <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-3.5 line-clamp-2">
+                      <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-4 line-clamp-3">
                         {item.description}
                       </p>
                     )}
@@ -152,13 +153,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
         </Swiper>
       ) : (
         /* Clean landscape rectangle card filling the available space */
-        <div className="w-full h-[370px] sm:h-[410px] lg:h-[440px] rounded-[24px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-9 text-white">
+        <div className="w-full h-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white">
           <div className="relative z-10 flex flex-col justify-end">
-            <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl xl:text-3xl leading-snug mb-2.5 drop-shadow-sm">
+            <h3 className="font-display font-bold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-3 drop-shadow-sm">
               {DEFAULT_HERO_SLIDE.title}
             </h3>
 
-            <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-3.5 line-clamp-2">
+            <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-4 line-clamp-3">
               {DEFAULT_HERO_SLIDE.description}
             </p>
 
