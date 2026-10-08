@@ -39,16 +39,16 @@ export function DonateImpact() {
           {t('donate.donateImpact.text1')}
         </h2>
 
-        {/* Benefits Card */}
-        <div className="max-w-md sm:max-w-lg mx-auto bg-[#FAF6F0] border border-border/80 rounded-[28px] sm:rounded-3xl p-3.5 sm:p-6 md:p-7 shadow-soft">
-          <div className="flex flex-col gap-2.5 sm:gap-3.5">
+        {/* Benefits Card - Clean single rounded card with bullet points as in user reference */}
+        <div className="max-w-md sm:max-w-lg mx-auto bg-[#F6F1E8] border border-[#E8DFCFC0] rounded-[28px] sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-soft">
+          <div className="flex flex-col gap-5 sm:gap-6 md:gap-7">
             {benefits.map((area, index) => (
               <div
                 key={index}
-                className="w-full flex items-center gap-3 sm:gap-3.5 px-4 sm:px-5 py-3 sm:py-3.5 rounded-full bg-[#F3EDE3] border border-[#E6DDD0] hover:border-brand-primary/30 hover:bg-[#EFE7DC] transition-all duration-200"
+                className="flex items-start gap-3.5 sm:gap-4"
               >
-                <span className="w-2 h-2 rounded-full bg-brand-primary shrink-0 opacity-80" />
-                <span className="text-xs sm:text-sm md:text-base font-semibold text-content-primary leading-snug">
+                <span className="w-2 h-2 rounded-full bg-[#C87055] shrink-0 mt-1.5" />
+                <span className="text-[15px] sm:text-base md:text-[17px] font-semibold text-content-primary/90 leading-snug">
                   {area}
                 </span>
               </div>

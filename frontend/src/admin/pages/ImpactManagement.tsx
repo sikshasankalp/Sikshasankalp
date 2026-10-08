@@ -516,8 +516,8 @@ export default function ImpactManagement() {
             </div>
 
             {/* Right 1 Col: Live Card Mockup Preview */}
-            <div className="bg-[#FAF6F0] rounded-[24px] border border-border/80 p-5 shadow-soft flex flex-col">
-              <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3">
+            <div className="bg-[#F6F1E8] rounded-[24px] border border-[#E8DFCFC0] p-5 sm:p-6 shadow-soft flex flex-col">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E8DFCFC0] mb-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-content-secondary flex items-center gap-1.5">
                   <Smartphone className="w-4 h-4 text-brand-primary" />
                   Live Mobile View Preview
@@ -527,20 +527,22 @@ export default function ImpactManagement() {
                 </span>
               </div>
 
-              <div className="text-center font-display font-extrabold text-sm text-content-primary mb-3">
+              <div className="text-center font-display font-extrabold text-base text-content-primary mb-4">
                 What Your Support Enables
               </div>
 
-              <div className="space-y-2 flex-1">
+              <div className="space-y-3.5 flex-1">
                 {benefits
                   .filter((b) => b.isActive)
                   .map((b) => (
                     <div
                       key={b.id}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-full bg-[#F3EDE3] border border-[#E6DDD0] text-xs font-semibold text-content-primary"
+                      className="flex items-start gap-2.5"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0 opacity-80" />
-                      <span className="truncate">{b.title}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C87055] shrink-0 mt-1" />
+                      <span className="text-xs font-semibold text-content-primary/90 leading-snug">
+                        {b.title}
+                      </span>
                     </div>
                   ))}
               </div>
