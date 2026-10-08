@@ -24,30 +24,30 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
   const css = `
     .HeroCreativeSwiper {
       width: 100%;
-      height: 350px;
+      height: 370px;
       padding-bottom: 25px !important;
     }
     
     .HeroCreativeSwiper .swiper-slide {
       background-position: center;
       background-size: cover;
-      width: 100%;
+      width: 100% !important;
       height: 100%;
-      border-radius: 20px;
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.28);
       position: relative;
     }
 
     @media (min-width: 640px) {
       .HeroCreativeSwiper {
-        height: 390px;
+        height: 410px;
       }
     }
 
     @media (min-width: 1024px) {
       .HeroCreativeSwiper {
-        height: 420px;
+        height: 440px;
       }
     }
 
@@ -74,7 +74,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full max-w-[560px] lg:max-w-[580px] xl:max-w-[620px] mx-auto lg:mx-0 select-none"
+      className="relative w-full mx-auto lg:mx-0 select-none"
     >
       <style>{css}</style>
 
@@ -114,31 +114,31 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
 
             return (
               <SwiperSlide key={item.id || index}>
-                <div className="relative w-full h-full bg-[#1c1917] overflow-hidden rounded-[20px]">
+                <div className="relative w-full h-full bg-[#141210] overflow-hidden rounded-[24px]">
                   <img
                     src={item.imageUrl}
                     alt={item.title || 'Siksha Sankalp Hero Image'}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover opacity-50 filter brightness-75 contrast-125"
                     loading={index === 0 ? 'eager' : 'lazy'}
                   />
 
-                  {/* Clean full overlay gradient: prevents background logo/text from clashing with the slide title */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/30 flex flex-col justify-end p-5 sm:p-6 md:p-7 text-white z-10">
-                    <h3 className="font-display font-bold text-white text-base sm:text-lg md:text-xl xl:text-2xl leading-snug mb-2 drop-shadow-sm">
+                  {/* Clean deep overlay: ensures no background words clash with the title */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/30 flex flex-col justify-end p-6 sm:p-8 md:p-9 text-white z-10">
+                    <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl xl:text-3xl leading-snug mb-2.5 drop-shadow-sm">
                       {item.title || DEFAULT_HERO_SLIDE.title}
                     </h3>
 
                     {item.description && (
-                      <p className="text-white/85 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
+                      <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-3.5 line-clamp-2">
                         {item.description}
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
                       {tags.map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
+                          className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
                         >
                           {tag}
                         </span>
@@ -151,22 +151,22 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
           })}
         </Swiper>
       ) : (
-        /* Clean landscape rectangle card matching left text height */
-        <div className="w-full h-[350px] sm:h-[390px] lg:h-[420px] rounded-[20px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-5 sm:p-6 md:p-7 text-white">
+        /* Clean landscape rectangle card filling the available space */
+        <div className="w-full h-[370px] sm:h-[410px] lg:h-[440px] rounded-[24px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-9 text-white">
           <div className="relative z-10 flex flex-col justify-end">
-            <h3 className="font-display font-bold text-white text-base sm:text-lg md:text-xl xl:text-2xl leading-snug mb-2 drop-shadow-sm">
+            <h3 className="font-display font-bold text-white text-base sm:text-xl md:text-2xl xl:text-3xl leading-snug mb-2.5 drop-shadow-sm">
               {DEFAULT_HERO_SLIDE.title}
             </h3>
 
-            <p className="text-white/85 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
+            <p className="text-white/85 text-xs sm:text-sm md:text-base leading-relaxed mb-3.5 line-clamp-2">
               {DEFAULT_HERO_SLIDE.description}
             </p>
 
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
               {DEFAULT_HERO_SLIDE.tags.map((tag, tIdx) => (
                 <span
                   key={tIdx}
-                  className="px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
+                  className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
                 >
                   {tag}
                 </span>
