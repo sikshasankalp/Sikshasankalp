@@ -33,9 +33,9 @@ export function HeroSection() {
   return (
     <section className="relative pt-8 sm:pt-10 md:pt-12 lg:pt-14 pb-10 sm:pb-14 md:pb-16 overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12">
-        <div className="grid lg:grid-cols-[1.1fr_1fr] lg:gap-10 xl:gap-14 items-center">
+        <div className="grid lg:grid-cols-[1fr_1.15fr] lg:gap-8 xl:gap-12 items-center">
           {/* Left Column: Golden ratio 1.618 typography hierarchy and spacing */}
-          <div className="flex flex-col max-w-[580px] lg:ml-2 xl:ml-6">
+          <div className="flex flex-col max-w-[540px] lg:ml-2 xl:ml-4">
             <div>
               {/* Heading: ~42px (26px * 1.618) */}
               <h1 className="text-[30px] sm:text-[36px] md:text-[40px] lg:text-[44px] leading-[1.18] font-bold tracking-tight text-content-primary mb-[18px] lg:mb-[20px]">

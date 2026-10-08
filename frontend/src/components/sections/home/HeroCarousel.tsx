@@ -92,7 +92,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full max-w-[580px] aspect-[16/11] sm:aspect-[16/10] lg:aspect-[4/3] max-h-[430px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-elevated border border-border/60 select-none"
+      className="relative w-full max-w-[660px] lg:max-w-none aspect-[16/10] sm:aspect-[16/9.5] lg:aspect-[16/9.5] xl:aspect-[16/9] max-h-[440px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-elevated border border-border/60 select-none"
     >
       <style>{css}</style>
 
