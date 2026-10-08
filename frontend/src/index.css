@@ -77,6 +77,8 @@
 
   .animate-marquee {
     display: flex;
+    align-items: center;
+    height: 100%;
     width: max-content;
     animation: marquee 32s linear infinite;
   }
