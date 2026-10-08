@@ -32,7 +32,7 @@ export function HeroSection() {
   return (
     <section className="relative pt-3 sm:pt-4 md:pt-6 pb-12 md:pb-[72px] overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12">
-        <div className="grid lg:grid-cols-[1fr_1.1fr] lg:gap-8 xl:gap-12 items-center pt-1 lg:pt-2">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] lg:gap-8 xl:gap-12 items-center pt-1 lg:pt-2">
           <div className="flex flex-col max-w-[580px] lg:ml-4 xl:ml-8">
             <h1 className="text-[32px] md:text-[40px] lg:text-[46px] xl:text-[48px] leading-[1.15] lg:leading-[1.12] font-semibold tracking-tight text-content-primary mb-[16px] lg:mb-[20px]">
               {t('home.heroSection.title1')}

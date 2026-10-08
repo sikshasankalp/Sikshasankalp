@@ -24,44 +24,30 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
   const css = `
     .HeroCreativeSwiper {
       width: 100%;
-      height: 520px;
-      padding-bottom: 45px !important;
+      height: 350px;
+      padding-bottom: 25px !important;
     }
     
     .HeroCreativeSwiper .swiper-slide {
       background-position: center;
       background-size: cover;
-      width: 310px;
-      border-radius: 28px;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.22);
       position: relative;
     }
 
-    @media (min-width: 480px) {
+    @media (min-width: 640px) {
       .HeroCreativeSwiper {
-        height: 560px;
-      }
-      .HeroCreativeSwiper .swiper-slide {
-        width: 380px;
+        height: 390px;
       }
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
       .HeroCreativeSwiper {
-        height: 600px;
-      }
-      .HeroCreativeSwiper .swiper-slide {
-        width: 460px;
-      }
-    }
-
-    @media (min-width: 1280px) {
-      .HeroCreativeSwiper {
-        height: 640px;
-      }
-      .HeroCreativeSwiper .swiper-slide {
-        width: 520px;
+        height: 420px;
       }
     }
 
@@ -69,13 +55,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       background: #C85A27 !important;
       opacity: 0.35;
       transition: all 0.3s ease;
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
     }
 
     .HeroCreativeSwiper .swiper-pagination-bullet-active {
       opacity: 1 !important;
-      width: 26px !important;
+      width: 24px !important;
       border-radius: 9999px !important;
     }
   `;
@@ -88,7 +74,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full max-w-[540px] sm:max-w-[580px] lg:max-w-[600px] xl:max-w-[650px] mx-auto lg:mx-0 select-none"
+      className="relative w-full max-w-[560px] lg:max-w-[580px] xl:max-w-[620px] mx-auto lg:mx-0 select-none"
     >
       <style>{css}</style>
 
@@ -96,7 +82,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
         <Swiper
           spaceBetween={0}
           autoplay={{
-            delay: 3500,
+            delay: 4000,
             disableOnInteraction: false,
           }}
           effect="creative"
@@ -110,13 +96,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
             prev: {
               shadow: true,
               origin: 'left center',
-              translate: ['-6%', 0, -220],
-              rotate: [0, 100, 0],
+              translate: ['-5%', 0, -200],
+              rotate: [0, 80, 0],
             },
             next: {
               origin: 'right center',
-              translate: ['6%', 0, -220],
-              rotate: [0, -100, 0],
+              translate: ['5%', 0, -200],
+              rotate: [0, -80, 0],
             },
           }}
           modules={[EffectCreative, Pagination, Autoplay]}
@@ -128,31 +114,31 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
 
             return (
               <SwiperSlide key={item.id || index}>
-                <div className="relative w-full h-full bg-[#EAE3D6] overflow-hidden">
+                <div className="relative w-full h-full bg-[#1c1917] overflow-hidden rounded-[20px]">
                   <img
                     src={item.imageUrl}
                     alt={item.title || 'Siksha Sankalp Hero Image'}
-                    className="w-full h-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
+                    className="w-full h-full object-cover"
                     loading={index === 0 ? 'eager' : 'lazy'}
                   />
 
-                  {/* Dark gradient overlay at bottom with metadata */}
-                  <div className="absolute inset-x-0 bottom-0 pt-36 pb-8 px-6 sm:px-8 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex flex-col justify-end text-white z-10">
-                    <h3 className="font-display font-extrabold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-2.5 drop-shadow-md">
+                  {/* Clean full overlay gradient: prevents background logo/text from clashing with the slide title */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/30 flex flex-col justify-end p-5 sm:p-6 md:p-7 text-white z-10">
+                    <h3 className="font-display font-bold text-white text-base sm:text-lg md:text-xl xl:text-2xl leading-snug mb-2 drop-shadow-sm">
                       {item.title || DEFAULT_HERO_SLIDE.title}
                     </h3>
 
                     {item.description && (
-                      <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed mb-4 line-clamp-3 drop-shadow-xs">
+                      <p className="text-white/85 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
                         {item.description}
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                       {tags.map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
+                          className="px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
                         >
                           {tag}
                         </span>
@@ -165,33 +151,22 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
           })}
         </Swiper>
       ) : (
-        /* Large clean card mockup showing exact bottom overlay structure until images are uploaded in admin */
-        <div className="w-full h-[520px] sm:h-[560px] md:h-[600px] lg:h-[640px] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#F2ECE2] via-[#E8DECD] to-[#D5C9B5] border border-border shadow-elevated relative flex flex-col justify-end">
-          {/* Subtle background branding */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center opacity-40">
-            <span className="font-display font-extrabold text-3xl sm:text-4xl text-content-primary/40 uppercase tracking-widest">
-              Siksha Sankalp
-            </span>
-            <span className="text-xs sm:text-sm text-content-secondary mt-1">
-              Upload photos in Admin Gallery with &quot;HOME_HERO&quot; tag to display live slides
-            </span>
-          </div>
-
-          {/* Bottom Data Overlay as requested */}
-          <div className="relative z-10 pt-36 pb-8 px-6 sm:px-8 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex flex-col justify-end text-white">
-            <h3 className="font-display font-extrabold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-2.5 drop-shadow-md">
+        /* Clean landscape rectangle card matching left text height */
+        <div className="w-full h-[350px] sm:h-[390px] lg:h-[420px] rounded-[20px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-5 sm:p-6 md:p-7 text-white">
+          <div className="relative z-10 flex flex-col justify-end">
+            <h3 className="font-display font-bold text-white text-base sm:text-lg md:text-xl xl:text-2xl leading-snug mb-2 drop-shadow-sm">
               {DEFAULT_HERO_SLIDE.title}
             </h3>
 
-            <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed mb-4 drop-shadow-xs">
+            <p className="text-white/85 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
               {DEFAULT_HERO_SLIDE.description}
             </p>
 
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
               {DEFAULT_HERO_SLIDE.tags.map((tag, tIdx) => (
                 <span
                   key={tIdx}
-                  className="px-3.5 py-1 rounded-full text-xs sm:text-[13px] font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
+                  className="px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-xs"
                 >
                   {tag}
                 </span>
