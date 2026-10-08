@@ -49,6 +49,9 @@ export const cloudinaryService = {
         {
           folder: folder.trim(),
           resource_type: 'image',
+          transformation: [
+            { quality: 'auto', fetch_format: 'auto' },
+          ],
         },
         (error, result) => {
           if (error || !result) {
