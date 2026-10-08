@@ -31,24 +31,29 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative pt-2 sm:pt-4 pb-8 sm:pb-12 md:pb-16 overflow-hidden">
+    <section className="relative pt-8 sm:pt-10 md:pt-12 lg:pt-14 pb-10 sm:pb-14 md:pb-16 overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12">
         <div className="grid lg:grid-cols-[1.1fr_1fr] lg:gap-10 xl:gap-14 items-center">
-          {/* Left Column: Main hero content and primary actions - tightly grouped without excessive empty space */}
-          <div className="flex flex-col max-w-[580px] lg:ml-2 xl:ml-6 gap-4 sm:gap-5">
+          {/* Left Column: Golden ratio 1.618 typography hierarchy and spacing */}
+          <div className="flex flex-col max-w-[580px] lg:ml-2 xl:ml-6">
             <div>
-              <h1 className="text-[28px] sm:text-[34px] md:text-[40px] lg:text-[44px] leading-[1.18] font-bold tracking-tight text-content-primary mb-3">
+              {/* Heading: ~42px (26px * 1.618) */}
+              <h1 className="text-[30px] sm:text-[36px] md:text-[40px] lg:text-[44px] leading-[1.18] font-bold tracking-tight text-content-primary mb-[18px] lg:mb-[20px]">
                 {t('home.heroSection.title1') || "Every child has the right to education, dignity and a better future"}
               </h1>
-              <p className="text-[16px] sm:text-[18px] lg:text-[19px] leading-[1.4] font-medium text-brand-primary mb-3">
+
+              {/* Subheading: ~26px (16px * 1.618) */}
+              <p className="text-[19px] sm:text-[22px] lg:text-[26px] leading-[1.38] font-medium text-brand-primary mb-[18px] lg:mb-[20px]">
                 {t('home.heroSection.desc1') || "Taking underprivileged children from the world of pavements to the world of schools."}
               </p>
-              <p className="text-[14px] sm:text-[15px] lg:text-[16px] leading-[1.65] text-content-secondary">
+
+              {/* Body Content: 16px with exact 1.618 golden ratio line-height & 32px (20px * 1.618) margin */}
+              <p className="text-[15px] sm:text-[16px] leading-[1.618] text-content-secondary mb-[28px] lg:mb-[32px]">
                 {t('home.heroSection.text1') || "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future."}
               </p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <Button to="/our-story" variant="interactive">
                 {t('home.heroSection.btn1') || "Our Story"}
               </Button>
@@ -59,7 +64,7 @@ export function HeroSection() {
             </div>
 
             {/* Divider link placed neatly below the action buttons */}
-            <div className="pt-3 border-t border-border mt-1">
+            <div className="pt-4 border-t border-border mt-4">
               <Button to="/digital-library" variant="ghost" className="text-[14px] sm:text-[15px] font-medium px-0 hover:bg-transparent hover:text-brand-primary">
                 {t('home.heroSection.text2') || "Free Digital Siksha & Library →"}
               </Button>
