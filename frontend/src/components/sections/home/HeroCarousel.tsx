@@ -25,8 +25,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
     .HeroCreativeSwiper {
       width: 100% !important;
       height: 100% !important;
-      min-height: 460px;
-      padding-bottom: 25px !important;
+      padding-bottom: 0 !important;
     }
     
     .HeroCreativeSwiper .swiper-slide {
@@ -40,16 +39,9 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       position: relative;
     }
 
-    @media (min-width: 640px) {
-      .HeroCreativeSwiper {
-        min-height: 500px;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .HeroCreativeSwiper {
-        min-height: 540px;
-      }
+    .HeroCreativeSwiper .swiper-pagination {
+      bottom: 14px !important;
+      z-index: 20 !important;
     }
 
     .HeroCreativeSwiper .swiper-pagination-bullet {
@@ -75,7 +67,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
       initial={{ opacity: 0, translateY: 15 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="relative w-full h-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] select-none flex flex-col"
+      className="relative w-full h-full min-h-[380px] sm:min-h-[420px] select-none flex flex-col"
     >
       <style>{css}</style>
 
@@ -153,7 +145,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
         </Swiper>
       ) : (
         /* Clean landscape rectangle card filling the available space */
-        <div className="w-full h-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white">
+        <div className="w-full h-full min-h-[380px] sm:min-h-[420px] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#2a241f] via-[#1c1917] to-[#141210] border border-border shadow-elevated relative flex flex-col justify-end p-6 sm:p-8 md:p-10 text-white">
           <div className="relative z-10 flex flex-col justify-end">
             <h3 className="font-display font-bold text-white text-lg sm:text-2xl md:text-3xl leading-snug mb-3 drop-shadow-sm">
               {DEFAULT_HERO_SLIDE.title}
