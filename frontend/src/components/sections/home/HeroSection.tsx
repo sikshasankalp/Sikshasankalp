@@ -71,8 +71,8 @@ export function HeroSection() {
             </div>
           </div>
           
-          {/* Right Column: Anchored to the bottom baseline, stretching upwards towards the top */}
-          <div className="w-full flex justify-center lg:justify-end mt-6 lg:mt-0 self-end">
+          {/* Right Column: Anchored to the bottom baseline with a subtle bottom lift */}
+          <div className="w-full flex justify-center lg:justify-end mt-6 lg:mt-0 self-end lg:mb-3.5">
             <HeroCarousel items={heroItems} />
           </div>
         </div>
