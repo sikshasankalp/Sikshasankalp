@@ -17,8 +17,8 @@ export default function Home() {
       <NeedsTicker />
       <HeroSection />
       <MissionSection />
-      <StoryTeaser />
       <EducationRoadmapSection />
+      <StoryTeaser />
       <ProgramsOverview />
       <ImpactSection />
       <DigitalLibrarySection />
