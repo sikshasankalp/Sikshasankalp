@@ -112,17 +112,25 @@ export function MediaCoverageSection() {
   }
   
   .MediaCoverflowCarousel .swiper-slide {
-    width: 86vw;
-    max-width: 640px;
+    width: 88vw;
+    max-width: 760px;
     aspect-ratio: 16/10;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
     transition: all 0.4s ease;
   }
   
   @media (min-width: 640px) {
     .MediaCoverflowCarousel .swiper-slide {
+      max-width: 760px;
       aspect-ratio: 16/9;
+      border-radius: 26px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .MediaCoverflowCarousel .swiper-slide {
+      max-width: 780px;
     }
   }
 
@@ -193,7 +201,7 @@ export function MediaCoverageSection() {
 
         {/* 3D Coverflow Showcase Carousel with real uploaded media */}
         {!isLoading && filteredArticles.length > 0 && (
-          <div className="relative max-w-6xl mx-auto px-0 sm:px-4">
+          <div className="relative max-w-7xl mx-auto px-0 sm:px-4">
             <Swiper
               key={`swiper-${selectedPublication}-${loopedArticles.length}`}
               spaceBetween={0}
@@ -204,11 +212,11 @@ export function MediaCoverageSection() {
               centeredSlides={true}
               loop={loopedArticles.length >= 3}
               coverflowEffect={{
-                rotate: 28,
+                rotate: 24,
                 stretch: 0,
-                depth: 100,
+                depth: 90,
                 modifier: 1,
-                slideShadows: true,
+                slideShadows: false,
               }}
               pagination={{ clickable: true }}
               navigation={{
@@ -229,7 +237,7 @@ export function MediaCoverageSection() {
                 return (
                   <SwiperSlide 
                     key={`${article.id}-${index}`}
-                    className="shadow-elevated bg-[#1A1A1A] group relative rounded-2xl overflow-hidden border border-border/50 text-left cursor-pointer"
+                    className="shadow-elevated bg-[#1A1A1A] group relative rounded-2xl sm:rounded-3xl overflow-hidden border border-border/50 text-left cursor-pointer"
                   >
                     <a
                       href={article.externalUrl || '#'}
@@ -239,7 +247,7 @@ export function MediaCoverageSection() {
                       className="block w-full h-full relative inset-0"
                       aria-label={`View media coverage: ${article.title}`}
                     >
-                      {/* Real Press Screenshot / Photo */}
+                      {/* Real Press Screenshot / Photo - 100% Bright & Crisp */}
                       <img
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         src={article.image}
@@ -247,8 +255,8 @@ export function MediaCoverageSection() {
                         loading="lazy"
                       />
                       
-                      {/* Dark Gradient Overlay for optimal readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/25 transition-opacity duration-300"></div>
+                      {/* Soft Bottom Readability Gradient: Top 65% is completely bright and clearly visible */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 via-35% to-transparent pointer-events-none transition-opacity duration-300"></div>
                       
                       {/* Top Badges & Action Icon */}
                       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 z-10">
