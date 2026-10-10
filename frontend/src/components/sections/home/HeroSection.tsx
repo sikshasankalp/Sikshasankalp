@@ -5,9 +5,33 @@ import type { GalleryItem } from '../../../services/api/gallery';
 import { useLanguage } from "../../../context/LanguageContext";
 import { HeroCarousel } from './HeroCarousel';
 
+const CACHED_HERO_KEY = 'siksha_hero_slides_cache';
+const DEFAULT_HERO_SLIDE: GalleryItem = {
+  id: 'c98e3a72-5219-4edb-907e-9e041ec021c8',
+  title: 'Footpath Se School Tak: Siksha Sankalp Badal Raha Hai Bachho Ka Bhavishya',
+  description: 'Siksha Sankalp Foundation brings free foundational education and formal school admissions to underprivileged children living on streets.',
+  imageUrl: '/logo/logo.jpeg',
+  category: 'FOOTPATH_EDUCATION',
+  displayLocation: 'HOME_HERO',
+  isFeatured: true,
+  isPublished: true,
+  createdAt: '2026-10-08T20:30:27.278Z',
+};
+
 export function HeroSection() {
   const { t } = useLanguage();
-  const [heroItems, setHeroItems] = useState<GalleryItem[]>([]);
+  const [heroItems, setHeroItems] = useState<GalleryItem[]>(() => {
+    try {
+      const cached = localStorage.getItem(CACHED_HERO_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return [DEFAULT_HERO_SLIDE];
+  });
 
   useEffect(() => {
     const loadHeroImages = async () => {
@@ -20,8 +44,11 @@ export function HeroSection() {
         );
         if (validHeroItems.length > 0) {
           setHeroItems(validHeroItems);
-        } else {
-          setHeroItems([]);
+          try {
+            localStorage.setItem(CACHED_HERO_KEY, JSON.stringify(validHeroItems));
+          } catch {
+            // ignore
+          }
         }
       } catch (err) {
         console.error('Failed to load hero images:', err);

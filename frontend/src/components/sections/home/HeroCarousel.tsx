@@ -13,28 +13,15 @@ interface HeroCarouselProps {
   items: GalleryItem[];
 }
 
-// Grassroots groundwork fallback slides (authentic field activity, NOT media/newspaper articles)
-const FALLBACK_GROUNDWORK_SLIDES = [
+// Real Foundation Hero Slide (Matches the uploaded slide in Admin Console)
+const DEFAULT_HERO_SLIDES = [
   {
-    id: 'hero-fall-1',
-    title: 'Footpath Se School Tak: Har Bachhe Ke Haath Mein Kitaab',
-    description: 'Siksha Sankalp Foundation connects street and pavement children directly with foundational education and school admissions.',
-    imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Ground Reality', 'Street to School', 'Dignity'],
-  },
-  {
-    id: 'hero-fall-2',
-    title: 'Nishulk Shiksha & Regular Admission Drive',
-    description: 'Enrolling underprivileged children into formal government and private schools with free books and uniforms.',
-    imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80',
-    tags: ['School Admission', 'Free Study Kits', 'Education'],
-  },
-  {
-    id: 'hero-fall-3',
-    title: 'Khuli Digital Library & Community Learning Sessions',
-    description: 'Open-air interactive learning, digital literacy workshops and regular health & hygiene drives.',
-    imageUrl: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Digital Siksha', 'Learning Center', 'Empowerment'],
+    id: 'hero-foundation-main',
+    title: 'Footpath Se School Tak: Siksha Sankalp Badal Raha Hai Bachho Ka Bhavishya',
+    description: 'Siksha Sankalp Foundation brings free foundational education and formal school admissions to underprivileged children living on streets.',
+    imageUrl: '/logo/logo.jpeg',
+    category: 'FOOTPATH_EDUCATION',
+    tags: ['Ground Reality', 'School Admission', 'Street to School'],
   },
 ];
 
@@ -83,8 +70,8 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
     }
   `;
 
-  // Use admin-uploaded HOME_HERO slides if present, otherwise use groundwork fallback slides
-  const activeSlides = items && items.length > 0 ? items : FALLBACK_GROUNDWORK_SLIDES;
+  // Use admin-uploaded HOME_HERO slides if present, otherwise use real foundation default slide
+  const activeSlides = items && items.length > 0 ? items : DEFAULT_HERO_SLIDES;
   const loopMode = activeSlides.length > 1;
 
   return (
