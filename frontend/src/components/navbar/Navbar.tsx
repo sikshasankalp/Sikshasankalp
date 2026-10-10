@@ -17,12 +17,22 @@ export function Navbar() {
   const { user, isAdmin, logout } = useAuth();
   const headerRef = useRef<HTMLElement>(null);
 
-  // Dynamically sync navbar height to CSS variable so content below is never overlapped
+  const [headerHeight, setHeaderHeight] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024 ? 98 : 108;
+    }
+    return 98;
+  });
+
+  // Dynamically sync navbar height so content below is NEVER overlapped on ANY screen size
   useEffect(() => {
     const updateHeaderHeight = () => {
-      if (headerRef.current) {
+      if (headerRef.current && window.scrollY <= 20) {
         const height = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+        if (height > 0) {
+          setHeaderHeight(height);
+          document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+        }
       }
     };
 
@@ -289,9 +299,17 @@ export function Navbar() {
       </div>
     </header>
 
+    {/* Physical Spacer that precisely reserves the exact measured height of the header across ALL screen sizes */}
+    <div 
+      style={{ height: `${headerHeight}px` }} 
+      aria-hidden="true" 
+      className="w-full shrink-0 pointer-events-none" 
+    />
+
     {/* Mobile Drawer (placed outside header to prevent backdrop-filter containing block trap) */}
     <div 
-      className={`fixed inset-x-0 bottom-0 top-[56px] md:top-[70px] bg-background z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col shadow-2xl ${
+      style={{ top: `${headerHeight}px` }}
+      className={`fixed inset-x-0 bottom-0 bg-background z-40 transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden flex flex-col shadow-2xl ${
         isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
       }`}
     >
