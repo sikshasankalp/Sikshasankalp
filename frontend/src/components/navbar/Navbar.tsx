@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Globe } from 'lucide-react';
 import { Logo } from '../common/Logo';
@@ -15,6 +15,31 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { user, isAdmin, logout } = useAuth();
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Dynamically sync navbar height to CSS variable so content below is never overlapped
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      }
+    };
+
+    updateHeaderHeight();
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (headerRef.current && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(updateHeaderHeight);
+      resizeObserver.observe(headerRef.current);
+    }
+
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -62,6 +87,7 @@ export function Navbar() {
   return (
     <>
       <header 
+        ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-border/40 ${
           isScrolled 
             ? 'bg-background/95 backdrop-blur-md shadow-sm' 
@@ -70,12 +96,12 @@ export function Navbar() {
       >
         {/* Top Compliance & 80G Tax Exemption Announcement Bar (like Bal Raksha Bharat) */}
         <div className="bg-[#B84E1F] text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4 text-center font-medium tracking-wide flex items-center justify-center gap-1.5 sm:gap-2 shadow-inner">
-          <span className="hidden sm:inline">
+          <span className="hidden md:inline">
             {currentLanguage === 'Hindi'
               ? 'शिक्षा संकल्प फाउंडेशन आयकर अधिनियम 1961 की धारा 12A एवं 80G के तहत पंजीकृत है। सभी दान 50% कर-मुक्त हैं।'
               : 'Siksha Sankalp Foundation is registered under Sections 12A & 80G of the Income Tax Act, 1961. All donations are 50% tax exempt.'}
           </span>
-          <span className="inline sm:hidden">
+          <span className="inline md:hidden">
             {currentLanguage === 'Hindi'
               ? '12A एवं 80G प्रमाणित NGO • 50% कर छूट'
               : '12A & 80G Registered NGO • 50% Tax Exempt'}

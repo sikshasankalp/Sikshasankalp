@@ -69,7 +69,7 @@ export const NeedsTicker: React.FC = () => {
     <div
       role="region"
       aria-label="Current NGO Needs Announcement Ticker"
-      className="relative w-full bg-[#1c1917] border-b border-[#38332d] text-white overflow-hidden select-none z-30 shadow-xs flex items-center h-10 sm:h-11"
+      className="relative w-full bg-[#1c1917] border-b border-[#38332d] text-white overflow-hidden select-none z-30 shadow-xs flex items-center h-11"
     >
       {/* Pinned Left Badge: compact on mobile so scrolling text has maximum room */}
       <div className="relative z-20 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 h-full bg-[#1c1917] shrink-0 border-r border-[#38332d] shadow-[3px_0_10px_rgba(0,0,0,0.4)]">
@@ -96,20 +96,20 @@ export const NeedsTicker: React.FC = () => {
               to="/needs"
               className="inline-flex items-center gap-2 text-xs sm:text-[13px] text-white hover:text-white/90 transition-colors whitespace-nowrap group cursor-pointer"
             >
-              <span className="font-medium text-white group-hover:underline underline-offset-2">
+              <span className="font-medium text-white group-hover:underline underline-offset-2 leading-none">
                 {item.title}
               </span>
               {item.quantity && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-white/20 text-white border border-white/25 shadow-2xs">
+                <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-white/20 text-white border border-white/25 shadow-2xs leading-none">
                   {item.quantity}
                 </span>
               )}
               {item.category && (
-                <span className="text-[11px] text-stone-300 hidden md:inline">
+                <span className="text-[11px] text-stone-300 hidden md:inline leading-none">
                   ({item.category})
                 </span>
               )}
-              <span className="text-stone-500 font-bold ml-1.5 select-none">•</span>
+              <span className="text-stone-500 font-bold ml-1.5 select-none leading-none">•</span>
             </Link>
           ))}
 
