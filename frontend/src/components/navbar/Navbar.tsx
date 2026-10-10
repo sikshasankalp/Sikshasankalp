@@ -96,12 +96,12 @@ export function Navbar() {
       >
         {/* Top Compliance & 80G Tax Exemption Announcement Bar (like Bal Raksha Bharat) */}
         <div className="bg-[#B84E1F] text-white text-[10.5px] xs:text-[11px] sm:text-xs py-1.5 px-2.5 sm:px-4 text-center font-medium tracking-normal sm:tracking-wide flex items-center justify-center gap-1 sm:gap-2 shadow-inner">
-          <span className="hidden md:inline">
+          <span className="hidden lg:inline">
             {currentLanguage === 'Hindi'
               ? 'शिक्षा संकल्प फाउंडेशन आयकर अधिनियम 1961 की धारा 12A एवं 80G के तहत पंजीकृत है। सभी दान 50% कर-मुक्त हैं।'
               : 'Siksha Sankalp Foundation is registered under Sections 12A & 80G of the Income Tax Act, 1961. All donations are 50% tax exempt.'}
           </span>
-          <span className="inline md:hidden">
+          <span className="inline lg:hidden">
             {currentLanguage === 'Hindi'
               ? '12A एवं 80G NGO • 50% कर छूट'
               : '12A & 80G NGO • 50% Tax Exempt'}
@@ -256,15 +256,26 @@ export function Navbar() {
           </div>
         </nav>
 
-        {/* Mobile Menu Button */}
-        <div className="flex flex-1 items-center justify-end gap-4 lg:hidden">
-          <Button variant="accent" size="sm" to="/donate" className="text-xs px-3.5 py-1.5 md:px-4 md:py-2 font-semibold shadow-sm">
+        {/* Mobile / Tablet Header Actions */}
+        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3.5 lg:hidden">
+          {/* Quick Language Switcher on mobile/tablet */}
+          <button
+            onClick={() => setCurrentLanguage(currentLanguage === 'English' ? 'Hindi' : 'English')}
+            className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-[13px] font-semibold text-content-secondary hover:text-brand-primary bg-surface border border-border/80 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors cursor-pointer shadow-2xs"
+            title={currentLanguage === 'English' ? 'हिन्दी में बदलें' : 'Switch to English'}
+            aria-label="Change Language"
+          >
+            <Globe className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+            <span>{currentLanguage === 'English' ? 'हिन्दी' : 'EN'}</span>
+          </button>
+
+          <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 sm:px-4 sm:py-2 font-semibold shadow-sm">
             {t('navbar.navbar.text8')}
           </Button>
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 -mr-2 text-content-secondary hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-md"
+            className="p-1.5 -mr-1 text-content-secondary hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-md"
             aria-expanded={isMobileMenuOpen}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >

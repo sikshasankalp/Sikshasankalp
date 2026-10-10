@@ -17,10 +17,10 @@ export default function PublicLayout() {
       <Navbar />
       
       {/* 
-        Top padding dynamically matches the navbar height on mobile, keeping ticker flush and never overlapped.
-        Desktop md:pt-[98px] remains exactly unchanged.
+        Top padding dynamically matches the navbar height on mobile & tablet, keeping ticker flush and never overlapped.
+        Desktop lg:pt-[98px] remains exactly unchanged.
       */}
-      <main className="flex-grow pt-[var(--navbar-height,106px)] md:pt-[98px] flex flex-col w-full max-w-full overflow-x-hidden">
+      <main className="flex-grow pt-[var(--navbar-height,112px)] lg:pt-[98px] flex flex-col w-full max-w-full overflow-x-hidden">
         <Outlet />
       </main>
 
