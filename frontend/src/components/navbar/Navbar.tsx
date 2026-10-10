@@ -267,17 +267,34 @@ export function Navbar() {
         </nav>
 
         {/* Mobile / Tablet Header Actions */}
-        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3.5 lg:hidden">
-          {/* Quick Language Switcher on mobile/tablet */}
-          <button
-            onClick={() => setCurrentLanguage(currentLanguage === 'English' ? 'Hindi' : 'English')}
-            className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-[13px] font-semibold text-content-secondary hover:text-brand-primary bg-surface border border-border/80 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors cursor-pointer shadow-2xs"
-            title={currentLanguage === 'English' ? 'हिन्दी में बदलें' : 'Switch to English'}
-            aria-label="Change Language"
-          >
-            <Globe className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-            <span>{currentLanguage === 'English' ? 'हिन्दी' : 'EN'}</span>
-          </button>
+        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3 lg:hidden">
+          {/* Quick Segmented Language Switcher on mobile/tablet */}
+          <div className="inline-flex items-center rounded-lg border border-border bg-surface-muted/60 p-0.5 text-[11px] font-semibold shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setCurrentLanguage('English')}
+              className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                currentLanguage === 'English'
+                  ? 'bg-brand-primary text-white shadow-xs font-bold'
+                  : 'text-content-secondary hover:text-content-primary'
+              }`}
+              aria-label="Switch to English"
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentLanguage('Hindi')}
+              className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                currentLanguage === 'Hindi'
+                  ? 'bg-brand-primary text-white shadow-xs font-bold'
+                  : 'text-content-secondary hover:text-content-primary'
+              }`}
+              aria-label="Switch to Hindi"
+            >
+              हिन्दी
+            </button>
+          </div>
 
           <Button variant="accent" size="sm" to="/donate" className="text-xs px-3 py-1.5 sm:px-4 sm:py-2 font-semibold shadow-sm">
             {t('navbar.navbar.text8')}
