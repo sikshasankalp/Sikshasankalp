@@ -74,8 +74,8 @@ export function HeroSection() {
                 {t('home.heroSection.desc1') || "Taking underprivileged children from the world of pavements to the world of schools."}
               </p>
 
-              {/* Body Content: Reduced by 2px (14px on desktop) */}
-              <p className="text-[12px] xs:text-[12.5px] sm:text-[13.5px] lg:text-[14px] leading-[1.6] lg:leading-[1.618] text-content-secondary mb-[22px] sm:mb-[28px] lg:mb-[32px] break-words">
+              {/* Body Content: Increased by 1px (15px on desktop) */}
+              <p className="text-[13px] xs:text-[13.5px] sm:text-[14.5px] lg:text-[15px] leading-[1.6] lg:leading-[1.618] text-content-secondary mb-[22px] sm:mb-[28px] lg:mb-[32px] break-words">
                 {t('home.heroSection.text1') || "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future."}
               </p>
             </div>
