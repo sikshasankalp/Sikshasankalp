@@ -28,7 +28,9 @@ import {
   createDonationOrder,
   verifyDonationPayment,
   processRazorpayWebhook,
-  downloadDonationReceipt
+  downloadDonationReceipt,
+  deleteDonation,
+  clearTestDonations
 } from '../controllers/donation.controller';
 
 const router = Router();
@@ -147,6 +149,21 @@ router.get(
   ),
   validateParams(donationIdSchema),
   getDonationById
+);
+
+router.delete(
+  '/clear-all',
+  requireAuth,
+  requireRole(Role.SUPER_ADMIN),
+  clearTestDonations
+);
+
+router.delete(
+  '/:id',
+  requireAuth,
+  requireRole(Role.SUPER_ADMIN),
+  validateParams(donationIdSchema),
+  deleteDonation
 );
 
 export default router;

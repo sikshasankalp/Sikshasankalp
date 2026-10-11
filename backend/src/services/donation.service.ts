@@ -859,5 +859,28 @@ export const donationService = {
       success: Boolean(refreshed?.receiptEmailSentAt),
       receiptEmailSentAt: refreshed?.receiptEmailSentAt
     };
+  },
+
+  async deleteDonation(id: string) {
+    const donation = await prisma.donation.findUnique({
+      where: { id }
+    });
+
+    if (!donation) {
+      throw new AppError('Donation not found', 404);
+    }
+
+    await prisma.donation.delete({
+      where: { id }
+    });
+
+    return { success: true };
+  },
+
+  async clearTestDonations() {
+    const result = await prisma.donation.deleteMany({});
+    await prisma.receiptSequence.deleteMany({});
+
+    return { success: true, count: result.count };
   }
 };

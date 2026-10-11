@@ -222,3 +222,37 @@ export const downloadMyDonationReceipt = async (
     next(error);
   }
 };
+
+export const deleteDonation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    await donationService.deleteDonation(id);
+    res.json({
+      success: true,
+      message: 'Donation deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const clearTestDonations = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const result = await donationService.clearTestDonations();
+    res.json({
+      success: true,
+      message: 'All test donations cleared successfully',
+      count: result.count
+    });
+  } catch (error) {
+    next(error);
+  }
+};

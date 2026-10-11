@@ -2,30 +2,49 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardData } from '../services/dashboard';
 import type { DashboardStats } from '../services/dashboard';
+import { clearAllTestDonationsAdmin } from '../../services/api/donation';
 import { 
   Heart, Users, Image as ImageIcon, 
-  BookOpen, Plus, Activity
+  BookOpen, Plus, Activity, Trash2
 } from 'lucide-react';
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isClearing, setIsClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchData = async () => {
+    try {
+      const result = await getDashboardData();
+      setData(result);
+    } catch (error: any) {
+      console.error("Failed to load dashboard data", error);
+      setError("Failed to load dashboard data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getDashboardData();
-        setData(result);
-      } catch (error: any) {
-        console.error("Failed to load dashboard data", error);
-        setError("Failed to load dashboard data. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchData();
   }, []);
+
+  const handleClearTestDonations = async () => {
+    if (!window.confirm("Are you sure you want to delete all test/fake donations? This will reset Total Donations to ₹0.")) {
+      return;
+    }
+    try {
+      setIsClearing(true);
+      const res = await clearAllTestDonationsAdmin();
+      alert(`Cleared ${res.count} test donation records. Total reset to ₹0.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to clear donations');
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -49,24 +68,38 @@ export default function Dashboard() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-content-primary mb-1">Dashboard Overview</h2>
-        <p className="text-sm text-content-secondary">
-          Welcome back. Here's a snapshot of operations.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-content-primary mb-1">Dashboard Overview</h2>
+          <p className="text-sm text-content-secondary">
+            Welcome back. Here's a snapshot of operations.
+          </p>
+        </div>
+        {data.donations.totalAmount > 0 && (
+          <button
+            onClick={handleClearTestDonations}
+            disabled={isClearing}
+            className="self-start sm:self-auto flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {isClearing ? 'Clearing...' : 'Reset Test Donations (₹0)'}
+          </button>
+        )}
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         
-        <div className="bg-background border border-border/50 p-5 rounded-xl flex items-start gap-4 shadow-sm">
-          <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
-            <Heart className="w-5 h-5 text-brand-primary" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Total Donations</p>
-            <p className="text-2xl font-bold text-content-primary">₹{data.donations.totalAmount.toLocaleString('en-IN')}</p>
-            <p className="text-xs text-content-secondary mt-1">{data.donations.successfulCount} successful</p>
+        <div className="bg-background border border-border/50 p-5 rounded-xl flex items-start justify-between shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
+              <Heart className="w-5 h-5 text-brand-primary" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-content-muted uppercase tracking-wider mb-1">Total Donations</p>
+              <p className="text-2xl font-bold text-content-primary">₹{data.donations.totalAmount.toLocaleString('en-IN')}</p>
+              <p className="text-xs text-content-secondary mt-1">{data.donations.successfulCount} successful</p>
+            </div>
           </div>
         </div>
 

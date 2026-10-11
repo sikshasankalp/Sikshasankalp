@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
-import { RefreshCw, Search, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchDonationsAdmin } from '../../services/api/donation';
+import { RefreshCw, Search, Eye, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { 
+  fetchDonationsAdmin, 
+  deleteDonationAdmin, 
+  clearAllTestDonationsAdmin 
+} from '../../services/api/donation';
 import type { Donation } from '../../services/api/donation';
 
 export default function DonationsManagement() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Pagination & Filters
@@ -52,6 +57,36 @@ export default function DonationsManagement() {
     setSearch(searchInput);
   };
 
+  const handleDeleteDonation = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this donation record?')) return;
+    try {
+      setIsDeleting(true);
+      await deleteDonationAdmin(id);
+      if (selectedDonation?.id === id) {
+        setSelectedDonation(null);
+      }
+      await loadDonations();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete donation');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleClearAllTestDonations = async () => {
+    if (!window.confirm('Are you sure you want to delete ALL test/fake donations? This will reset the total donations to ₹0 on the dashboard.')) return;
+    try {
+      setIsDeleting(true);
+      const res = await clearAllTestDonationsAdmin();
+      alert(`Cleared ${res.count} test donation records.`);
+      await loadDonations();
+    } catch (err: any) {
+      alert(err.message || 'Failed to clear donations');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getStatusBadgeClass = (statusStr: string) => {
     switch (statusStr) {
       case 'SUCCESS': return 'bg-success/10 text-success';
@@ -82,14 +117,29 @@ export default function DonationsManagement() {
   return (
     <div className="p-6 h-full flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Donations Management</h1>
-        <button
-          onClick={() => loadDonations()}
-          className="flex items-center gap-2 px-4 py-2 bg-surface border border-border text-content-primary rounded-lg hover:bg-surface-muted transition-colors"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Refresh
-        </button>
+        <div>
+          <h1 className="text-2xl font-bold">Donations Management</h1>
+          <p className="text-sm text-content-secondary">Track real-time contributions and receipts</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {donations.length > 0 && (
+            <button
+              onClick={handleClearAllTestDonations}
+              disabled={isDeleting}
+              className="flex items-center gap-2 px-3.5 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors text-sm font-semibold disabled:opacity-50"
+            >
+              <Trash2 className="w-4 h-4" />
+              {isDeleting ? 'Clearing...' : 'Clear Test Donations (₹0)'}
+            </button>
+          )}
+          <button
+            onClick={() => loadDonations()}
+            className="flex items-center gap-2 px-4 py-2 bg-surface border border-border text-content-primary rounded-lg hover:bg-surface-muted transition-colors text-sm"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -160,7 +210,7 @@ export default function DonationsManagement() {
               ) : donations.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-content-secondary">
-                    No donations found matching the criteria.
+                    No donations found.
                   </td>
                 </tr>
               ) : (
@@ -192,13 +242,23 @@ export default function DonationsManagement() {
                       )}
                     </td>
                     <td className="p-4 text-right">
-                      <button
-                        onClick={() => setSelectedDonation(donation)}
-                        className="p-2 text-content-secondary hover:text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => setSelectedDonation(donation)}
+                          className="p-2 text-content-secondary hover:text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDonation(donation.id)}
+                          disabled={isDeleting}
+                          className="p-2 text-content-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Donation"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -238,62 +298,64 @@ export default function DonationsManagement() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl my-8 overflow-hidden flex flex-col max-h-[90vh]">
             <div className="flex justify-between items-center p-6 border-b border-border shrink-0">
-              <h2 className="text-xl font-bold">Donation Details</h2>
-              <button onClick={() => setSelectedDonation(null)} className="text-content-secondary hover:text-content-primary">
+              <h2 className="text-lg font-bold text-content-primary">Donation Details</h2>
+              <button 
+                onClick={() => setSelectedDonation(null)}
+                className="text-content-secondary hover:text-content-primary p-1 rounded-lg hover:bg-surface-muted transition-colors"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto">
-              <div className="grid md:grid-cols-2 gap-8">
-                
-                {/* Donor Info */}
+            <div className="p-6 overflow-y-auto space-y-6">
+              <div className="flex items-center justify-between p-4 bg-surface-muted rounded-xl">
                 <div>
-                  <h3 className="text-sm font-bold text-content-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Donor Information</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Name</p>
-                      <p className="font-medium text-content-primary">{selectedDonation.donorName}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Email</p>
-                      <p className="font-medium text-content-primary">{selectedDonation.email || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Mobile</p>
-                      <p className="font-medium text-content-primary">{selectedDonation.mobile}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">PAN Number</p>
-                      <p className="font-medium text-content-primary">{selectedDonation.pan || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Address</p>
-                      <p className="font-medium text-content-primary">{selectedDonation.address || '-'}</p>
-                    </div>
-                  </div>
+                  <p className="text-sm text-content-secondary">Amount</p>
+                  <p className="text-2xl font-bold text-content-primary">
+                    {formatCurrency(selectedDonation.amount, selectedDonation.currency)}
+                  </p>
                 </div>
-
-                {/* Payment Info */}
                 <div>
-                  <h3 className="text-sm font-bold text-content-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Payment Information</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Amount</p>
-                      <p className="font-bold text-xl text-brand-primary">
-                        {formatCurrency(selectedDonation.amount, selectedDonation.currency)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Status</p>
-                      <span className={`inline-block text-xs px-2 py-1 rounded-full font-medium ${getStatusBadgeClass(selectedDonation.status)}`}>
-                        {selectedDonation.status}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-xs text-content-secondary mb-1">Receipt Number</p>
-                      <p className="font-mono text-sm text-content-primary">{selectedDonation.receiptNumber || '-'}</p>
-                    </div>
+                  <span className={`text-sm px-3 py-1 rounded-full font-medium ${getStatusBadgeClass(selectedDonation.status)}`}>
+                    {selectedDonation.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-content-secondary mb-1">Donor Name</p>
+                  <p className="font-medium text-content-primary">{selectedDonation.donorName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-content-secondary mb-1">Email</p>
+                  <p className="font-medium text-content-primary">{selectedDonation.email || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-content-secondary mb-1">Mobile</p>
+                  <p className="font-medium text-content-primary">{selectedDonation.mobile}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-content-secondary mb-1">PAN Number</p>
+                  <p className="font-mono text-content-primary">{selectedDonation.pan || '-'}</p>
+                </div>
+              </div>
+
+              {selectedDonation.address && (
+                <div>
+                  <p className="text-xs text-content-secondary mb-1">Address</p>
+                  <p className="text-sm text-content-primary bg-surface-muted p-3 rounded-lg">{selectedDonation.address}</p>
+                </div>
+              )}
+
+              <div className="border-t border-border pt-4">
+                <h3 className="text-sm font-semibold text-content-primary mb-3">Gateway &amp; Receipt Identifiers</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-content-secondary mb-1">Receipt Number</p>
+                    <p className="font-mono text-sm text-content-primary">{selectedDonation.receiptNumber || '-'}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-content-secondary mb-1">Razorpay Order ID</p>
                       <p className="font-mono text-sm text-content-primary">{selectedDonation.razorpayOrderId || '-'}</p>
@@ -312,10 +374,18 @@ export default function DonationsManagement() {
               </div>
             </div>
             
-            <div className="p-4 border-t border-border bg-surface flex justify-end shrink-0">
+            <div className="p-4 border-t border-border bg-surface flex justify-between items-center shrink-0">
+              <button
+                onClick={() => handleDeleteDonation(selectedDonation.id)}
+                disabled={isDeleting}
+                className="flex items-center gap-1.5 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Record
+              </button>
               <button
                 onClick={() => setSelectedDonation(null)}
-                className="px-4 py-2 border border-border rounded-lg text-content-primary hover:bg-surface-muted transition-colors font-medium"
+                className="px-4 py-2 border border-border rounded-lg text-content-primary hover:bg-surface-muted transition-colors font-medium text-sm"
               >
                 Close
               </button>

@@ -107,3 +107,22 @@ export const fetchDonationById = async (id: string): Promise<Donation> => {
   if (!result.success) throw new Error(result.message || 'Failed to fetch donation details');
   return result.data;
 };
+
+export const deleteDonationAdmin = async (id: string): Promise<void> => {
+  const response = await fetchWithAuth(`${API_URL}/donations/${id}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'Failed to delete donation');
+};
+
+export const clearAllTestDonationsAdmin = async (): Promise<{ count: number }> => {
+  const response = await fetchWithAuth(`${API_URL}/donations/clear-all`, {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'Failed to clear test donations');
+  return result;
+};
