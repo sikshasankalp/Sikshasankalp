@@ -22,6 +22,7 @@ import MyDonations from './pages/MyDonations';
 import NeedsPage from './pages/Needs';
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsOfService from './pages/Legal/TermsOfService';
+import RefundPolicy from './pages/Legal/RefundPolicy';
 
 // Admin Page Imports
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -71,6 +72,9 @@ function App() {
           <Route path="/account/donations" element={<MyDonations />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/terms-and-conditions" element={<TermsOfService />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/cancellation-policy" element={<RefundPolicy />} />
         </Route>
 
           <Route path="/login" element={<LoginRoute />} />

@@ -44,6 +44,7 @@ export const footerNavigation = {
   ],
   legal: [
     { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Terms & Conditions', href: '/terms' },
+    { label: 'Cancellation & Refund Policy', href: '/refund-policy' },
   ]
 };
