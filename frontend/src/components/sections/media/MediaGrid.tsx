@@ -88,20 +88,28 @@ export function MediaGrid() {
                 }}
                 className="group cursor-pointer flex flex-col md:flex-row gap-6 md:gap-10 py-8 border-t border-border/60 hover:bg-background/80 transition-all -mx-4 px-4 md:mx-0 md:px-6 rounded-xl"
               >
-                <div className="relative aspect-video w-full md:w-[240px] shrink-0 rounded-lg overflow-hidden bg-background border border-border/50 shadow-sm">
+                <div className="relative aspect-video w-full md:w-[240px] shrink-0 rounded-xl overflow-hidden bg-neutral-950 border border-border/50 shadow-sm flex items-center justify-center">
                   {item.thumbnailUrl ? (
-                    <img 
-                      src={item.thumbnailUrl} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                      loading="lazy" 
-                      decoding="async" 
-                    />
+                    <>
+                      <img 
+                        src={item.thumbnailUrl} 
+                        alt="" 
+                        aria-hidden="true" 
+                        className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-40 pointer-events-none" 
+                      />
+                      <img 
+                        src={item.thumbnailUrl} 
+                        alt={item.title} 
+                        className="relative z-10 w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
+                        loading="lazy" 
+                        decoding="async" 
+                      />
+                    </>
                   ) : (
                     <PlaceholderImage className="w-full h-full border-none transition-transform duration-500 group-hover:scale-105" text="Thumbnail" />
                   )}
                   {item.isImage && (
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white z-20">
                       <Eye className="w-6 h-6 drop-shadow-md" />
                     </div>
                   )}
@@ -195,7 +203,7 @@ export function MediaGrid() {
               <img 
                 src={lightboxItem.thumbnailUrl} 
                 alt={lightboxItem.title} 
-                className="max-h-[72vh] w-auto max-w-full object-contain rounded shadow-lg"
+                className="max-h-[72vh] w-auto max-w-full object-contain rounded shadow-lg" 
               />
             </div>
 

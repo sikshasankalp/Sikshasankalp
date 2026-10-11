@@ -108,22 +108,30 @@ export function MediaFeatured() {
             href={featuredItem.url} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="relative aspect-video w-full rounded-lg overflow-hidden bg-surface-muted border border-border/50 group block shadow-md"
+            className="relative aspect-video w-full rounded-2xl overflow-hidden bg-neutral-950 border border-border/50 group block shadow-md flex items-center justify-center"
           >
             {featuredItem.thumbnailUrl ? (
-              <img 
-                src={featuredItem.thumbnailUrl} 
-                alt={featuredItem.title} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                loading="lazy" 
-                decoding="async" 
-              />
+              <>
+                <img 
+                  src={featuredItem.thumbnailUrl} 
+                  alt="" 
+                  aria-hidden="true" 
+                  className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-40 pointer-events-none" 
+                />
+                <img 
+                  src={featuredItem.thumbnailUrl} 
+                  alt={featuredItem.title} 
+                  className="relative z-10 w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
+                  loading="lazy" 
+                  decoding="async" 
+                />
+              </>
             ) : (
               <PlaceholderImage className="w-full h-full border-none transition-transform duration-500 group-hover:scale-105" text="Featured Media Thumbnail" />
             )}
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors pointer-events-none"></div>
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors pointer-events-none z-20"></div>
             {featuredItem.isImage && (
-              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 font-medium">
+              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 font-medium z-30">
                 <Eye className="w-3.5 h-3.5" /> Newspaper Clipping
               </div>
             )}

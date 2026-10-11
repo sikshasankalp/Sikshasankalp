@@ -84,18 +84,32 @@ export function GalleryGrid() {
             {filteredImages.map((image) => (
               <div 
                 key={image.id}
-                className="relative aspect-square w-full rounded-lg overflow-hidden bg-surface-muted border border-border cursor-pointer group"
+                className="relative aspect-square w-full rounded-2xl overflow-hidden bg-neutral-950 border border-border cursor-pointer group flex items-center justify-center shadow-sm"
                 onClick={() => setLightboxImage(image)}
               >
                 {image.imageUrl ? (
-                  <img src={image.imageUrl} alt={image.title || 'Gallery Image'} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" />
+                  <>
+                    <img 
+                      src={image.imageUrl} 
+                      alt="" 
+                      aria-hidden="true" 
+                      className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-40 pointer-events-none" 
+                    />
+                    <img 
+                      src={image.imageUrl} 
+                      alt={image.title || 'Gallery Image'} 
+                      className="relative z-10 w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
+                      loading="lazy" 
+                      decoding="async" 
+                    />
+                  </>
                 ) : (
                   <PlaceholderImage className="w-full h-full border-none transition-transform duration-500 group-hover:scale-105" text="Image Placeholder" />
                 )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
                   <span className="text-white font-medium px-4 py-2 border border-white/50 rounded backdrop-blur-sm text-sm uppercase tracking-wider">
                     {t('gallery.galleryGrid.text1')}
-                                              </span>
+                  </span>
                 </div>
               </div>
             ))}
@@ -107,11 +121,11 @@ export function GalleryGrid() {
             <h3 className="text-xl font-bold text-content-primary mb-2">{t('gallery.galleryGrid.text2')}</h3>
             <p className="text-body text-content-secondary max-w-md mx-auto mb-6">
               {t('gallery.galleryGrid.text3')} <span className="font-semibold text-brand-primary">{activeCategory}</span> {t('gallery.galleryGrid.text4')}
-                                          </p>
+            </p>
             {activeCategory !== 'All' && (
               <Button onClick={() => setActiveCategory('All')} variant="outline" size="sm">
                 {t('gallery.galleryGrid.text5')}
-                                                </Button>
+              </Button>
             )}
           </div>
         )}
@@ -119,9 +133,9 @@ export function GalleryGrid() {
 
       {/* Lightbox Modal */}
       {lightboxImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 md:p-10" onClick={() => setLightboxImage(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 md:p-10 backdrop-blur-md" onClick={() => setLightboxImage(null)}>
           <button 
-            className="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white transition-colors"
+            className="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
             onClick={(e) => { e.stopPropagation(); setLightboxImage(null); }}
             aria-label="Close lightbox"
           >
@@ -129,13 +143,18 @@ export function GalleryGrid() {
           </button>
           <div className="relative w-full max-w-5xl max-h-[85vh] flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
             {lightboxImage.imageUrl ? (
-              <img src={lightboxImage.imageUrl} alt={lightboxImage.title || 'Full Image'} className="max-w-full max-h-[75vh] object-contain rounded" />
+              <img src={lightboxImage.imageUrl} alt={lightboxImage.title || 'Full Image'} className="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl" />
             ) : (
               <div className="w-full max-w-3xl aspect-[16/9] bg-surface-muted rounded overflow-hidden flex flex-col items-center justify-center text-content-muted">
                 <ImageIcon className="w-16 h-16 mb-4 opacity-50" />
                 <span className="text-lg font-medium">{t('gallery.galleryGrid.text6')}</span>
                 <span className="text-sm mt-2 text-content-secondary">{t('gallery.galleryGrid.text7')} {lightboxImage.category}</span>
               </div>
+            )}
+            {lightboxImage.title && (
+              <p className="mt-3 text-white/90 text-sm md:text-base font-medium text-center">
+                {lightboxImage.title}
+              </p>
             )}
           </div>
         </div>
