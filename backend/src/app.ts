@@ -48,13 +48,33 @@ app.use(
 /**
  * CORS
  *
- * Only the configured frontend origin is allowed.
+ * Configured frontend origins and custom domains are allowed.
  * Credentials are enabled because authentication uses
  * HttpOnly cookies.
  */
+const allowedOrigins = Array.from(
+  new Set(
+    [
+      config.frontendUrl,
+      'https://sikshasankalp.com',
+      'https://www.sikshasankalp.com',
+      'https://sikshasankalp.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ].filter(Boolean)
+  )
+);
+
 app.use(
   cors({
-    origin: config.frontendUrl,
+    origin: (requestOrigin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!requestOrigin || allowedOrigins.includes(requestOrigin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
     methods: [
       'GET',
