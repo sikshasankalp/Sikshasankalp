@@ -1,9 +1,10 @@
 import { PlaceholderImage } from '../../common/PlaceholderImage';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchGallery } from '../../../services/api/gallery';
 import type { GalleryItem } from '../../../services/api/gallery';
 import { useLanguage } from "../../../context/LanguageContext";
-import { X, ZoomIn } from 'lucide-react';
+import { X, ZoomIn, ArrowRight } from 'lucide-react';
 
 export function PhotoStorySection() {
   const { t } = useLanguage();
@@ -107,15 +108,16 @@ export function PhotoStorySection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between p-4 md:p-5 z-20 pointer-events-none">
               <span className="text-white font-medium drop-shadow">{t('home.photoStorySection.text2')}</span>
               <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 text-xs flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                <ZoomIn className="w-3 h-3" />
+                <ZoomIn className="w-3.5 h-3.5" /> View Full
               </span>
             </div>
           </div>
           
-          {/* Small Image 2 */}
-          <div 
-            onClick={() => familyImage && setLightboxImage(familyImage)}
-            className="md:col-span-4 h-[240px] md:h-full relative rounded-2xl overflow-hidden group bg-neutral-950 shadow-md flex items-center justify-center cursor-pointer"
+          {/* Small Image 2: Links to Full Gallery with "See All" */}
+          <Link 
+            to="/gallery"
+            className="md:col-span-4 h-[240px] md:h-full relative rounded-2xl overflow-hidden group bg-neutral-950 shadow-md flex items-center justify-center cursor-pointer block"
+            title="View all gallery photos"
           >
             {familyImage ? (
               <>
@@ -128,7 +130,7 @@ export function PhotoStorySection() {
                 <img 
                   src={familyImage.imageUrl} 
                   alt={familyImage.title || "Family Support"} 
-                  className="relative z-10 w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" 
+                  className="relative z-10 w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
                   loading="lazy" 
                   decoding="async" 
                 />
@@ -136,13 +138,13 @@ export function PhotoStorySection() {
             ) : (
               <PlaceholderImage className="w-full h-full" text="Family Support" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between p-4 md:p-5 z-20 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex items-end justify-between p-4 md:p-5 z-20">
               <span className="text-white font-medium drop-shadow">{t('home.photoStorySection.text3')}</span>
-              <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 text-xs flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                <ZoomIn className="w-3 h-3" />
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-white text-xs font-semibold rounded-full shadow-lg group-hover:bg-brand-primary-hover group-hover:scale-105 transition-all">
+                See All <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
 
