@@ -69,13 +69,13 @@ export function HeroSection() {
                 {t('home.heroSection.title1') || "Every child has the right to education, dignity and a better future"}
               </h1>
 
-              {/* Subheading: Responsive on mobile, exactly 26px on desktop */}
-              <p className="text-[15px] xs:text-[17px] sm:text-[21px] lg:text-[26px] leading-snug sm:leading-[1.38] font-medium text-content-secondary mb-[14px] sm:mb-[18px] lg:mb-[20px] break-words">
+              {/* Subheading: Reduced by 1px (25px on desktop) */}
+              <p className="text-[14px] xs:text-[16px] sm:text-[20px] lg:text-[25px] leading-snug sm:leading-[1.38] font-medium text-content-secondary mb-[14px] sm:mb-[18px] lg:mb-[20px] break-words">
                 {t('home.heroSection.desc1') || "Taking underprivileged children from the world of pavements to the world of schools."}
               </p>
 
-              {/* Body Content: 16px with exact 1.618 golden ratio line-height & 32px margin on desktop */}
-              <p className="text-[13.5px] xs:text-[14px] sm:text-[15px] lg:text-[16px] leading-[1.6] lg:leading-[1.618] text-content-secondary mb-[22px] sm:mb-[28px] lg:mb-[32px] break-words">
+              {/* Body Content: Reduced by 2px (14px on desktop) */}
+              <p className="text-[12px] xs:text-[12.5px] sm:text-[13.5px] lg:text-[14px] leading-[1.6] lg:leading-[1.618] text-content-secondary mb-[22px] sm:mb-[28px] lg:mb-[32px] break-words">
                 {t('home.heroSection.text1') || "Siksha Sankalp Foundation works at the grassroots level to connect underprivileged and needy children with education, mainstream schools and better opportunities. Our efforts are not limited to education only, but to empower children and families with respect, confidence and a better future."}
               </p>
             </div>
