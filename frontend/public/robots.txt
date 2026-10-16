@@ -1,4 +1,5 @@
 # robots.txt for Siksha Sankalp Foundation (https://www.sikshasankalp.com)
+# AI & Answer Engine Optimized (GEO/AEO)
 
 User-agent: *
 Allow: /
@@ -7,5 +8,31 @@ Disallow: /admin/*
 Disallow: /reset-password/*
 Disallow: /verify-email/*
 
-# Sitemap location
+# Explicitly allow AI Search Engines (ChatGPT, Gemini, Perplexity, Claude, Copilot)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap & LLM Discovery
 Sitemap: https://www.sikshasankalp.com/sitemap.xml
+# AI Model Guide: https://www.sikshasankalp.com/llms.txt
