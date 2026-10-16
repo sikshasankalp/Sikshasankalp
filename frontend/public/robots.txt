@@ -1,0 +1,11 @@
+# robots.txt for Siksha Sankalp Foundation (https://www.sikshasankalp.com)
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /reset-password/*
+Disallow: /verify-email/*
+
+# Sitemap location
+Sitemap: https://www.sikshasankalp.com/sitemap.xml
